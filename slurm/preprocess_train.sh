@@ -1,0 +1,20 @@
+#!/bin/bash
+sbatch --export=IS=0,IE=100 slurm/preprocess_train_base.slurm
+sbatch --export=IS=100,IE=200 slurm/preprocess_train_base.slurm
+sbatch --export=IS=200,IE=300 slurm/preprocess_train_base.slurm
+sbatch --export=IS=300,IE=400 slurm/preprocess_train_base.slurm
+sbatch --export=IS=400,IE=500 slurm/preprocess_train_base.slurm
+sbatch --export=IS=500,IE=600 slurm/preprocess_train_base.slurm
+sbatch --export=IS=600,IE=700 slurm/preprocess_train_base.slurm
+sbatch --export=IS=700,IE=800 slurm/preprocess_train_base.slurm
+sbatch --export=IS=800,IE=900 slurm/preprocess_train_base.slurm
+sbatch --export=IS=900,IE=1000 slurm/preprocess_train_base.slurm
+sbatch --export=IS=1000,IE=1100 slurm/preprocess_train_base.slurm
+sbatch --export=IS=1100,IE=1200 slurm/preprocess_train_base.slurm
+sbatch --export=IS=1200,IE=1300 slurm/preprocess_train_base.slurm
+sbatch --export=IS=1300,IE=1400 slurm/preprocess_train_base.slurm
+sbatch --export=IS=1400,IE=1500 slurm/preprocess_train_base.slurm
+sbatch --export=IS=1500,IE=1600 slurm/preprocess_train_base.slurm
+sbatch --export=IS=1600,IE=1700 slurm/preprocess_train_base.slurm
+sbatch --export=IS=1700,IE=1800 slurm/preprocess_train_base.slurm
+sbatch --export=IS=1800,IE=1822 slurm/preprocess_train_base.slurm
