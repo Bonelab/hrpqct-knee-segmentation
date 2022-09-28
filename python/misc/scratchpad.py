@@ -202,8 +202,8 @@ def main():
     HPARAMS_FILE = 'hparams.yaml'
     CKPT_FILE = 'epoch=49-step=1449.ckpt'
 
-    HPARAMS_PATH = os.path.join('.', LOG_DIR, MODEL_DIR, EXP_DIR, HPARAMS_FILE)
-    CKPT_PATH = os.path.join('.', LOG_DIR, MODEL_DIR, EXP_DIR, CKPT_DIR, CKPT_FILE)
+    HPARAMS_PATH = os.path.join('..', LOG_DIR, MODEL_DIR, EXP_DIR, HPARAMS_FILE)
+    CKPT_PATH = os.path.join('..', LOG_DIR, MODEL_DIR, EXP_DIR, CKPT_DIR, CKPT_FILE)
 
     with open(HPARAMS_PATH, 'r') as f:
         hparams = yaml.safe_load(f)
@@ -272,8 +272,8 @@ def main_check_segan():
     HPARAMS_FILE = 'hparams.yaml'
     CKPT_FILE = 'epoch=30-step=898.ckpt'
 
-    HPARAMS_PATH = os.path.join('.', LOG_DIR, MODEL_DIR, EXP_DIR, HPARAMS_FILE)
-    CKPT_PATH = os.path.join('.', LOG_DIR, MODEL_DIR, EXP_DIR, CKPT_DIR, CKPT_FILE)
+    HPARAMS_PATH = os.path.join('..', LOG_DIR, MODEL_DIR, EXP_DIR, HPARAMS_FILE)
+    CKPT_PATH = os.path.join('..', LOG_DIR, MODEL_DIR, EXP_DIR, CKPT_DIR, CKPT_FILE)
 
     with open(HPARAMS_PATH, 'r') as f:
         hparams = yaml.safe_load(f)
