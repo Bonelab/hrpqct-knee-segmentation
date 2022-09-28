@@ -1,10 +1,10 @@
 import numpy as np
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
-from datasets.AIMLoader import AIMLoader
-from datasets.SlicePatchSampler import SlicePatchSampler
-from datasets.HRpQCTTransformer import HRpQCTTransformer
-from datasets.HRpQCTDataset import HRpQCTDataset
+from blpytorchlightning.dataset_components.AIMLoader import AIMLoader
+from blpytorchlightning.dataset_components.SlicePatchSampler import SlicePatchSampler
+from blpytorchlightning.dataset_components.HRpQCTTransformer import HRpQCTTransformer
+from blpytorchlightning.dataset_components.HRpQCTDataset import HRpQCTDataset
 
 
 def create_parser():

@@ -4,9 +4,9 @@ from torch.utils.data import DataLoader
 from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import CSVLogger
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-from lightning_modules.SegmentationTask import SegmentationTask
-from datasets.PickledDataset import PickledDataset
-from models.UNet2D import UNet2D
+from blpytorchlightning.tasks.SegmentationTask import SegmentationTask
+from blpytorchlightning.dataset_components.PickledDataset import PickledDataset
+from blpytorchlightning.models.UNet2D import UNet2D
 
 
 def create_parser():

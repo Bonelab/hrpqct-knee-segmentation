@@ -49,7 +49,7 @@ def main():
             )
             print(f'{experiment_name} collated')
         except FileNotFoundError:
-            print(f'{experiment_name} couldn\'t be collated')
+            print(f'{experiment_folder} couldn\'t be collated')
 
 
 if __name__ == '__main__':

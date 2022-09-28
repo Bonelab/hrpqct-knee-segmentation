@@ -6,11 +6,11 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import CSVLogger
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from lightning_modules.SegmentationEmbeddingTask import SegmentationEmbeddingTask
-from datasets.PickledDataset import PickledDataset
-from models.UNet2D import UNet2D
-from utils.embedding_conversion import create_convert_embeddings_to_predictions
-from loss_functions.CurvatureLoss import CurvatureLoss
-from loss_functions.MagnitudeGradientSDTLoss import MagnitudeGradientSDTLoss
+from blpytorchlightning.dataset_components.PickledDataset import PickledDataset
+from blpytorchlightning.models.UNet2D import UNet2D
+from blpytorchlightning.utils.embedding_conversion import create_convert_embeddings_to_predictions
+from blpytorchlightning.loss_functions.CurvatureLoss import CurvatureLoss
+from blpytorchlightning.loss_functions.MagnitudeGradientSDTLoss import MagnitudeGradientSDTLoss
 
 
 def create_parser():

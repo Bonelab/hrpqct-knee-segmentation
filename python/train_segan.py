@@ -4,9 +4,9 @@ from torch.utils.data import DataLoader
 from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import CSVLogger
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-from lightning_modules.SeGANTask import SeGANTask
-from datasets.PickledDataset import PickledDataset
-from models.SeGAN import get_segmentor_and_discriminators
+from blpytorchlightning.tasks.SeGANTask import SeGANTask
+from blpytorchlightning.dataset_components.PickledDataset import PickledDataset
+from blpytorchlightning.models.SeGAN import get_segmentor_and_discriminators
 
 
 def create_parser():

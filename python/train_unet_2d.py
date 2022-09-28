@@ -4,12 +4,12 @@ from torch.utils.data import DataLoader
 from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import CSVLogger
 from lightning_modules.SegmentationTask import SegmentationTask
-from datasets.AIMLoader import AIMLoader
-from datasets.AIMLoaderRAM import AIMLoaderRAM
-from datasets.SlicePatchSampler import SlicePatchSampler
-from datasets.HRpQCTTransformer import HRpQCTTransformer
-from datasets.HRpQCTDataset import HRpQCTDataset
-from models.UNet2D import UNet2D
+from blpytorchlightning.dataset_components.AIMLoader import AIMLoader
+from blpytorchlightning.dataset_components.AIMLoaderRAM import AIMLoaderRAM
+from blpytorchlightning.dataset_components.SlicePatchSampler import SlicePatchSampler
+from blpytorchlightning.dataset_components.HRpQCTTransformer import HRpQCTTransformer
+from blpytorchlightning.dataset_components.HRpQCTDataset import HRpQCTDataset
+from blpytorchlightning.models.UNet2D import UNet2D
 
 
 def create_parser():
