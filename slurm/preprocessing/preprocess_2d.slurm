@@ -17,6 +17,6 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 ####### Run your script #########################
 source activate blptl
 python -u python/preprocessing/preprocess_2d_slice_samples.py \
-/home/njneetes/work/data/NORMXTII_and_HIPFX/data \
-/home/njneetes/work/data/NORMXTII_and_HIPFX/pickled_2d \
+/home/njneetes/work/data/"$STUDY"/"$SITE" \
+/home/njneetes/work/data/"$STUDY"/"$SITE"_pickled_2d \
 -e 50 -is "$IS" -ie "$IE"
