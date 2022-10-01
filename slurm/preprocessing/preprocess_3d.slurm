@@ -20,5 +20,5 @@ source activate blptl
 ####### Run your script #########################
 python -u python/preprocessing/preprocess_3d_patch_samples.py \
 /home/njneetes/work/data/"$STUDY"/"$SITE" \
-/home/njneetes/work/data/"$STUDY"/"$SITE"_pickled_2d \
+/home/njneetes/work/data/"$STUDY"/"$SITE"_pickled_3d \
 -e 5 -is "$IS" -ie "$IE"
