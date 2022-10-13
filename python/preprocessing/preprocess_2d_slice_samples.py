@@ -42,7 +42,7 @@ def create_parser():
         help='number of epochs to train for'
     )
     parser.add_argument(
-        '--patch-width', '-pw', type=int, default=160, metavar='N',
+        '--patch-width', '-pw', type=int, default=128, metavar='N',
         help='width of slice patch to use in training'
     )
 

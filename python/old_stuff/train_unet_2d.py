@@ -26,6 +26,7 @@ def create_parser():
         '--validation-data-dir', '-vd', type=str, default='./data/validate', metavar='STR',
         help='main directory of the validation dataset'
     )
+
     parser.add_argument(
         '--label', '-l', type=str, default='unet2d', metavar='STR',
         help='base title to use when saving logs and model checkpoints'
