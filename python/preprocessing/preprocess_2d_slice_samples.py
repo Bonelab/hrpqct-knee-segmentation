@@ -1,10 +1,14 @@
 import numpy as np
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
-from blpytorchlightning.dataset_components.AIMLoader import AIMLoader
-from blpytorchlightning.dataset_components.SlicePatchSampler import SlicePatchSampler
-from blpytorchlightning.dataset_components.HRpQCTTransformer import HRpQCTTransformer
-from blpytorchlightning.dataset_components.HRpQCTDataset import HRpQCTDataset
+from blpytorchlightning.dataset_components.file_loaders.AIMLoader import AIMLoader
+from blpytorchlightning.dataset_components.samplers.SliceSampler import SliceSampler
+from blpytorchlightning.dataset_components.samplers.ForegroundPatchSampler import ForegroundPatchSampler
+from blpytorchlightning.dataset_components.samplers.ComposedSampler import ComposedSampler
+from blpytorchlightning.dataset_components.transformers.Rescaler import Rescaler
+from blpytorchlightning.dataset_components.transformers.TensorConverter import TensorConverter
+from blpytorchlightning.dataset_components.transformers.ComposedTransformers import ComposedTransformers
+from blpytorchlightning.dataset_components.datasets.ComposedDataset import ComposedDataset
 
 
 def create_parser():
@@ -14,11 +18,11 @@ def create_parser():
     )
 
     parser.add_argument(
-        'data_dir', type=str, metavar='STR',
+        'data_dir', type=str, metavar='DIR',
         help='main directory of the raw dataset'
     )
     parser.add_argument(
-        'pickle_dir', type=str, metavar='STR',
+        'pickle_dir', type=str, metavar='PICKLED_DIR',
         help='main directory to save the pickled dataset to'
     )
     parser.add_argument(
@@ -55,12 +59,18 @@ def main():
 
     # create dataset
     file_loader = AIMLoader(args.data_dir, '*_*_??.AIM')
-    sampler = SlicePatchSampler(patch_width=args.patch_width)
-    transformer = HRpQCTTransformer(intensity_bounds=[args.min_density, args.max_density])
-    dataset = HRpQCTDataset(file_loader, sampler, transformer)
+    sampler = ComposedSampler([
+        SliceSampler(),
+        ForegroundPatchSampler(patch_width=args.patch_width)
+    ])
+    transformer = ComposedTransformers([
+        Rescaler(intensity_bounds=[args.min_density, args.max_density]),
+        TensorConverter()
+    ])
+    dataset = ComposedDataset(file_loader, sampler, transformer)
 
     # pickle the samples
-    if not args.idx_end:
+    if args.idx_end is None:
         args.idx_end = len(dataset)
     idxs = np.arange(args.idx_start, args.idx_end, dtype=int)
     dataset.pickle_dataset(args.pickle_dir, idxs, args.epochs, args=args)

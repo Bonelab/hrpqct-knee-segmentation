@@ -1,9 +1,12 @@
 import numpy as np
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
-from blpytorchlightning.dataset_components.AIMLoader import AIMLoader
-from blpytorchlightning.dataset_components.PatchSampler import PatchSampler
-from blpytorchlightning.dataset_components.HRpQCTTransformer import HRpQCTTransformer
-from blpytorchlightning.dataset_components.HRpQCTDataset import HRpQCTDataset
+
+from blpytorchlightning.dataset_components.file_loaders.AIMLoader import AIMLoader
+from blpytorchlightning.dataset_components.samplers.ForegroundPatchSampler import ForegroundPatchSampler
+from blpytorchlightning.dataset_components.transformers.Rescaler import Rescaler
+from blpytorchlightning.dataset_components.transformers.TensorConverter import TensorConverter
+from blpytorchlightning.dataset_components.transformers.ComposedTransformers import ComposedTransformers
+from blpytorchlightning.dataset_components.datasets.ComposedDataset import ComposedDataset
 
 
 def create_parser():
@@ -54,9 +57,12 @@ def main():
 
     # create dataset
     file_loader = AIMLoader(args.data_dir, '*_*_??.AIM')
-    sampler = PatchSampler(patch_width=args.patch_width)
-    hrpqct_transformer = HRpQCTTransformer(intensity_bounds=[args.min_density, args.max_density])
-    dataset = HRpQCTDataset(file_loader, sampler, hrpqct_transformer)
+    sampler = ForegroundPatchSampler(patch_width=args.patch_width)
+    transformer = ComposedTransformers([
+        Rescaler(intensity_bounds=[args.min_density, args.max_density]),
+        TensorConverter()
+    ])
+    dataset = ComposedDataset(file_loader, sampler, transformer)
 
     # pickle the samples
     if not args.idx_end:
