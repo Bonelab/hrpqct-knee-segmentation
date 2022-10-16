@@ -48,7 +48,7 @@ def create_parser() -> ArgumentParser:
         help='number of samples per minibatch'
     )
     parser.add_argument(
-        "--num_gpus", "-ng", type=int, default=0, metavar="N",
+        "--num-gpus", "-ng", type=int, default=0, metavar="N",
         help="number of GPUs to use"
     )
     parser.add_argument(

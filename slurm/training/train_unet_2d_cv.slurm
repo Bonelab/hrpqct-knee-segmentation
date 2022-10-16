@@ -29,7 +29,7 @@ python -u python/training/train_unet_2d_cv.py \
 --batch-size 32 \
 --num-gpus 1 \
 --folds 5 \
---workers 5 \
+--num-workers 5 \
 /home/njneetes/work/data/NORMXTII/radius_pickled_2d \
 /home/njneetes/work/data/NORMXTII/tibia_pickled_2d \
 /home/njneetes/work/data/HIPFX/radius_pickled_2d \
