@@ -58,6 +58,14 @@ def create_parser() -> ArgumentParser:
         "--folds", "-f", type=int, default=5, metavar="N",
         help="number of folds to use in cross-validation"
     )
+    parser.add_argument(
+        "--log-step-interval", "-lsi", type=int, default=20, metavar="N",
+        help="log metrics every N training/validation steps"
+    )
+    parser.add_argument(
+        '--early-stopping-patience', '-esp', type=int, default=40, metavar='N',
+        help='number of epochs to train for'
+    )
 
     return parser
 
@@ -128,12 +136,20 @@ def main() -> None:
         )
         csv_logger.log_hyperparams(args)
 
+        # create callbacks
+        early_stopping = EarlyStopping(
+            monitor='val_dsc_0',
+            mode='max',
+            patience=args.early_stopping_patience
+        )
+
         # create a Trainer
         trainer = Trainer(
             gpus=args.num_gpus,
             max_epochs=args.epochs,
-            log_every_n_steps=20,
-            logger=csv_logger
+            log_every_n_steps=args.log_step_interval,
+            logger=csv_logger,
+            callbacks=[early_stopping]
         )
         trainer.fit(task, train_dataloader, val_dataloader)
 
