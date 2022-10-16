@@ -86,8 +86,6 @@ def main() -> None:
     np.random.shuffle(idxs)
     folds_idxs = np.array_split(idxs, args.folds)
 
-    print(folds_idxs)
-
     # dataloader standard kwargs
     dataloader_kwargs = {
         'batch_size': args.batch_size,
