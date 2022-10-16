@@ -4,6 +4,7 @@ from torch.nn import CrossEntropyLoss
 from torch.utils.data import DataLoader, ConcatDataset, Subset
 from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import CSVLogger
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from blpytorchlightning.tasks.SegmentationTask import SegmentationTask
 from blpytorchlightning.dataset_components.datasets.PickledDataset import PickledDataset
 from monai.networks.nets.unet import UNet

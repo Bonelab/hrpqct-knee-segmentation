@@ -17,10 +17,11 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 
 ####### Run your script #########################
 source activate blptl
+CHANNELS_ARR=("$CHANNELS")
 python -u python/training/train_unet_2d_cv.py \
 --label unet_2d_cv \
 --version "$SLURM_JOB_ID" \
---channels "$CHANNELS" \
+--channels "${CHANNELS_ARR[@]}" \
 --dropout "$DROPOUT" \
 --learning-rate "$LEARNING_RATE" \
 --epochs 250 \
