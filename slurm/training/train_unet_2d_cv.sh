@@ -8,6 +8,7 @@ do
       sbatch \
       --export=CHANNELS="$channels",DROPOUT="$dropout",LEARNING_RATE="$learning_rate" \
       slurm/training/train_unet_2d_cv.slurm
+      sleep 1
     done
   done
 done
