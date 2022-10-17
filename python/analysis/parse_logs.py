@@ -117,7 +117,7 @@ def main():
             # read the metrics file
             try:
                 metrics = pd.read_csv(os.path.join(version_dir, args.metrics_fn))
-            except FileNotFoundError as e:
+            except (FileNotFoundError, pd.errors.EmptyDataError) as e:
                 # if the metrics file isn't there, this isn't a version we can analyze
                 print("NO METRICS CSV, SKIPPING...")
                 continue
