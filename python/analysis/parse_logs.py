@@ -133,7 +133,7 @@ def main():
                         # add to dict
                         df[f"metrics_{col}_min"] = [metrics[col].min()]
                         df[f"metrics_{col}_max"] = [metrics[col].max()]
-                        df[f"metrics {col}_final"] = [metrics[col].dropna(inplace=False).iloc[-1]]
+                        df[f"metrics_{col}_final"] = [metrics[col].dropna(inplace=False).iloc[-1]]
 
             # add dataframe to list
             dfs.append(df)

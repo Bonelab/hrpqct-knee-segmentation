@@ -130,3 +130,6 @@ dmypy.json
 
 # pytorch lightning logs
 /logs
+
+# things copied over from ARC
+/from_arc
