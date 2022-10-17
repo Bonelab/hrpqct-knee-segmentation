@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=10
 #SBATCH --time=23:00:00
 #SBATCH --mem=200G
-#SBATCH --partition=gpu-v100 --gres=gpu:1
+#SBATCH --partition=gpu-a100 --gres=gpu:1
 #SBATCH --job-name=UNET_GS
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
@@ -16,7 +16,7 @@
 export PATH="$HOME/software/miniconda3/bin:$PATH"
 
 ####### Run your script #########################
-source activate blptl
+source activate blptl_11.1
 CHANNELS_ARR=("$CHANNELS")
 # shellcheck disable=SC2068
 python -u python/training/train_unet_2d_cv.py \
