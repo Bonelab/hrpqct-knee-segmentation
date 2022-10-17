@@ -26,7 +26,7 @@ python -u python/training/train_unet_2d_cv.py \
 --dropout "$DROPOUT" \
 --learning-rate "$LEARNING_RATE" \
 --epochs 250 \
---batch-size 32 \
+--batch-size 128 \
 --num-gpus 1 \
 --folds 5 \
 --num-workers 5 \
