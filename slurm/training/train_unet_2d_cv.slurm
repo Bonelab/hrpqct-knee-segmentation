@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=10
-#SBATCH --time=12:00:00
+#SBATCH --time=18:00:00
 #SBATCH --mem=300G
 #SBATCH --partition=gpu-v100 --gres=gpu:1
 #SBATCH --job-name=UNET_GS
