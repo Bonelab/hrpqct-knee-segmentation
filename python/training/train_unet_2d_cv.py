@@ -1,4 +1,4 @@
-from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter, Namespace
 import numpy as np
 from torch.nn import CrossEntropyLoss
 from torch.utils.data import DataLoader, ConcatDataset, Subset
