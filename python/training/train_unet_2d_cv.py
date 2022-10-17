@@ -71,10 +71,7 @@ def create_parser() -> ArgumentParser:
     return parser
 
 
-def main() -> None:
-    # get parameters from command line
-    args = create_parser().parse_args()
-
+def train_unet_2d_cv(args: Namespace) -> None:
     # create datasets
     datasets = []
     for data_dir in args.data_dirs:
@@ -95,7 +92,6 @@ def main() -> None:
 
     # start the cross-validation loop
     for f in range(args.folds):
-
         # create dataloaders
         train_dataloader = DataLoader(
             Subset(
@@ -151,6 +147,37 @@ def main() -> None:
             callbacks=[early_stopping]
         )
         trainer.fit(task, train_dataloader, val_dataloader)
+
+
+def main() -> None:
+    # get parameters from command line
+    args = create_parser().parse_args()
+
+    training_complete = False
+
+    # start the training attempt loop
+    while not training_complete:
+        try:
+            # attempt to train at current batch size
+            train_unet_2d_cv(args)
+            # if successful, set the flag to end the while loop
+            training_complete = True
+        except RuntimeError as err:
+            # if we get a runtime error, check if it involves being out of memory
+            if 'out of memory' in str(err):
+                # if the error was because we're out of memory, then we want to reduce the batch size
+                if args.batch_size == 1:
+                    # if the batch size is 1, we can't reduce it anymore so give up and raise the error
+                    print("CUDA OOM with batch size = 1, reduce model complexity.")
+                    raise err
+                else:
+                    # if the batch size is not 1, divide it by 2 (with integer division), empty the cache, and let
+                    # the while loop go around again
+                    args.batch_size = args.batch_size // 2
+                    torch.cuda.empty_cache()
+            else:
+                # if the error did not have to do with being out of memory, raise it
+                raise err
 
 
 if __name__ == "__main__":
