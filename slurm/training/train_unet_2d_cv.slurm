@@ -3,9 +3,9 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=10
-#SBATCH --time=18:00:00
+#SBATCH --time=23:00:00
 #SBATCH --mem=200G
-#SBATCH --partition=gpu-v100,gpu-a100 --gres=gpu:1
+#SBATCH --partition=gpu-v100 --gres=gpu:1
 #SBATCH --job-name=UNET_GS
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
@@ -26,7 +26,7 @@ python -u python/training/train_unet_2d_cv.py \
 --dropout "$DROPOUT" \
 --learning-rate "$LEARNING_RATE" \
 --epochs 250 \
---batch-size 64 \
+--batch-size 32 \
 --num-gpus 1 \
 --folds 5 \
 --num-workers 5 \
