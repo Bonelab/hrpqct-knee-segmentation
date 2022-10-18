@@ -1,0 +1,210 @@
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter, Namespace
+import numpy as np
+import torch
+from torch.nn import L1Loss
+from torch.nn import CrossEntropyLoss
+from torch.utils.data import DataLoader, ConcatDataset, Subset
+from pytorch_lightning import Trainer
+from pytorch_lightning.loggers import CSVLogger
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from blpytorchlightning.tasks.SeGANTask import SeGANTask
+from blpytorchlightning.dataset_components.datasets.PickledDataset import PickledDataset
+from blpytorchlightning.models.SeGAN import get_segmentor_and_discriminators
+
+
+def create_parser() -> ArgumentParser:
+    parser = ArgumentParser(
+        description='2D, 2.5D, or 3D SeGAN Training Cross-Validation Script',
+        formatter_class=ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument(
+        "data_dirs", type=str, nargs="+", metavar="DIR",
+        help="list of directories to pull data from"
+    )
+    parser.add_argument(
+        "--label", "-l", type=str, default='segan', metavar="STR",
+        help="base title to use when saving logs and model checkpoints"
+    )
+    parser.add_argument(
+        "--num-workers", "-w", type=int, default=8, metavar="N",
+        help="number of CPU workers to use to load data in parallel"
+    )
+    parser.add_argument(
+        "--input-channels", "-ic", type=int, default=1, metavar="N",
+        help="Modify this only if you are using a 2.5D model (extra slices on channel axis)."
+    )
+    parser.add_argument(
+        "--output-channels", "-oc", type=int, default=1, metavar="N",
+        help="How many classes there are to segment images into."
+    )
+    parser.add_argument(
+        "--model-channels", "-mc", type=int, nargs='+', default=[64, 128, 256, 512, 1024], metavar="N",
+        help="sequence of filters in U-Net layers"
+    )
+    parser.add_argument(
+        '--channels-per-group', '-c', type=int, default=16, metavar='N',
+        help='channels per group in GroupNorm'
+    )
+    parser.add_argument(
+        '--upsample-mode', '-us', type=str, default="bilinear", metavar='STR',
+        help='method for upsampling in decoder'
+    )
+    parser.add_argument(
+        '--is-3d', '-3d', action="store_true", default=False,
+        help="set this flag to train a SeGAN with 3D convolutions for segmenting 3D image data"
+    )
+    parser.add_argument(
+        "--dropout", "-d", type=float, default=0.1, metavar="D",
+        help="dropout probability"
+    )
+    parser.add_argument(
+        "--epochs", "-e", type=int, default=200, metavar="N",
+        help="number of epochs to train for"
+    )
+    parser.add_argument(
+        "--learning-rate", "-lr", type=float, default=0.001, metavar="LR",
+        help="learning rate for the optimizer"
+    )
+    parser.add_argument(
+        "--batch-size", "-bs", type=int, default=32, metavar="N",
+        help='number of samples per minibatch'
+    )
+    parser.add_argument(
+        "--num-gpus", "-ng", type=int, default=0, metavar="N",
+        help="number of GPUs to use"
+    )
+    parser.add_argument(
+        "--version", "-v", type=int, default=None, metavar="N",
+        help="version number for logging"
+    )
+    parser.add_argument(
+        "--folds", "-f", type=int, default=5, metavar="N",
+        help="number of folds to use in cross-validation"
+    )
+    parser.add_argument(
+        "--log-step-interval", "-lsi", type=int, default=20, metavar="N",
+        help="log metrics every N training/validation steps"
+    )
+    parser.add_argument(
+        '--early-stopping-patience', '-esp', type=int, default=40, metavar='N',
+        help='number of epochs to train for'
+    )
+
+    return parser
+
+
+def train_segan_2d_cv(args):
+    # create datasets
+    datasets = []
+    for data_dir in args.data_dirs:
+        datasets.append(PickledDataset(data_dir))
+    dataset = ConcatDataset(datasets)
+
+    # create the fold index lists
+    idxs = np.arange(0, len(dataset))
+    np.random.shuffle(idxs)
+    folds_idxs = np.array_split(idxs, args.folds)
+
+    # dataloader standard kwargs
+    dataloader_kwargs = {
+        'batch_size': args.batch_size,
+        'num_workers': args.num_workers,
+        'pin_memory': True
+    }
+
+    # start the cross-validation loop
+    for f in range(args.folds):
+        # create dataloaders
+        train_dataloader = DataLoader(
+            Subset(
+                dataset,
+                np.concatenate([folds_idxs[i] for i in range(args.folds) if i is not f])
+            ),
+            shuffle=True, **dataloader_kwargs
+        )
+        val_dataloader = DataLoader(
+            Subset(dataset, folds_idxs[f]),
+            **dataloader_kwargs
+        )
+
+        # create the model
+        model_kwargs = {
+            'input_channels': args.input_channels,
+            'output_classes': args.output_channels,
+            'num_filters': args.model_channels,
+            'channels_per_group': args.channels_per_group,
+            'upsample_mode': args.upsample_mode,
+            'is_3d': args.is_3d
+        }
+        segmentor, discriminators = get_segmentor_and_discriminators(**model_kwargs)
+        segmentor.float()
+        for d in discriminators:
+            d.float()
+
+        # create the task
+        task = SeGANTask(
+            segmentor,
+            discriminators,
+            L1Loss(),
+            learning_rate=args.learning_rate
+        )
+
+        # create loggers
+        csv_logger = CSVLogger(
+            './logs',
+            name=args.label,
+            version=f"{args.version}_f{f}"
+        )
+        csv_logger.log_hyperparams(args)
+
+        # create callbacks
+        early_stopping = EarlyStopping(
+            monitor='val_dsc_0',
+            mode='max',
+            patience=args.early_stopping_patience
+        )
+
+        # create a Trainer
+        trainer = Trainer(
+            gpus=args.num_gpus,
+            max_epochs=args.epochs,
+            log_every_n_steps=args.log_step_interval,
+            logger=csv_logger,
+            callbacks=[early_stopping]
+        )
+        trainer.fit(task, train_dataloader, val_dataloader)
+
+
+def main() -> None:
+    # get parameters from command line
+    args = create_parser().parse_args()
+
+    training_complete = False
+
+    # start the training attempt loop
+    while not training_complete:
+        try:
+            # attempt to train at current batch size
+            train_segan_2d_cv(args)
+            # if successful, set the flag to end the while loop
+            training_complete = True
+        except RuntimeError as err:
+            # if we get a runtime error, check if it involves being out of memory
+            if 'out of memory' in str(err):
+                # if the error was because we're out of memory, then we want to reduce the batch size
+                if args.batch_size == 1:
+                    # if the batch size is 1, we can't reduce it anymore so give up and raise the error
+                    print("CUDA OOM with batch size = 1, reduce model complexity.")
+                    raise err
+                else:
+                    # if the batch size is not 1, divide it by 2 (with integer division), empty the cache, and let
+                    # the while loop go around again
+                    args.batch_size = args.batch_size // 2
+                    torch.cuda.empty_cache()
+            else:
+                # if the error did not have to do with being out of memory, raise it
+                raise err
+
+
+if __name__ == "__main__":
+    main()

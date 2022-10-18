@@ -13,7 +13,7 @@ from monai.networks.nets.unet import UNet
 
 def create_parser() -> ArgumentParser:
     parser = ArgumentParser(
-        description='2D UNet Training Cross-Validation Script',
+        description='2D, 2.5D, or 3D UNet Training Cross-Validation Script',
         formatter_class=ArgumentDefaultsHelpFormatter
     )
     parser.add_argument(
@@ -21,7 +21,7 @@ def create_parser() -> ArgumentParser:
         help="list of directories to pull data from"
     )
     parser.add_argument(
-        "--label", "-l", type=str, default='unet2d', metavar="STR",
+        "--label", "-l", type=str, default='unet', metavar="STR",
         help="base title to use when saving logs and model checkpoints"
     )
     parser.add_argument(
@@ -29,8 +29,20 @@ def create_parser() -> ArgumentParser:
         help="number of CPU workers to use to load data in parallel"
     )
     parser.add_argument(
-        "--channels", "-c", type=int, nargs='+', default=[64, 128, 256, 512, 1024], metavar="N",
+        "--input-channels", "-ic", type=int, default=1, metavar="N",
+        help="Modify this only if you are using a 2.5D model (extra slices on channel axis)."
+    )
+    parser.add_argument(
+        "--output-channels", "-oc", type=int, default=1, metavar="N",
+        help="How many classes there are to segment images into."
+    )
+    parser.add_argument(
+        "--model-channels", "-c", type=int, nargs='+', default=[64, 128, 256, 512], metavar="N",
         help="sequence of filters in U-Net layers"
+    )
+    parser.add_argument(
+        '--is-3d', '-3d', action="store_true", default=False,
+        help="set this flag to train a SeGAN with 3D convolutions for segmenting 3D image data"
     )
     parser.add_argument(
         "--dropout", "-d", type=float, default=0.1, metavar="D",
@@ -108,11 +120,11 @@ def train_unet_2d_cv(args: Namespace) -> None:
 
         # create the model
         model_kwargs = {
-            "spatial_dims": 2,  # 2D segmentation
-            "in_channels": 1,  # density
-            "out_channels": 3,  # cort, trab, back
-            "channels": args.channels,
-            "strides": [1 for _ in range(len(args.channels) - 1)],
+            "spatial_dims": 3 if args.is_3d else 2,
+            "in_channels": args.input_channels,  # density
+            "out_channels": args.output_channels,  # cort, trab, back
+            "channels": args.model_channels,
+            "strides": [1 for _ in range(len(args.model_channels) - 1)],
             "dropout": args.dropout
         }
         model = UNet(**model_kwargs)
