@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=10
 #SBATCH --time=23:00:00
 #SBATCH --mem=200G
-#SBATCH --partition=gpu-a100 --gres=gpu:4
+#SBATCH --partition=gpu-a100 --gres=gpu:2
 #SBATCH --job-name=UNET_GS
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
@@ -28,8 +28,8 @@ python -u python/training/train_segan_cv.py \
 --dropout "$DROPOUT" \
 --learning-rate "$LEARNING_RATE" \
 --epochs 250 \
---batch-size 1024 \
---num-gpus 4 \
+--batch-size 256 \
+--num-gpus 2 \
 --folds 5 \
 --num-workers 5 \
 /home/njneetes/work/data/NORMXTII/radius_pickled_2d \
