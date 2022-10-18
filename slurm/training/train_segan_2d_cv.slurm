@@ -20,7 +20,7 @@ source activate blptl_11.1
 CHANNELS_ARR=("$CHANNELS")
 # shellcheck disable=SC2068
 python -u python/training/train_segan_cv.py \
---label unet_2d_cv \
+--label segan_2d_cv \
 --version "$SLURM_JOB_ID" \
 --input-channels 1 \
 --output-channels 3 \
