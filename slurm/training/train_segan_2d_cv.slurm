@@ -28,7 +28,7 @@ python -u python/training/train_segan_cv.py \
 --dropout "$DROPOUT" \
 --learning-rate "$LEARNING_RATE" \
 --epochs 250 \
---batch-size 128 \
+--batch-size 256 \
 --num-gpus 2 \
 --folds 5 \
 --num-workers 5 \
