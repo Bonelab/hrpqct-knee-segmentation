@@ -233,6 +233,15 @@ def main():
     data_dir = '/Users/nathanneeteson/Documents/Data/test_hdf5'
     dataset = HDF5SliceDataset(data_dir, patch_width=160)
 
+    z = 100
+    image, mask = niftloader[0]
+    pred = np.zeros_like(mask)
+
+    image = torch.from_numpy(image).unsqueeze(0)
+
+    img_slice = torch.from_numpy(image[..., z]).unsqueeze(0)
+
+
     num_samples = 5
 
     fig, axs = plt.subplots(3, num_samples)
