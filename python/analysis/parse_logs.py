@@ -104,7 +104,7 @@ def main():
             # read the hyperparameters file
             with open(os.path.join(version_dir, args.hparams_fn), "r") as stream:
                 try:
-                    hparams = yaml.safe_load(stream)
+                    hparams = yaml.load(stream)
                     print('\n'.join(f'{k}: {v}' for k, v in hparams.items()))
                 except yaml.YAMLError as exc:
                     print(exc)
