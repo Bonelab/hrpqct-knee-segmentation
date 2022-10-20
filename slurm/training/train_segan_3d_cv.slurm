@@ -34,7 +34,7 @@ python -u python/training/train_segan_cv.py \
 --folds 5 \
 --num-workers 5 \
 --upsample-mode trilinear --is-3d \
-/home/njneetes/work/data/NORMXTII/radius_pickled_2d \
-/home/njneetes/work/data/NORMXTII/tibia_pickled_2d \
-/home/njneetes/work/data/HIPFX/radius_pickled_2d \
-/home/njneetes/work/data/HIPFX/tibia_pickled_2d
+/home/njneetes/work/data/NORMXTII/radius_pickled_3d \
+/home/njneetes/work/data/NORMXTII/tibia_pickled_3d \
+/home/njneetes/work/data/HIPFX/radius_pickled_3d \
+/home/njneetes/work/data/HIPFX/tibia_pickled_3d

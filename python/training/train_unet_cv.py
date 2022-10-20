@@ -37,7 +37,7 @@ def create_parser() -> ArgumentParser:
         help="How many classes there are to segment images into."
     )
     parser.add_argument(
-        "--model-channels", "-c", type=int, nargs='+', default=[64, 128, 256, 512], metavar="N",
+        "--model-channels", "-mc", type=int, nargs='+', default=[64, 128, 256, 512], metavar="N",
         help="sequence of filters in U-Net layers"
     )
     parser.add_argument(
