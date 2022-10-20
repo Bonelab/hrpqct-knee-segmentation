@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=10
 #SBATCH --time=23:00:00
-#SBATCH --mem=200G
+#SBATCH --mem=0
 #SBATCH --partition=gpu-a100 --gres=gpu:2
 #SBATCH --job-name=UNET_GS
 #SBATCH --mail-user=njneetes@ucalgary.ca
