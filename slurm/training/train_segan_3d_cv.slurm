@@ -32,7 +32,7 @@ python -u python/training/train_segan_cv.py \
 --batch-size 64 \
 --num-gpus 2 \
 --folds 5 \
---num-workers 5 \
+--num-workers 2 \
 --upsample-mode trilinear --is-3d \
 /home/njneetes/work/data/NORMXTII/radius_pickled_3d \
 /home/njneetes/work/data/NORMXTII/tibia_pickled_3d \
