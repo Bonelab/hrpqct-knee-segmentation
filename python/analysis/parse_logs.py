@@ -102,14 +102,19 @@ def main():
             df["fold"] = [fold]
 
             # read the hyperparameters file
-            with open(os.path.join(version_dir, args.hparams_fn), "r") as stream:
-                try:
-                    hparams = yaml.load(stream, yaml.CLoader)
-                    print('\n'.join(f'{k}: {v}' for k, v in hparams.items()))
-                except yaml.YAMLError as exc:
-                    print(exc)
-                    print("COULD NOT LOAD HPARAMS, SKIPPING...")
-                    continue
+            try:
+                with open(os.path.join(version_dir, args.hparams_fn), "r") as stream:
+                    try:
+                        hparams = yaml.load(stream, yaml.CLoader)
+                        print('\n'.join(f'{k}: {v}' for k, v in hparams.items()))
+                    except yaml.YAMLError as exc:
+                        print(exc)
+                        print("COULD NOT LOAD HPARAMS, SKIPPING...")
+                        continue
+            except FileNotFoundError as exc:
+                print(exc)
+                print("NO HPARAMS FILE, SKIPPING...")
+                continue
 
             # add the hyperparameters to the dict
             for k, v in hparams.items():
