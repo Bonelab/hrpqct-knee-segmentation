@@ -16,9 +16,6 @@
 export PATH="$HOME/software/miniconda3/bin:$PATH"
 
 ####### Run your script #########################
-echo "before rm -rf /dev/shm"
-ls -l /dev/shm/
-echo "after rm -rf /dev/shm"
 rm -rf /dev/shm/*
 source activate blptl_11.1
 CHANNELS_ARR=("$CHANNELS")
@@ -42,8 +39,4 @@ python -u python/training/train_segan_cv.py \
 /home/njneetes/work/data/NORMXTII/tibia_pickled_3d \
 /home/njneetes/work/data/HIPFX/radius_pickled_3d \
 /home/njneetes/work/data/HIPFX/tibia_pickled_3d
-echo "after job"
-ls -l /dev/shm/
 rm -rf /dev/shm
-echo "after final rm -rf"
-ls -l /dev/shm/
