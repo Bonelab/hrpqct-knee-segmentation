@@ -4,8 +4,8 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=10
 #SBATCH --time=23:00:00
-#SBATCH --mem=0
-#SBATCH --partition=gpu-a100 --gres=gpu:2
+#SBATCH --mem=150G
+#SBATCH --partition=gpu-a100 --gres=gpu:1
 #SBATCH --job-name=UNET_GS
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
@@ -29,8 +29,8 @@ python -u python/training/train_segan_cv.py \
 --learning-rate "$LEARNING_RATE" \
 --epochs 250 \
 --log-step-interval 1 \
---batch-size 16 \
---num-gpus 2 \
+--batch-size 32 \
+--num-gpus 1 \
 --folds 5 \
 --num-workers 6 \
 --upsample-mode trilinear --is-3d \
