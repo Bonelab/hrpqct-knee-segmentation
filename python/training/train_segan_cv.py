@@ -89,6 +89,14 @@ def create_parser() -> ArgumentParser:
         '--early-stopping-patience', '-esp', type=int, default=40, metavar='N',
         help='number of epochs to train for'
     )
+    parser.add_argument(
+        "--auto-learning-rate", "-alr", action="store_true", default=False,
+        help="let pytorch-lightning pick the best learning rate"
+    )
+    parser.add_argument(
+        "--auto-batch-size", "-abs", action="store_true", default=False,
+        help="let pytorch-lightning find the largest batch size that fits in memory"
+    )
 
     return parser
 
@@ -109,7 +117,8 @@ def train_segan_cv(args):
     dataloader_kwargs = {
         'batch_size': args.batch_size,
         'num_workers': args.num_workers,
-        'pin_memory': True
+        'pin_memory': True,
+        'persistent_workers': True
     }
 
     # start the cross-validation loop
@@ -166,7 +175,11 @@ def train_segan_cv(args):
 
         # create a Trainer
         trainer = Trainer(
-            gpus=args.num_gpus,
+            accelerator=("gpu" if args.num_gpus > 0 else "cpu"),
+            devices=int(np.maximum(args.num_gpus, 1)),
+            strategy="ddp",
+            auto_lr_find=args.auto_learning_rate,
+            auto_scale_batch_size=args.auto_batch_size,
             max_epochs=args.epochs,
             log_every_n_steps=args.log_step_interval,
             logger=csv_logger,
