@@ -1,9 +1,9 @@
 #!/bin/bash
-for channels in "64 128 256" #"32 64 128 256" "64 128 256 512"
+for channels in "64 128 256" "32 64 128 256" "64 128 256 512"
 do
-  for dropout in "0.1" #"0.3" "0.5"
+  for dropout in "0.1" "0.3" "0.5"
   do
-    for learning_rate in "0.001" #"0.01"
+    for learning_rate in "0.001" "0.01"
     do
       sbatch \
       --export=CHANNELS="$channels",DROPOUT="$dropout",LEARNING_RATE="$learning_rate" \
