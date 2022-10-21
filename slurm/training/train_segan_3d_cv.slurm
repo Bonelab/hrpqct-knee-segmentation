@@ -16,6 +16,7 @@
 export PATH="$HOME/software/miniconda3/bin:$PATH"
 
 ####### Run your script #########################
+rm -rf /dev/shm/*
 source activate blptl_11.1
 CHANNELS_ARR=("$CHANNELS")
 # shellcheck disable=SC2068
