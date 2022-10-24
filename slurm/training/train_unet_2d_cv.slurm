@@ -16,6 +16,7 @@
 export PATH="$HOME/software/miniconda3/bin:$PATH"
 
 ####### Run your script #########################
+rm -rf /dev/shm/* &>/dev/null
 source activate blptl_11.1
 CHANNELS_ARR=("$CHANNELS")
 # shellcheck disable=SC2068
@@ -36,4 +37,5 @@ python -u python/training/train_unet_cv.py \
 /home/njneetes/work/data/NORMXTII/tibia_pickled_2d \
 /home/njneetes/work/data/HIPFX/radius_pickled_2d \
 /home/njneetes/work/data/HIPFX/tibia_pickled_2d
+rm -rf /dev/shm/* &>/dev/null
 
