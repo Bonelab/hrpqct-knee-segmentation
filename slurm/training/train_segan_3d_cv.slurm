@@ -27,14 +27,13 @@ python -u python/training/train_segan_cv.py \
 --output-channels 3 \
 --model-channels ${CHANNELS_ARR[@]} \
 --dropout "$DROPOUT" \
---learning-rate "$LEARNING_RATE" \
 --epochs 250 \
 --log-step-interval 1 \
---batch-size 32 \
 --num-gpus 2 \
 --folds 5 \
 --num-workers 6 \
 --upsample-mode trilinear --is-3d \
+-abs -alr \
 /home/njneetes/work/data/NORMXTII/radius_pickled_3d \
 /home/njneetes/work/data/NORMXTII/tibia_pickled_3d \
 /home/njneetes/work/data/HIPFX/radius_pickled_3d \
