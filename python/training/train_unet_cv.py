@@ -156,14 +156,19 @@ def train_unet_2d_cv(args: Namespace) -> None:
 
         # find learning rate if option enabled
         if args.auto_learning_rate:
-            trainer = Trainer(auto_lr_find=True, enable_checkpointing=False)
+            trainer = Trainer(
+                accelerator=("gpu" if args.num_gpus > 0 else "cpu"),
+                devices=int(np.maximum(args.num_gpus, 1)),
+                auto_lr_find=True, enable_checkpointing=False
+            )
             trainer.tune(task, train_dataloader, val_dataloader)
             args.learning_rate = task.learning_rate
 
         # create a Trainer and fit the model
         csv_logger.log_hyperparams(args)
         trainer = Trainer(
-            gpus=args.num_gpus,
+            accelerator=("gpu" if args.num_gpus > 0 else "cpu"),
+            devices=int(np.maximum(args.num_gpus, 1)),
             max_epochs=args.epochs,
             log_every_n_steps=args.log_step_interval,
             logger=csv_logger,
