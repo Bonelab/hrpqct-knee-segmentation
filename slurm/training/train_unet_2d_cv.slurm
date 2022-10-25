@@ -28,6 +28,7 @@ python -u python/training/train_unet_cv.py \
 --model-channels ${CHANNELS_ARR[@]} \
 --dropout "$DROPOUT" \
 --epochs 250 \
+--log-step-interval 1 \
 --num-gpus 2 \
 --folds 5 \
 --num-workers 5 \
