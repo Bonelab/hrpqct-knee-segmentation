@@ -197,13 +197,13 @@ def main() -> None:
             train_segan_cv(args)
             # if successful, set the flag to end the while loop
             training_complete = True
-        except (RuntimeError, OSError) as err:
+        except RuntimeError as err:
             # if we get a runtime error, check if it involves being out of memory
-            if ("out of memory" in str(err)) or ("No space left on device" in str(err)):
+            if "out of memory" in str(err):
                 # if the error was because we're out of memory, then we want to reduce the batch size
                 if args.batch_size == 1:
                     # if the batch size is 1, we can't reduce it anymore so give up and raise the error
-                    print("CUDA OOM or OSError with batch size = 1, reduce model complexity or use less workers.")
+                    print("CUDA OOM with batch size = 1, reduce model complexity or use less workers.")
                     raise err
                 else:
                     # if the batch size is not 1, divide it by 2 (with integer division), empty the cache, and let
