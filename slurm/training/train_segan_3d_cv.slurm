@@ -33,7 +33,7 @@ python -u python/training/train_segan_cv.py \
 --folds 5 \
 --num-workers 6 \
 --upsample-mode trilinear --is-3d \
--abs -alr \
+--auto-learning-rate \
 /home/njneetes/work/data/NORMXTII/radius_pickled_3d \
 /home/njneetes/work/data/NORMXTII/tibia_pickled_3d \
 /home/njneetes/work/data/HIPFX/radius_pickled_3d \

@@ -57,7 +57,7 @@ def create_parser() -> ArgumentParser:
         help="learning rate for the optimizer"
     )
     parser.add_argument(
-        "--batch-size", "-bs", type=int, default=32, metavar="N",
+        "--batch-size", "-bs", type=int, default=128, metavar="N",
         help='number of samples per minibatch'
     )
     parser.add_argument(
@@ -79,6 +79,10 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         '--early-stopping-patience', '-esp', type=int, default=40, metavar='N',
         help='number of epochs to train for'
+    )
+    parser.add_argument(
+        "--auto-learning-rate", "-alr", action="store_true", default=False,
+        help="let pytorch-lightning pick the best learning rate"
     )
 
     return parser
@@ -142,7 +146,6 @@ def train_unet_2d_cv(args: Namespace) -> None:
             name=args.label,
             version=f"{args.version}_f{f}"
         )
-        csv_logger.log_hyperparams(args)
 
         # create callbacks
         early_stopping = EarlyStopping(
@@ -151,7 +154,14 @@ def train_unet_2d_cv(args: Namespace) -> None:
             patience=args.early_stopping_patience
         )
 
-        # create a Trainer
+        # find learning rate if option enabled
+        if args.auto_learning_rate:
+            trainer = Trainer(auto_lr_find=True, enable_checkpointing=False)
+            trainer.tune(task, train_dataloader, val_dataloader)
+            args.learning_rate = task.learning_rate
+
+        # create a Trainer and fit the model
+        csv_logger.log_hyperparams(args)
         trainer = Trainer(
             gpus=args.num_gpus,
             max_epochs=args.epochs,

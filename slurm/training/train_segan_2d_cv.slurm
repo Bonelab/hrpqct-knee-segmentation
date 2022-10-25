@@ -32,7 +32,7 @@ python -u python/training/train_segan_cv.py \
 --num-gpus 2 \
 --folds 5 \
 --num-workers 5 \
--abs -alr \
+--auto-learning-rate \
 /home/njneetes/work/data/NORMXTII/radius_pickled_2d \
 /home/njneetes/work/data/NORMXTII/tibia_pickled_2d \
 /home/njneetes/work/data/HIPFX/radius_pickled_2d \

@@ -66,7 +66,7 @@ def create_parser() -> ArgumentParser:
         help="learning rate for the optimizer"
     )
     parser.add_argument(
-        "--batch-size", "-bs", type=int, default=32, metavar="N",
+        "--batch-size", "-bs", type=int, default=128, metavar="N",
         help='number of samples per minibatch'
     )
     parser.add_argument(
@@ -92,10 +92,6 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         "--auto-learning-rate", "-alr", action="store_true", default=False,
         help="let pytorch-lightning pick the best learning rate"
-    )
-    parser.add_argument(
-        "--auto-batch-size", "-abs", action="store_true", default=False,
-        help="let pytorch-lightning find the largest batch size that fits in memory"
     )
 
     return parser

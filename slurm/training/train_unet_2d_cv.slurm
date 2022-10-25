@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=10
 #SBATCH --time=23:00:00
 #SBATCH --mem=200G
-#SBATCH --partition=gpu-a100 --gres=gpu:1
+#SBATCH --partition=gpu-a100 --gres=gpu:2
 #SBATCH --job-name=UNET_GS
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
@@ -28,10 +28,10 @@ python -u python/training/train_unet_cv.py \
 --model-channels ${CHANNELS_ARR[@]} \
 --dropout "$DROPOUT" \
 --epochs 250 \
---num-gpus 1 \
+--num-gpus 2 \
 --folds 5 \
 --num-workers 5 \
--abs -alr \
+--auto-learning-rate \
 /home/njneetes/work/data/NORMXTII/radius_pickled_2d \
 /home/njneetes/work/data/NORMXTII/tibia_pickled_2d \
 /home/njneetes/work/data/HIPFX/radius_pickled_2d \
