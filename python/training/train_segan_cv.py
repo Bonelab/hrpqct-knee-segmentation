@@ -173,9 +173,7 @@ def train_segan_cv(args):
         trainer = Trainer(
             accelerator=("gpu" if args.num_gpus > 0 else "cpu"),
             devices=int(np.maximum(args.num_gpus, 1)),
-            strategy="ddp",
-            auto_lr_find=args.auto_learning_rate,
-            auto_scale_batch_size=args.auto_batch_size,
+            strategy="ddp_find_unused_parameters_false",
             max_epochs=args.epochs,
             log_every_n_steps=args.log_step_interval,
             logger=csv_logger,

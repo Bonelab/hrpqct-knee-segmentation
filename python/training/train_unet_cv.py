@@ -104,7 +104,8 @@ def train_unet_2d_cv(args: Namespace) -> None:
     dataloader_kwargs = {
         'batch_size': args.batch_size,
         'num_workers': args.num_workers,
-        'pin_memory': True
+        'pin_memory': True,
+        'persistent_workers': True
     }
 
     # start the cross-validation loop
@@ -169,6 +170,7 @@ def train_unet_2d_cv(args: Namespace) -> None:
         trainer = Trainer(
             accelerator=("gpu" if args.num_gpus > 0 else "cpu"),
             devices=int(np.maximum(args.num_gpus, 1)),
+            strategy="ddp_find_unused_parameters_false",
             max_epochs=args.epochs,
             log_every_n_steps=args.log_step_interval,
             logger=csv_logger,
