@@ -93,6 +93,10 @@ def create_parser() -> ArgumentParser:
         "--auto-learning-rate", "-alr", action="store_true", default=False,
         help="let pytorch-lightning pick the best learning rate"
     )
+    parser.add_argument(
+        "--hours-per-fold", "-hpf", type=int, default=4,
+        help="maximum time in hours to spend training the model in each fold"
+    )
 
     return parser
 
@@ -175,6 +179,7 @@ def train_segan_cv(args):
             devices=int(np.maximum(args.num_gpus, 1)),
             strategy="ddp_find_unused_parameters_false",
             max_epochs=args.epochs,
+            max_time={"hours": args.hours_per_fold},
             log_every_n_steps=args.log_step_interval,
             logger=csv_logger,
             callbacks=[early_stopping]
