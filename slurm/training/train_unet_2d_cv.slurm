@@ -26,6 +26,7 @@ python -u python/training/train_unet_cv.py \
 --input-channels 1 \
 --output-channels 3 \
 --model-channels ${CHANNELS_ARR[@]} \
+--batch-size 256 \
 --dropout "$DROPOUT" \
 --epochs 250 \
 --log-step-interval 1 \

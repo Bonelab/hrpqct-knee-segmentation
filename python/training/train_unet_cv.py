@@ -114,6 +114,13 @@ def train_unet_2d_cv(args: Namespace) -> None:
 
     # start the cross-validation loop
     for f in range(args.folds):
+
+        print("=" * 40)
+        print("=" * 40)
+        print(f"FOLD {f+1} / {args.folds}")
+        print("=" * 40)
+        print("=" * 40)
+
         # create dataloaders
         train_dataloader = DataLoader(
             Subset(
@@ -161,6 +168,8 @@ def train_unet_2d_cv(args: Namespace) -> None:
 
         # find learning rate if option enabled
         if args.auto_learning_rate:
+            print("Learning rate tuning....")
+            print("=" * 40)
             # tune on just one GPU or CPU since you can't do it in parallel
             trainer = Trainer(
                 accelerator=("gpu" if args.num_gpus > 0 else "cpu"), devices=1,
@@ -168,6 +177,9 @@ def train_unet_2d_cv(args: Namespace) -> None:
             )
             trainer.tune(task, train_dataloader, val_dataloader)
             args.learning_rate = task.learning_rate
+            print("=" * 40)
+            print(f"Learning rate set to {args.learning_rate}")
+            print("=" * 40)
 
         # create a Trainer and fit the model
         csv_logger.log_hyperparams(args)
@@ -181,6 +193,8 @@ def train_unet_2d_cv(args: Namespace) -> None:
             logger=csv_logger,
             callbacks=[early_stopping]
         )
+        print("Training...")
+        print("=" * 40)
         trainer.fit(task, train_dataloader, val_dataloader)
 
 
@@ -210,6 +224,10 @@ def main() -> None:
                     # the while loop go around again
                     args.batch_size = args.batch_size // 2
                     torch.cuda.empty_cache()
+                    print("=" * 40)
+                    print(f"Training script crashed due to OOM on GPU. Batch size set to {args.batch_size} and "
+                          f"retrying...")
+                    print("=" * 40)
             else:
                 # if the error did not have to do with being out of memory, raise it
                 raise err
