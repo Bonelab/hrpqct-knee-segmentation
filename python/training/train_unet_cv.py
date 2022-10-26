@@ -64,10 +64,6 @@ def create_parser() -> ArgumentParser:
         help='number of samples per minibatch'
     )
     parser.add_argument(
-        "--num-gpus", "-ng", type=int, default=0, metavar="N",
-        help="number of GPUs to use"
-    )
-    parser.add_argument(
         "--log-dir", "-ld", type=str, default="./logs", metavar="STR",
         help="root directory to store all training logs in"
     )
@@ -91,11 +87,31 @@ def create_parser() -> ArgumentParser:
         "--hours-per-fold", "-hpf", type=int, default=4,
         help="maximum time in hours to spend training the model in each fold"
     )
+    parser.add_argument(
+        "--cuda", "-c", action="store_true", default=False,
+        help="if enabled, check for GPUs and use them"
+    )
 
     return parser
 
 
 def train_unet_2d_cv(args: Namespace) -> None:
+
+    # check if we are using CUDA and set accelerator, devices, strategy
+    if args.cuda:
+        if torch.cuda.is_available():
+            accelerator = "gpu"
+            num_devices = torch.cuda.device_count()
+            strategy = "ddp_find_unused_parameters_false" if num_devices > 1 else None
+            print(f"CUDA enabled and available, using {num_devices} GPUs with strategy: {strategy}")
+        else:
+            raise RuntimeError("CUDA enabled but not available.")
+    else:
+        print("CUDA not requested, training on CPU.")
+        accelerator = "cpu"
+        num_devices = 1
+        strategy = None
+
     # create datasets
     datasets = []
     for data_dir in args.data_dirs:
@@ -171,9 +187,9 @@ def train_unet_2d_cv(args: Namespace) -> None:
         # create a Trainer and fit the model
         csv_logger.log_hyperparams(args)
         trainer = Trainer(
-            accelerator=("gpu" if args.num_gpus > 0 else "cpu"),
-            devices=int(np.maximum(args.num_gpus, 1)),
-            strategy=("ddp_find_unused_parameters_false" if args.num_gpus > 1 else None),
+            accelerator=accelerator,
+            devices=num_devices,
+            strategy=strategy,
             max_epochs=args.epochs,
             max_time={"hours": args.hours_per_fold},
             log_every_n_steps=args.log_step_interval,

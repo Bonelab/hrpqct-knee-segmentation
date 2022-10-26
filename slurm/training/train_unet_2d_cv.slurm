@@ -29,7 +29,7 @@ python -u python/training/train_unet_cv.py \
 --dropout "$DROPOUT" \
 --learning-rate "$LEARNING_RATE" \
 --log-step-interval 3 \
---num-gpus 2 \
+--cuda \
 --folds 5 \
 --num-workers 4 \
 /home/njneetes/work/data/NORMXTII/radius_pickled_2d \
