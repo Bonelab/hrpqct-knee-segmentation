@@ -2,7 +2,7 @@
 ####### Reserve computing resources #############
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=8
 #SBATCH --time=23:00:00
 #SBATCH --mem=0
 #SBATCH --partition=gpu-a100 --gres=gpu:2
@@ -28,7 +28,7 @@ python -u python/training/train_unet_cv.py \
 --batch-size 16 \
 --dropout "$DROPOUT" \
 --learning-rate "$LEARNING_RATE" \
---log-step-interval 1 \
+--log-step-interval 3 \
 --num-gpus 2 \
 --folds 5 \
 --num-workers 4 \
