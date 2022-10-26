@@ -21,7 +21,7 @@ source activate blptl_11.1
 CHANNELS_ARR=("$CHANNELS")
 # shellcheck disable=SC2068
 python -u python/training/train_unet_cv.py \
---label unet_2d_cv \
+--label unet_3d_cv \
 --version "$SLURM_JOB_ID" \
 --input-channels 1 \
 --output-channels 3 \
