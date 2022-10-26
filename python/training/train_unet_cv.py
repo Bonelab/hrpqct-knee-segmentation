@@ -173,7 +173,8 @@ def train_unet_2d_cv(args: Namespace) -> None:
             # tune on just one GPU or CPU since you can't do it in parallel
             trainer = Trainer(
                 accelerator=("gpu" if args.num_gpus > 0 else "cpu"), devices=1,
-                auto_lr_find=True, enable_checkpointing=False
+                auto_lr_find=True, enable_checkpointing=False,
+                default_root_dir="./auto_lr_logs"
             )
             trainer.tune(task, train_dataloader, val_dataloader)
             args.learning_rate = task.learning_rate
