@@ -4,11 +4,14 @@ import torch
 from torch.nn import CrossEntropyLoss
 from torch.utils.data import DataLoader, ConcatDataset, Subset
 from pytorch_lightning import Trainer
-from pytorch_lightning.loggers import CSVLogger
+from pytorch_lightning.tuner.tuning import Tuner
+from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from blpytorchlightning.tasks.SegmentationTask import SegmentationTask
 from blpytorchlightning.dataset_components.datasets.PickledDataset import PickledDataset
 from monai.networks.nets.unet import UNet
+from glob import glob
+from shutil import rmtree
 
 
 def create_parser() -> ArgumentParser:
@@ -49,7 +52,7 @@ def create_parser() -> ArgumentParser:
         help="dropout probability"
     )
     parser.add_argument(
-        "--epochs", "-e", type=int, default=200, metavar="N",
+        "--epochs", "-e", type=int, default=50, metavar="N",
         help="number of epochs to train for"
     )
     parser.add_argument(
@@ -63,6 +66,10 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         "--num-gpus", "-ng", type=int, default=0, metavar="N",
         help="number of GPUs to use"
+    )
+    parser.add_argument(
+        "--log-dir", "-ld", type=str, default="./logs", metavar="STR",
+        help="root directory to store all training logs in"
     )
     parser.add_argument(
         "--version", "-v", type=int, default=None, metavar="N",
@@ -79,10 +86,6 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         '--early-stopping-patience', '-esp', type=int, default=40, metavar='N',
         help='number of epochs to train for'
-    )
-    parser.add_argument(
-        "--auto-learning-rate", "-alr", action="store_true", default=False,
-        help="let pytorch-lightning pick the best learning rate"
     )
     parser.add_argument(
         "--hours-per-fold", "-hpf", type=int, default=4,
@@ -116,9 +119,7 @@ def train_unet_2d_cv(args: Namespace) -> None:
     for f in range(args.folds):
 
         print("=" * 40)
-        print("=" * 40)
         print(f"FOLD {f+1} / {args.folds}")
-        print("=" * 40)
         print("=" * 40)
 
         # create dataloaders
@@ -153,11 +154,12 @@ def train_unet_2d_cv(args: Namespace) -> None:
         )
 
         # create loggers
-        csv_logger = CSVLogger(
-            './logs',
-            name=args.label,
-            version=f"{args.version}_f{f}"
-        )
+        logger_kwargs = {
+            "save_dir": args.log_dir,
+            "name": args.label,
+            "version": f"{args.version}_f{f}"
+        }
+        csv_logger = CSVLogger(**logger_kwargs)
 
         # create callbacks
         early_stopping = EarlyStopping(
@@ -166,36 +168,18 @@ def train_unet_2d_cv(args: Namespace) -> None:
             patience=args.early_stopping_patience
         )
 
-        # find learning rate if option enabled
-        if args.auto_learning_rate:
-            print("Learning rate tuning....")
-            print("=" * 40)
-            # tune on just one GPU or CPU since you can't do it in parallel
-            trainer = Trainer(
-                accelerator=("gpu" if args.num_gpus > 0 else "cpu"), devices=1,
-                auto_lr_find=True, enable_checkpointing=False,
-                default_root_dir="./auto_lr_logs"
-            )
-            trainer.tune(task, train_dataloader, val_dataloader)
-            args.learning_rate = task.learning_rate
-            print("=" * 40)
-            print(f"Learning rate set to {args.learning_rate}")
-            print("=" * 40)
-
         # create a Trainer and fit the model
         csv_logger.log_hyperparams(args)
         trainer = Trainer(
             accelerator=("gpu" if args.num_gpus > 0 else "cpu"),
             devices=int(np.maximum(args.num_gpus, 1)),
-            strategy="ddp_find_unused_parameters_false",
+            strategy=("ddp_find_unused_parameters_false" if args.num_gpus > 1 else None),
             max_epochs=args.epochs,
             max_time={"hours": args.hours_per_fold},
             log_every_n_steps=args.log_step_interval,
             logger=csv_logger,
             callbacks=[early_stopping]
         )
-        print("Training...")
-        print("=" * 40)
         trainer.fit(task, train_dataloader, val_dataloader)
 
 

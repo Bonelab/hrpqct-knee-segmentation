@@ -16,7 +16,6 @@
 export PATH="$HOME/software/miniconda3/bin:$PATH"
 
 ####### Run your script #########################
-rm -rf /dev/shm/* &>/dev/null
 source activate blptl_11.1
 CHANNELS_ARR=("$CHANNELS")
 # shellcheck disable=SC2068
@@ -26,17 +25,15 @@ python -u python/training/train_unet_cv.py \
 --input-channels 1 \
 --output-channels 3 \
 --model-channels ${CHANNELS_ARR[@]} \
---batch-size 128 \
+--batch-size 16 \
 --dropout "$DROPOUT" \
---epochs 250 \
+--learning-rate "$LEARNING_RATE" \
 --log-step-interval 1 \
 --num-gpus 2 \
 --folds 5 \
---num-workers 6 \
---auto-learning-rate \
+--num-workers 4 \
 --is-3d \
 /home/njneetes/work/data/NORMXTII/radius_pickled_3d \
 /home/njneetes/work/data/NORMXTII/tibia_pickled_3d \
 /home/njneetes/work/data/HIPFX/radius_pickled_3d \
 /home/njneetes/work/data/HIPFX/tibia_pickled_3d
-rm -rf /dev/shm/* &>/dev/null

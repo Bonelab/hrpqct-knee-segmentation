@@ -10,6 +10,8 @@ from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from blpytorchlightning.tasks.SeGANTask import SeGANTask
 from blpytorchlightning.dataset_components.datasets.PickledDataset import PickledDataset
 from blpytorchlightning.models.SeGAN import get_segmentor_and_discriminators
+from glob import glob
+from shutil import rmtree
 
 
 def create_parser() -> ArgumentParser:
@@ -58,7 +60,7 @@ def create_parser() -> ArgumentParser:
         help="dropout probability"
     )
     parser.add_argument(
-        "--epochs", "-e", type=int, default=200, metavar="N",
+        "--epochs", "-e", type=int, default=50, metavar="N",
         help="number of epochs to train for"
     )
     parser.add_argument(
@@ -90,10 +92,6 @@ def create_parser() -> ArgumentParser:
         help='number of epochs to train for'
     )
     parser.add_argument(
-        "--auto-learning-rate", "-alr", action="store_true", default=False,
-        help="let pytorch-lightning pick the best learning rate"
-    )
-    parser.add_argument(
         "--hours-per-fold", "-hpf", type=int, default=4,
         help="maximum time in hours to spend training the model in each fold"
     )
@@ -123,6 +121,11 @@ def train_segan_cv(args):
 
     # start the cross-validation loop
     for f in range(args.folds):
+
+        print("=" * 40)
+        print(f"FOLD {f+1} / {args.folds}")
+        print("=" * 40)
+
         # create dataloaders
         train_dataloader = DataLoader(
             Subset(
@@ -159,12 +162,12 @@ def train_segan_cv(args):
         )
 
         # create loggers
-        csv_logger = CSVLogger(
-            './logs',
-            name=args.label,
-            version=f"{args.version}_f{f}"
-        )
-        csv_logger.log_hyperparams(args)
+        logger_kwargs = {
+            "save_dir": args.log_dir,
+            "name": args.label,
+            "version": f"{args.version}_f{f}"
+        }
+        csv_logger = CSVLogger(**logger_kwargs)
 
         # create callbacks
         early_stopping = EarlyStopping(
@@ -174,10 +177,11 @@ def train_segan_cv(args):
         )
 
         # create a Trainer
+        csv_logger.log_hyperparams(args)
         trainer = Trainer(
             accelerator=("gpu" if args.num_gpus > 0 else "cpu"),
             devices=int(np.maximum(args.num_gpus, 1)),
-            strategy="ddp",
+            strategy=("ddp" if args.num_gpus > 1 else None),
             max_epochs=args.epochs,
             max_time={"hours": args.hours_per_fold},
             log_every_n_steps=args.log_step_interval,
@@ -213,6 +217,11 @@ def main() -> None:
                     # the while loop go around again
                     args.batch_size = args.batch_size // 2
                     torch.cuda.empty_cache()
+
+                    print("=" * 40)
+                    print(f"Training script crashed due to OOM on GPU. Batch size set to {args.batch_size} and "
+                          f"retrying...")
+                    print("=" * 40)
             else:
                 # if the error did not have to do with being out of memory, raise it
                 raise err
