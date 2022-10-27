@@ -8,10 +8,10 @@ do
     idx_end=$((100*(i+1)))
     #sbatch --export=IS="$idx_start",IE="$idx_end",STUDY="$study",SITE="$site" slurm/preprocessing/preprocess_2d.slurm
     #sleep 1
-    sbatch --export=IS="$idx_start",IE="$idx_end",STUDY="$study",SITE="$site" slurm/preprocessing/preprocess_2-5d.slurm
-    sleep 1
-    #sbatch --export=IS="$idx_start",IE="$idx_end",STUDY="$study",SITE="$site" slurm/preprocessing/preprocess_3d.slurm
+    #sbatch --export=IS="$idx_start",IE="$idx_end",STUDY="$study",SITE="$site" slurm/preprocessing/preprocess_2-5d.slurm
     #sleep 1
+    sbatch --export=IS="$idx_start",IE="$idx_end",STUDY="$study",SITE="$site" slurm/preprocessing/preprocess_3d.slurm
+    sleep 1
   done
 done
 study="HIPFX"
@@ -23,9 +23,9 @@ do
     idx_end=$((100*(i+1)))
     #sbatch --export=IS="$idx_start",IE="$idx_end",STUDY="$study",SITE="$site" slurm/preprocessing/preprocess_2d.slurm
     #sleep 1
-    sbatch --export=IS="$idx_start",IE="$idx_end",STUDY="$study",SITE="$site" slurm/preprocessing/preprocess_2-5d.slurm
-    sleep 1
-    #sbatch --export=IS="$idx_start",IE="$idx_end",STUDY="$study",SITE="$site" slurm/preprocessing/preprocess_3d.slurm
+    #sbatch --export=IS="$idx_start",IE="$idx_end",STUDY="$study",SITE="$site" slurm/preprocessing/preprocess_2-5d.slurm
     #sleep 1
+    sbatch --export=IS="$idx_start",IE="$idx_end",STUDY="$study",SITE="$site" slurm/preprocessing/preprocess_3d.slurm
+    sleep 1
   done
 done
