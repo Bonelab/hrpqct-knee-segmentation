@@ -44,7 +44,7 @@ def create_parser() -> ArgumentParser:
         help="sequence of filters in U-Net layers"
     )
     parser.add_argument(
-        '--channels-per-group', '-c', type=int, default=16, metavar='N',
+        '--channels-per-group', '-cpg', type=int, default=16, metavar='N',
         help='channels per group in GroupNorm'
     )
     parser.add_argument(
@@ -72,8 +72,8 @@ def create_parser() -> ArgumentParser:
         help='number of samples per minibatch'
     )
     parser.add_argument(
-        "--num-gpus", "-ng", type=int, default=0, metavar="N",
-        help="number of GPUs to use"
+        "--log-dir", "-ld", type=str, default="./logs", metavar="STR",
+        help="root directory to store all training logs in"
     )
     parser.add_argument(
         "--version", "-v", type=int, default=None, metavar="N",
@@ -95,11 +95,30 @@ def create_parser() -> ArgumentParser:
         "--hours-per-fold", "-hpf", type=int, default=4,
         help="maximum time in hours to spend training the model in each fold"
     )
+    parser.add_argument(
+        "--cuda", "-c", action="store_true", default=False,
+        help="if enabled, check for GPUs and use them"
+    )
 
     return parser
 
 
 def train_segan_cv(args):
+    # check if we are using CUDA and set accelerator, devices, strategy
+    if args.cuda:
+        if torch.cuda.is_available():
+            accelerator = "gpu"
+            num_devices = torch.cuda.device_count()
+            strategy = "ddp_find_unused_parameters_false" if num_devices > 1 else None
+            print(f"CUDA enabled and available, using {num_devices} GPUs with strategy: {strategy}")
+        else:
+            raise RuntimeError("CUDA enabled but not available.")
+    else:
+        print("CUDA not requested, training on CPU.")
+        accelerator = "cpu"
+        num_devices = 1
+        strategy = None
+
     # create datasets
     datasets = []
     for data_dir in args.data_dirs:
@@ -176,12 +195,12 @@ def train_segan_cv(args):
             patience=args.early_stopping_patience
         )
 
-        # create a Trainer
+        # create a Trainer and fit the model
         csv_logger.log_hyperparams(args)
         trainer = Trainer(
-            accelerator=("gpu" if args.num_gpus > 0 else "cpu"),
-            devices=int(np.maximum(args.num_gpus, 1)),
-            strategy=("ddp" if args.num_gpus > 1 else None),
+            accelerator=accelerator,
+            devices=num_devices,
+            strategy=strategy,
             max_epochs=args.epochs,
             max_time={"hours": args.hours_per_fold},
             log_every_n_steps=args.log_step_interval,
