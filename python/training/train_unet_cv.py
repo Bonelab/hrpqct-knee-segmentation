@@ -10,6 +10,9 @@ from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from blpytorchlightning.tasks.SegmentationTask import SegmentationTask
 from blpytorchlightning.dataset_components.datasets.PickledDataset import PickledDataset
 from monai.networks.nets.unet import UNet
+from monai.networks.nets.attentionunet import AttentionUnet
+from monai.networks.nets.unetr import UNETR
+from monai.networks.nets.basic_unetplusplus import BasicUNetPlusPlus
 from glob import glob
 from shutil import rmtree
 
@@ -32,6 +35,10 @@ def create_parser() -> ArgumentParser:
         help="number of CPU workers to use to load data in parallel"
     )
     parser.add_argument(
+        "--model-architecture", "-ma", type=str, default="unet", metavar="STR",
+        help="model architecture to use, must be one of `unet`, `attention-unet`, `unet++` or `unet-r`"
+    )
+    parser.add_argument(
         "--input-channels", "-ic", type=int, default=1, metavar="N",
         help="Modify this only if you are using a 2.5D model (extra slices on channel axis)."
     )
@@ -44,8 +51,24 @@ def create_parser() -> ArgumentParser:
         help="sequence of filters in U-Net layers"
     )
     parser.add_argument(
+        "--unet-r-feature-size", "-urfs", type=int, default="16", metavar="N",
+        help="feature size for `unet-r`"
+    )
+    parser.add_argument(
+        "--unet-r-hidden-size", "-urhs", type=int, default=768, metavar="N",
+        help="hidden size for `unet-r`"
+    )
+    parser.add_argument(
+        "--unet-r-mlp-dim", "-urmlp", type=int, default=3072, metavar="N",
+        help="dimension of feed-forward layer for `unet-r`"
+    )
+    parser.add_argument(
+        "--unet-r-num-heads", "-urnh", type=int, default=12, metavar="N",
+        help="number of attention heads for `unet-r`"
+    )
+    parser.add_argument(
         '--is-3d', '-3d', action="store_true", default=False,
-        help="set this flag to train a SeGAN with 3D convolutions for segmenting 3D image data"
+        help="set this flag to train a UNet with 3D convolutions for segmenting 3D image data"
     )
     parser.add_argument(
         "--dropout", "-d", type=float, default=0.1, metavar="D",
@@ -91,8 +114,22 @@ def create_parser() -> ArgumentParser:
         "--cuda", "-c", action="store_true", default=False,
         help="if enabled, check for GPUs and use them"
     )
+    parser.add_argument(
+        "--image-size", "-is", type=int, nargs="+", default=None,
+        help="size of image, must specify if using `unet-r`"
+    )
 
     return parser
+
+
+# we need a factory function for creating a loss function that can be used for the unet++
+def create_unetplusplus_loss_function(loss_function):
+    def unetplusplus_loss_function(y_hat_list, y):
+        loss = 0
+        for y_hat in y_hat_list:
+            loss += loss_function(y_hat, y)
+        return loss
+    return unetplusplus_loss_function
 
 
 def train_unet_2d_cv(args: Namespace) -> None:
@@ -151,21 +188,70 @@ def train_unet_2d_cv(args: Namespace) -> None:
             **dataloader_kwargs
         )
 
+        unet_architectures = {
+            "unet": UNet,
+            "attention-unet": AttentionUnet,
+            "unet-r": UNETR
+        }
+
         # create the model
         model_kwargs = {
             "spatial_dims": 3 if args.is_3d else 2,
-            "in_channels": args.input_channels,  # density
-            "out_channels": args.output_channels,  # cort, trab, back
-            "channels": args.model_channels,
-            "strides": [1 for _ in range(len(args.model_channels) - 1)],
-            "dropout": args.dropout
+            "in_channels": args.input_channels,
+            "out_channels": args.output_channels,
         }
-        model = UNet(**model_kwargs)
+        if args.dropout < 0 or args.dropout > 1:
+            raise ValueError("dropout must be between 0 and 1")
+        if args.model_architecture == "unet":
+            if len(args.model_channels) < 2:
+                raise ValueError("model channels must be sequence of integers of at least length 2")
+            model_kwargs["channels"] = args.model_channels
+            model_kwargs["strides"] = [1 for _ in range(len(args.model_channels) - 1)]
+            model_kwargs["dropout"] = args.dropout
+            model = UNet(**model_kwargs)
+        elif args.model_architecture == "attention-unet":
+            if len(args.model_channels) < 2:
+                raise ValueError("model channels must be sequence of integers of at least length 2")
+            model_kwargs["channels"] = args.model_channels
+            model_kwargs["strides"] = [1 for _ in range(len(args.model_channels) - 1)]
+            model_kwargs["dropout"] = args.dropout
+            model = AttentionUnet(**model_kwargs)
+        elif args.model_architecture == "unet-r":
+            if args.image_size is None:
+                raise ValueError("if model architecture set to `unet-r`, you must specify image size")
+            if args.is_3d and len(args.image_size) != 3:
+                raise ValueError("if 3D, image_size must be integer or length-3 sequence of integers")
+            if not args.is_3d and len(args.image_size) != 2:
+                raise ValueError("if not 3D, image_size must be integer or length-2 sequence of integers")
+            model_kwargs["img_size"] = args.image_size
+            model_kwargs["dropout_rate"] = args.dropout
+            model_kwargs["feature_size"] = args.unet_r_feature_size
+            model_kwargs["hidden_size"] = args.unet_r_hidden_size
+            model_kwargs["mlp_dim"] = args.unet_r_mlp_dim
+            model_kwargs["num_heads"] = args.unet_r_num_heads
+            model = UNETR(**model_kwargs)
+        elif args.model_architecture == "unet++":
+            if len(args.model_channels) != 6:
+                raise ValueError("if model architecture set to `unet++`, model channels must be length-6 sequence of "
+                                 "integers")
+            model_kwargs["features"] = args.model_channels
+            model_kwargs["dropout"] = args.dropout
+            model = BasicUNetPlusPlus(**model_kwargs)
+        else:
+            raise ValueError(f"model architecture must be `unet`, `attention-unet`, `unet++`, or `unet-r`, "
+                             f"given {args.model_architecture}")
+
         model.float()
+
+        # create loss function
+        if args.model_architecture == "unet++":
+            loss_function = create_unetplusplus_loss_function(CrossEntropyLoss())
+        else:
+            loss_function = CrossEntropyLoss()
 
         # create the task
         task = SegmentationTask(
-            model, CrossEntropyLoss(),
+            model, loss_function,
             learning_rate=args.learning_rate
         )
 
