@@ -13,7 +13,7 @@ from monai.networks.nets.segresnet import SegResNetVAE
 
 def create_parser() -> ArgumentParser:
     parser = ArgumentParser(
-        description='2D, 2.5D, or 3D UNet Training Cross-Validation Script',
+        description='2D, 2.5D, or 3D SegResNetVAE Training Cross-Validation Script',
         formatter_class=ArgumentDefaultsHelpFormatter
     )
     parser.add_argument(
@@ -29,36 +29,12 @@ def create_parser() -> ArgumentParser:
         help="number of CPU workers to use to load data in parallel"
     )
     parser.add_argument(
-        "--model-architecture", "-ma", type=str, default="unet", metavar="STR",
-        help="model architecture to use, must be one of `unet`, `attention-unet`, `unet++` or `unet-r`"
-    )
-    parser.add_argument(
         "--input-channels", "-ic", type=int, default=1, metavar="N",
         help="Modify this only if you are using a 2.5D model (extra slices on channel axis)."
     )
     parser.add_argument(
         "--output-channels", "-oc", type=int, default=1, metavar="N",
         help="How many classes there are to segment images into."
-    )
-    parser.add_argument(
-        "--model-channels", "-mc", type=int, nargs='+', default=[64, 128, 256, 512], metavar="N",
-        help="sequence of filters in U-Net layers"
-    )
-    parser.add_argument(
-        "--unet-r-feature-size", "-urfs", type=int, default="16", metavar="N",
-        help="feature size for `unet-r`"
-    )
-    parser.add_argument(
-        "--unet-r-hidden-size", "-urhs", type=int, default=768, metavar="N",
-        help="hidden size for `unet-r`"
-    )
-    parser.add_argument(
-        "--unet-r-mlp-dim", "-urmlp", type=int, default=3072, metavar="N",
-        help="dimension of feed-forward layer for `unet-r`"
-    )
-    parser.add_argument(
-        "--unet-r-num-heads", "-urnh", type=int, default=12, metavar="N",
-        help="number of attention heads for `unet-r`"
     )
     parser.add_argument(
         '--is-3d', '-3d', action="store_true", default=False,
@@ -110,7 +86,19 @@ def create_parser() -> ArgumentParser:
     )
     parser.add_argument(
         "--image-size", "-is", type=int, nargs="+", default=None,
-        help="size of image, must specify if using `unet-r`"
+        help="size of image, must specify."
+    )
+    parser.add_argument(
+        "--init-filters", "-if", type=int, default=8, metavar="N",
+        help="output channels in initial convolutional layer"
+    )
+    parser.add_argument(
+        "--blocks-down", "-bd", type=int, nargs="+", default=[1, 2, 2, 4], metavar="N",
+        help="number of down-sample blocks in each layer"
+    )
+    parser.add_argument(
+        "--blocks-up", "-bu", type=int, nargs="+", default=[1, 1, 1], metavar="N",
+        help="number of up-sample blocks in each layer"
     )
 
     return parser
@@ -173,7 +161,7 @@ def train_segresnetvae_cv(args):
         # create model
         model_kwargs = {
             "spatial_dims": 3 if args.is_3d else 2,
-            "img_size": args.image_size,
+            "input_image_size": args.image_size,
             "in_channels": args.input_channels,
             "out_channels": args.output_channels,
             "dropout_prob": args.dropout,
@@ -188,7 +176,10 @@ def train_segresnetvae_cv(args):
         loss_function = CrossEntropyLoss()
 
         # create task
-        task = SegResNetVAETask()
+        task = SegResNetVAETask(
+            model, loss_function,
+            learning_rate=args.learning_rate
+        )
 
         # create loggers
         logger_kwargs = {
@@ -230,7 +221,7 @@ def main() -> None:
     while not training_complete:
         try:
             # attempt to train at current batch size
-            train_unet_2d_cv(args)
+            train_segresnetvae_cv(args)
             # if successful, set the flag to end the while loop
             training_complete = True
         except RuntimeError as err:
