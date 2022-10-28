@@ -1,5 +1,5 @@
 #!/bin/bash
-for channels in "32 64 128 256" "64 128 256 512" "32 64 128 256 512"
+for channels in "16 16 32 64 32 16" "32 32 64 128 64 32"
 do
   for dropout in "0.1" "0.3" "0.5"
   do

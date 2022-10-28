@@ -4,17 +4,11 @@ import torch
 from torch.nn import CrossEntropyLoss
 from torch.utils.data import DataLoader, ConcatDataset, Subset
 from pytorch_lightning import Trainer
-from pytorch_lightning.tuner.tuning import Tuner
-from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
+from pytorch_lightning.loggers import CSVLogger
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-from blpytorchlightning.tasks.SegmentationTask import SegmentationTask
+from blpytorchlightning.tasks.SegResNetVAETask import SegResNetVAETask
 from blpytorchlightning.dataset_components.datasets.PickledDataset import PickledDataset
-from monai.networks.nets.unet import UNet
-from monai.networks.nets.attentionunet import AttentionUnet
-from monai.networks.nets.unetr import UNETR
-from monai.networks.nets.basic_unetplusplus import BasicUNetPlusPlus
-from glob import glob
-from shutil import rmtree
+from monai.networks.nets.segresnet import SegResNetVAE
 
 
 def create_parser() -> ArgumentParser:
@@ -122,18 +116,7 @@ def create_parser() -> ArgumentParser:
     return parser
 
 
-# we need a factory function for creating a loss function that can be used for the unet++
-def create_unetplusplus_loss_function(loss_function):
-    def unetplusplus_loss_function(y_hat_list, y):
-        loss = 0
-        for y_hat in y_hat_list:
-            loss += loss_function(y_hat, y)
-        return loss
-    return unetplusplus_loss_function
-
-
-def train_unet_2d_cv(args: Namespace) -> None:
-
+def train_segresnetvae_cv(args):
     # check if we are using CUDA and set accelerator, devices, strategy
     if args.cuda:
         if torch.cuda.is_available():
@@ -170,9 +153,8 @@ def train_unet_2d_cv(args: Namespace) -> None:
 
     # start the cross-validation loop
     for f in range(args.folds):
-
         print("=" * 40)
-        print(f"FOLD {f+1} / {args.folds}")
+        print(f"FOLD {f + 1} / {args.folds}")
         print("=" * 40)
 
         # create dataloaders
@@ -188,66 +170,25 @@ def train_unet_2d_cv(args: Namespace) -> None:
             **dataloader_kwargs
         )
 
-        # create the model
+        # create model
         model_kwargs = {
             "spatial_dims": 3 if args.is_3d else 2,
+            "img_size": args.image_size,
             "in_channels": args.input_channels,
             "out_channels": args.output_channels,
+            "dropout_prob": args.dropout,
+            "init_filters": args.init_filters,
+            "blocks_down": tuple(args.blocks_down),
+            "blocks_up": tuple(args.blocks_up),
+            "upsample_mode": "pixelshuffle"
         }
-        if args.dropout < 0 or args.dropout > 1:
-            raise ValueError("dropout must be between 0 and 1")
-        if args.model_architecture == "unet":
-            if len(args.model_channels) < 2:
-                raise ValueError("model channels must be sequence of integers of at least length 2")
-            model_kwargs["channels"] = args.model_channels
-            model_kwargs["strides"] = [1 for _ in range(len(args.model_channels) - 1)]
-            model_kwargs["dropout"] = args.dropout
-            model = UNet(**model_kwargs)
-        elif args.model_architecture == "attention-unet":
-            if len(args.model_channels) < 2:
-                raise ValueError("model channels must be sequence of integers of at least length 2")
-            model_kwargs["channels"] = args.model_channels
-            model_kwargs["strides"] = [1 for _ in range(len(args.model_channels) - 1)]
-            model_kwargs["dropout"] = args.dropout
-            model = AttentionUnet(**model_kwargs)
-        elif args.model_architecture == "unet-r":
-            if args.image_size is None:
-                raise ValueError("if model architecture set to `unet-r`, you must specify image size")
-            if args.is_3d and len(args.image_size) != 3:
-                raise ValueError("if 3D, image_size must be integer or length-3 sequence of integers")
-            if not args.is_3d and len(args.image_size) != 2:
-                raise ValueError("if not 3D, image_size must be integer or length-2 sequence of integers")
-            model_kwargs["img_size"] = args.image_size
-            model_kwargs["dropout_rate"] = args.dropout
-            model_kwargs["feature_size"] = args.unet_r_feature_size
-            model_kwargs["hidden_size"] = args.unet_r_hidden_size
-            model_kwargs["mlp_dim"] = args.unet_r_mlp_dim
-            model_kwargs["num_heads"] = args.unet_r_num_heads
-            model = UNETR(**model_kwargs)
-        elif args.model_architecture == "unet++":
-            if len(args.model_channels) != 6:
-                raise ValueError("if model architecture set to `unet++`, model channels must be length-6 sequence of "
-                                 "integers")
-            model_kwargs["features"] = args.model_channels
-            model_kwargs["dropout"] = args.dropout
-            model = BasicUNetPlusPlus(**model_kwargs)
-        else:
-            raise ValueError(f"model architecture must be `unet`, `attention-unet`, `unet++`, or `unet-r`, "
-                             f"given {args.model_architecture}")
-
-        model.float()
+        model = SegResNetVAE(**model_kwargs)
 
         # create loss function
-        if args.model_architecture == "unet++":
-            loss_function = create_unetplusplus_loss_function(CrossEntropyLoss())
-        else:
-            loss_function = CrossEntropyLoss()
+        loss_function = CrossEntropyLoss()
 
-        # create the task
-        task = SegmentationTask(
-            model, loss_function,
-            learning_rate=args.learning_rate
-        )
+        # create task
+        task = SegResNetVAETask()
 
         # create loggers
         logger_kwargs = {
