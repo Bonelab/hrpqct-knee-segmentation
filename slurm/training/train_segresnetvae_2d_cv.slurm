@@ -17,8 +17,7 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 
 ####### Run your script #########################
 source activate blptl_11.1
-python -u python/training/train_unet_cv.py \
---model-architecture unet-r \
+python -u python/training/train_segresnetvae_cv.py \
 --image-size 128 128 \
 --label segresnetvae_2d_cv \
 --version "$SLURM_JOB_ID" \
