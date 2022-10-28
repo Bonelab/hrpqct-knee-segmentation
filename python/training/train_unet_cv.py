@@ -231,6 +231,9 @@ def train_unet_2d_cv(args: Namespace) -> None:
             model_kwargs["features"] = args.model_channels
             model_kwargs["dropout"] = args.dropout
             model = BasicUNetPlusPlus(**model_kwargs)
+            if strategy == "ddp_find_unused_parameters_false":
+                strategy = "ddp"
+                print(f"using `unet++`, so changing strategy to {strategy}")
         else:
             raise ValueError(f"model architecture must be `unet`, `attention-unet`, `unet++`, or `unet-r`, "
                              f"given {args.model_architecture}")
