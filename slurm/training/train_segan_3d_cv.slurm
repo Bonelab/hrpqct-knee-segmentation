@@ -6,7 +6,7 @@
 #SBATCH --time=23:00:00
 #SBATCH --mem=0
 #SBATCH --partition=gpu-a100 --gres=gpu:2
-#SBATCH --job-name=SEGAN_GS
+#SBATCH --job-name=SEGAN3D
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
 #SBATCH --mail-type=END
@@ -16,7 +16,6 @@
 export PATH="$HOME/software/miniconda3/bin:$PATH"
 
 ####### Run your script #########################
-rm -rf /dev/shm/* &>/dev/null
 source activate blptl_11.1
 CHANNELS_ARR=("$CHANNELS")
 # shellcheck disable=SC2068
@@ -26,16 +25,15 @@ python -u python/training/train_segan_cv.py \
 --input-channels 1 \
 --output-channels 3 \
 --model-channels ${CHANNELS_ARR[@]} \
+--batch-size 16 \
 --dropout "$DROPOUT" \
---epochs 250 \
---log-step-interval 1 \
---num-gpus 2 \
+--learning-rate "$LEARNING_RATE" \
+--log-step-interval 3 \
+--cuda \
 --folds 5 \
 --num-workers 6 \
 --upsample-mode trilinear --is-3d \
---auto-learning-rate \
 /home/njneetes/work/data/NORMXTII/radius_pickled_3d \
 /home/njneetes/work/data/NORMXTII/tibia_pickled_3d \
 /home/njneetes/work/data/HIPFX/radius_pickled_3d \
 /home/njneetes/work/data/HIPFX/tibia_pickled_3d
-rm -rf /dev/shm &>/dev/null
