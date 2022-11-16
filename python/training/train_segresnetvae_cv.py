@@ -2,12 +2,14 @@ from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter, Namespace
 import numpy as np
 import torch
 from torch.nn import CrossEntropyLoss
+from torchmetrics import Dice
 from torch.utils.data import DataLoader, ConcatDataset, Subset
 from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import CSVLogger
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from blpytorchlightning.tasks.SegResNetVAETask import SegResNetVAETask
 from blpytorchlightning.dataset_components.datasets.PickledDataset import PickledDataset
+from blpytorchlightning.loss_functions.DiceLoss import DiceLoss
 from monai.networks.nets.segresnet import SegResNetVAE
 
 
@@ -100,6 +102,10 @@ def create_parser() -> ArgumentParser:
         "--blocks-up", "-bu", type=int, nargs="+", default=[1, 1, 1], metavar="N",
         help="number of up-sample blocks in each layer"
     )
+    parser.add_argument(
+        "--dice-loss", "-dl", action="store_true", default=False,
+        help="enable this flag to use Dice loss instead of Cross-Entropy"
+    )
 
     return parser
 
@@ -173,7 +179,7 @@ def train_segresnetvae_cv(args):
         model = SegResNetVAE(**model_kwargs)
 
         # create loss function
-        loss_function = CrossEntropyLoss()
+        loss_function = DiceLoss() if args.dice_loss else CrossEntropyLoss()
 
         # create task
         task = SegResNetVAETask(

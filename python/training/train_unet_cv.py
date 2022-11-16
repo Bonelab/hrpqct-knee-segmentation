@@ -9,6 +9,8 @@ from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from blpytorchlightning.tasks.SegmentationTask import SegmentationTask
 from blpytorchlightning.dataset_components.datasets.PickledDataset import PickledDataset
+from blpytorchlightning.dataset_components.transformers.TensorOneHotEncoder import TensorOneHotEncoder
+from blpytorchlightning.loss_functions.DiceLoss import DiceLoss
 from monai.networks.nets.unet import UNet
 from monai.networks.nets.attentionunet import AttentionUnet
 from monai.networks.nets.unetr import UNETR
@@ -118,6 +120,10 @@ def create_parser() -> ArgumentParser:
         "--image-size", "-is", type=int, nargs="+", default=None,
         help="size of image, must specify if using `unet-r`"
     )
+    parser.add_argument(
+        "--dice-loss", "-dl", action="store_true", default=False,
+        help="enable this flag to use Dice loss instead of Cross-Entropy"
+    )
 
     return parser
 
@@ -150,9 +156,10 @@ def train_unet_2d_cv(args: Namespace) -> None:
         strategy = None
 
     # create datasets
+    transformer = TensorOneHotEncoder(num_classes=args.output_channels) if args.dice_loss else None
     datasets = []
     for data_dir in args.data_dirs:
-        datasets.append(PickledDataset(data_dir))
+        datasets.append(PickledDataset(data_dir, transformer=transformer))
     dataset = ConcatDataset(datasets)
 
     # create the fold index lists
@@ -241,15 +248,15 @@ def train_unet_2d_cv(args: Namespace) -> None:
         model.float()
 
         # create loss function
+        loss_function = DiceLoss() if args.dice_loss else CrossEntropyLoss()
         if args.model_architecture == "unet++":
-            loss_function = create_unetplusplus_loss_function(CrossEntropyLoss())
-        else:
-            loss_function = CrossEntropyLoss()
+            loss_function = create_unetplusplus_loss_function(loss_function)
 
         # create the task
         task = SegmentationTask(
             model, loss_function,
-            learning_rate=args.learning_rate
+            learning_rate=args.learning_rate,
+            ohe_targets=args.dice_loss
         )
 
         # create loggers
