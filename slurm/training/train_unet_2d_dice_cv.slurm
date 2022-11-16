@@ -1,3 +1,11 @@
+#!/bin/bash
+####### Reserve computing resources #############
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --time=23:00:00
+#SBATCH --mem=200G
+#SBATCH --partition=gpu-a100 --gres=gpu:2
 #SBATCH --job-name=UNET2D
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
