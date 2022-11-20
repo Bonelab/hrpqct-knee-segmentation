@@ -1,4 +1,3 @@
-from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter, Namespace
 import numpy as np
 import os
 import torch
@@ -12,65 +11,7 @@ from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from blpytorchlightning.tasks.SeGANTask import SeGANTask
 from blpytorchlightning.dataset_components.datasets.PickledDataset import PickledDataset
 from blpytorchlightning.models.SeGAN import get_segmentor_and_discriminators
-
-
-def create_parser() -> ArgumentParser:
-    parser = ArgumentParser(
-        description='2D, 2.5D, or 3D SeGAN Training Final/Best Version Script',
-        formatter_class=ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument(
-        "reference_label", type=str, metavar="REF_LABEL",
-        help="label to look in to find the parameters to use. will search in "
-             "<log-dir>/<reference_label>/<reference_version>."
-    )
-    parser.add_argument(
-        "reference_version", type=str, metavar="REF_VERSION",
-        help="version to look in to find the parameters to use. will search in "
-             "<log-dir>/<reference_label>/<reference_version>."
-    )
-    parser.add_argument(
-        "data_dirs", type=str, nargs="+", metavar="DIR",
-        help="list of directories to pull data from"
-    )
-    parser.add_argument(
-        "--label", "-l", type=str, default='segan', metavar="STR",
-        help="base title to use when saving logs and model checkpoints"
-    )
-    parser.add_argument(
-        "--version", "-v", type=int, default=None, metavar="N",
-        help="version number for logging"
-    )
-    parser.add_argument(
-        "--num-workers", "-w", type=int, default=8, metavar="N",
-        help="number of CPU workers to use to load data in parallel"
-    )
-    parser.add_argument(
-        "--epochs", "-e", type=int, default=1000, metavar="N",
-        help="number of epochs to train for"
-    )
-    parser.add_argument(
-        "--batch-size", "-bs", type=int, default=128, metavar="N",
-        help='number of samples per minibatch'
-    )
-    parser.add_argument(
-        "--log-dir", "-ld", type=str, default="./logs", metavar="STR",
-        help="root directory to store all training logs in"
-    )
-    parser.add_argument(
-        "--log-step-interval", "-lsi", type=int, default=20, metavar="N",
-        help="log metrics every N training/validation steps"
-    )
-    parser.add_argument(
-        '--early-stopping-patience', '-esp', type=int, default=40, metavar='N',
-        help='number of epochs to train for'
-    )
-    parser.add_argument(
-        "--cuda", "-c", action="store_true", default=False,
-        help="if enabled, check for GPUs and use them"
-    )
-
-    return parser
+from parser import create_parser
 
 
 def train_segan_final(args):
@@ -161,9 +102,9 @@ def train_segan_final(args):
     trainer.fit(task, dataloader)
 
 
-if __name__ == "__main__":
+def main():
     # get parameters from command line
-    args = create_parser().parse_args()
+    args = create_parser("SeGAN").parse_args()
 
     training_complete = False
 
@@ -195,3 +136,7 @@ if __name__ == "__main__":
             else:
                 # if the error did not have to do with being out of memory, raise it
                 raise err
+
+
+if __name__ == "__main__":
+    main()
