@@ -46,7 +46,7 @@ def create_parser() -> ArgumentParser:
         help="number of CPU workers to use to load data in parallel"
     )
     parser.add_argument(
-        "--epochs", "-e", type=int, default=50, metavar="N",
+        "--epochs", "-e", type=int, default=1000, metavar="N",
         help="number of epochs to train for"
     )
     parser.add_argument(
@@ -73,7 +73,7 @@ def create_parser() -> ArgumentParser:
     return parser
 
 
-def train_segan_best(args):
+def train_segan_final(args):
     # load the hyperparameters from file
     with open(os.path.join(args.log_dir, args.reference_label, args.reference_version, "hparams.yaml")) as f:
         hparams = yaml.safe_load(f)
@@ -171,7 +171,7 @@ if __name__ == "__main__":
     while not training_complete:
         try:
             # attempt to train at current batch size
-            train_segan_best(args)
+            train_segan_final(args)
             # if successful, set the flag to end the while loop
             training_complete = True
         except RuntimeError as err:
