@@ -46,7 +46,8 @@ def train_segresnetvae_cv(args):
         'batch_size': args.batch_size,
         'num_workers': args.num_workers,
         'pin_memory': True,
-        'persistent_workers': True
+        'persistent_workers': True,
+        'shuffle': True
     }
 
     # create dataloader

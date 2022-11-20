@@ -20,7 +20,7 @@ def train_segan_final(args):
         hparams = yaml.safe_load(f)
 
     # check if we are using CUDA and set accelerator, devices, strategy
-    if hparams["cuda"]:
+    if args.cuda:
         if torch.cuda.is_available():
             accelerator = "gpu"
             num_devices = torch.cuda.device_count()
@@ -45,7 +45,8 @@ def train_segan_final(args):
         'batch_size': args.batch_size,
         'num_workers': args.num_workers,
         'pin_memory': True,
-        'persistent_workers': True
+        'persistent_workers': True,
+        'shuffle': True
     }
 
     # create dataloader
