@@ -18,7 +18,7 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 ####### Run your script #########################
 source activate blptl_11.1
 # shellcheck disable=SC2068
-python -u python/training/train_unet_cv.py \
+python -u python/training/cv/train_unet_cv.py \
 --model-architecture unet-r \
 --image-size 64 64 64 \
 --label unetr_3d_cv \

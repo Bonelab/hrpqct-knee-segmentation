@@ -19,7 +19,7 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 source activate blptl_11.1
 CHANNELS_ARR=("$CHANNELS")
 # shellcheck disable=SC2068
-python -u python/training/train_unet_cv.py \
+python -u python/training/cv/train_unet_cv.py \
 --label unet_2d_cv \
 --version "$SLURM_JOB_ID" \
 --input-channels 1 \

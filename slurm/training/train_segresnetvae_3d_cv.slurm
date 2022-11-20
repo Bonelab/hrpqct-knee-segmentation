@@ -17,7 +17,7 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 
 ####### Run your script #########################
 source activate blptl_11.1
-python -u python/training/train_segresnetvae_cv.py \
+python -u python/training/cv/train_segresnetvae_cv.py \
 --image-size 64 64 64 \
 --label segresnetvae_3d_cv \
 --version "$SLURM_JOB_ID" \

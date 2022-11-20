@@ -17,7 +17,7 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 
 ####### Run your script #########################
 source activate blptl_11.1
-python -u python/training/train_unet_cv.py \
+python -u python/training/cv/train_unet_cv.py \
 --model-architecture unet-r \
 --image-size 128 128 \
 --label unetr_2d_cv \
