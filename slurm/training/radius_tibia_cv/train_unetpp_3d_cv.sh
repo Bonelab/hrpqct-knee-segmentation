@@ -7,7 +7,7 @@ do
     do
       sbatch \
       --export=CHANNELS="$channels",DROPOUT="$dropout",LEARNING_RATE="$learning_rate" \
-      slurm/training/train_unetpp_3d_cv.slurm
+      slurm/training/radius_tibia_cv/train_unetpp_3d_cv.slurm
       sleep 1
     done
   done
