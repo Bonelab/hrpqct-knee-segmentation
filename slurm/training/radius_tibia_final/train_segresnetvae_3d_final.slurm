@@ -2,11 +2,11 @@
 ####### Reserve computing resources #############
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=8
 #SBATCH --time=23:00:00
-#SBATCH --mem=0
+#SBATCH --mem=300G
 #SBATCH --partition=gpu-a100 --gres=gpu:2
-#SBATCH --job-name=SEGAN3D
+#SBATCH --job-name=SRNVAE3D
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
 #SBATCH --mail-type=END
@@ -17,15 +17,15 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 
 ####### Run your script #########################
 source activate blptl_11.1
-python -u python/training/final/train_segan_final.py \
-segan_3d_cv 16639287_f0 \
+python -u python/training/final/train_segresnetvae_final.py \
+segresnetvae_3d_cv 16639327_f0 \
 /home/njneetes/work/data/NORMXTII/radius_pickled_3d \
 /home/njneetes/work/data/NORMXTII/tibia_pickled_3d \
 /home/njneetes/work/data/HIPFX/radius_pickled_3d \
 /home/njneetes/work/data/HIPFX/tibia_pickled_3d \
---label segan_3d_final \
+--label segresnetvae_3d_final \
 --version "$SLURM_JOB_ID" \
---batch-size 16 \
+--batch-size 128 \
 --log-step-interval 3 \
 --cuda \
 --num-workers 4
