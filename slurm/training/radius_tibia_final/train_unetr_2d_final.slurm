@@ -17,7 +17,7 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 
 ####### Run your script #########################
 source activate blptl_11.1
-python -u python/training/cv/train_unet_cv.py \
+python -u python/training/final/train_unet_final.py \
 unetr_2d_cv 16639306_f0 \
 /home/njneetes/work/data/NORMXTII/radius_pickled_2d \
 /home/njneetes/work/data/NORMXTII/tibia_pickled_2d \
