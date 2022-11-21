@@ -77,21 +77,21 @@ def train_unet_2d_cv(args: Namespace) -> None:
     }
     if hparams["dropout"] < 0 or hparams["dropout"] > 1:
         raise ValueError("dropout must be between 0 and 1")
-    if hparams["model_architecture"] == "unet":
+    if hparams.get("model_architecture") == "unet" or hparams.get("model_architecture") is None:
         if len(hparams["model_channels"]) < 2:
             raise ValueError("model channels must be sequence of integers of at least length 2")
         model_kwargs["channels"] = hparams["model_channels"]
         model_kwargs["strides"] = [1 for _ in range(len(hparams["model_channels"]) - 1)]
         model_kwargs["dropout"] = hparams["dropout"]
         model = UNet(**model_kwargs)
-    elif hparams["model_architecture"] == "attention-unet":
+    elif hparams.get("model_architecture") == "attention-unet":
         if len(hparams["model_channels"]) < 2:
             raise ValueError("model channels must be sequence of integers of at least length 2")
         model_kwargs["channels"] = hparams["model_channels"]
         model_kwargs["strides"] = [1 for _ in range(len(hparams["model_channels"]) - 1)]
         model_kwargs["dropout"] = hparams["dropout"]
         model = AttentionUnet(**model_kwargs)
-    elif hparams["model_architecture"] == "unet-r":
+    elif hparams.get("model_architecture") == "unet-r":
         if hparams["image_size"] is None:
             raise ValueError("if model architecture set to `unet-r`, you must specify image size")
         if hparams["is_3d"] and len(hparams["image_size"]) != 3:
@@ -105,7 +105,7 @@ def train_unet_2d_cv(args: Namespace) -> None:
         model_kwargs["mlp_dim"] = hparams["unet_r_mlp_dim"]
         model_kwargs["num_heads"] = hparams["unet_r_num_heads"]
         model = UNETR(**model_kwargs)
-    elif hparams["model_architecture"] == "unet++":
+    elif hparams.get("model_architecture") == "unet++":
         if len(hparams["model_channels"]) != 6:
             raise ValueError("if model architecture set to `unet++`, model channels must be length-6 sequence of "
                              "integers")
