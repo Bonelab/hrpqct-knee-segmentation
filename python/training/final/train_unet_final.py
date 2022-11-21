@@ -123,7 +123,7 @@ def train_unet_2d_cv(args: Namespace) -> None:
 
     # create loss function
     loss_function = CrossEntropyLoss()
-    if hparams["model_architecture"] == "unet++":
+    if hparams.get("model_architecture") == "unet++":
         loss_function = create_unetplusplus_loss_function(loss_function)
 
     # create the task
