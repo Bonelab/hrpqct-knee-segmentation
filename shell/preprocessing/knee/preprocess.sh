@@ -6,7 +6,7 @@ do
   do
     for compartment in "medial" "lateral"
     do
-      sbatch --export=STUDY="$study",VISIT_NUM="$visit_num",BONE="$bone",COMPARTMENT="$compartment" slurm/preprocess/knee/preprocess_3d.slurm
+      sbatch --export=STUDY="$study",VISIT_NUM="$visit_num",BONE="$bone",COMPARTMENT="$compartment" slurm/preprocessing/knee/preprocess_3d.slurm
       sleep 1
     done
   done
