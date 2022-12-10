@@ -6,9 +6,9 @@ import yaml
 import os
 
 from torch.nn import BCEWithLogitsLoss, L1Loss
-from lightning_modules.SegmentationTask import SegmentationTask
-from lightning_modules.SynthesisTask import SynthesisTask
-from lightning_modules.SeGANTask import SeGANTask
+from blpytorchlightning.tasks.SegmentationTask import SegmentationTask
+from blpytorchlightning.tasks.SynthesisTask import SynthesisTask
+from blpytorchlightning.tasks.SeGANTask import SeGANTask
 
 from datasets.AIMLoader import AIMLoader
 from datasets.AIMLoaderRAM import AIMLoaderRAM
@@ -218,7 +218,7 @@ def main():
 
     task = SegmentationTask(
         model, BCEWithLogitsLoss(),
-        opt_kwargs={'lr': hparams['learning_rate']}
+        hparams['learning_rate']
     )
 
     trained_task = task.load_from_checkpoint(
@@ -359,4 +359,4 @@ def main_check_segan():
 
 
 if __name__ == '__main__':
-    main_check_segan()
+    main()

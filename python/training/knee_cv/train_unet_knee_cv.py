@@ -1,6 +1,8 @@
-from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter, Namespace
+from argparse import Namespace
 import numpy as np
+import os
 import torch
+import yaml
 from torch.nn import CrossEntropyLoss
 from torch.utils.data import DataLoader, ConcatDataset, Subset
 from pytorch_lightning import Trainer
@@ -16,116 +18,7 @@ from monai.networks.nets.attentionunet import AttentionUnet
 from monai.networks.nets.unetr import UNETR
 from monai.networks.nets.basic_unetplusplus import BasicUNetPlusPlus
 from glob import glob
-from shutil import rmtree
-
-
-def create_parser() -> ArgumentParser:
-    parser = ArgumentParser(
-        description='2D, 2.5D, or 3D UNet Training Cross-Validation Script',
-        formatter_class=ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument(
-        "data_dirs", type=str, nargs="+", metavar="DIR",
-        help="list of directories to pull data from"
-    )
-    parser.add_argument(
-        "--label", "-l", type=str, default='unet', metavar="STR",
-        help="base title to use when saving logs and model checkpoints"
-    )
-    parser.add_argument(
-        "--num-workers", "-w", type=int, default=8, metavar="N",
-        help="number of CPU workers to use to load data in parallel"
-    )
-    parser.add_argument(
-        "--model-architecture", "-ma", type=str, default="unet", metavar="STR",
-        help="model architecture to use, must be one of `unet`, `attention-unet`, `unet++` or `unet-r`"
-    )
-    parser.add_argument(
-        "--input-channels", "-ic", type=int, default=1, metavar="N",
-        help="Modify this only if you are using a 2.5D model (extra slices on channel axis)."
-    )
-    parser.add_argument(
-        "--output-channels", "-oc", type=int, default=1, metavar="N",
-        help="How many classes there are to segment images into."
-    )
-    parser.add_argument(
-        "--model-channels", "-mc", type=int, nargs='+', default=[64, 128, 256, 512], metavar="N",
-        help="sequence of filters in U-Net layers"
-    )
-    parser.add_argument(
-        "--unet-r-feature-size", "-urfs", type=int, default="16", metavar="N",
-        help="feature size for `unet-r`"
-    )
-    parser.add_argument(
-        "--unet-r-hidden-size", "-urhs", type=int, default=768, metavar="N",
-        help="hidden size for `unet-r`"
-    )
-    parser.add_argument(
-        "--unet-r-mlp-dim", "-urmlp", type=int, default=3072, metavar="N",
-        help="dimension of feed-forward layer for `unet-r`"
-    )
-    parser.add_argument(
-        "--unet-r-num-heads", "-urnh", type=int, default=12, metavar="N",
-        help="number of attention heads for `unet-r`"
-    )
-    parser.add_argument(
-        '--is-3d', '-3d', action="store_true", default=False,
-        help="set this flag to train a UNet with 3D convolutions for segmenting 3D image data"
-    )
-    parser.add_argument(
-        "--dropout", "-d", type=float, default=0.1, metavar="D",
-        help="dropout probability"
-    )
-    parser.add_argument(
-        "--epochs", "-e", type=int, default=50, metavar="N",
-        help="number of epochs to train for"
-    )
-    parser.add_argument(
-        "--learning-rate", "-lr", type=float, default=0.001, metavar="LR",
-        help="learning rate for the optimizer"
-    )
-    parser.add_argument(
-        "--batch-size", "-bs", type=int, default=128, metavar="N",
-        help='number of samples per minibatch'
-    )
-    parser.add_argument(
-        "--log-dir", "-ld", type=str, default="./logs", metavar="STR",
-        help="root directory to store all training logs in"
-    )
-    parser.add_argument(
-        "--version", "-v", type=int, default=None, metavar="N",
-        help="version number for logging"
-    )
-    parser.add_argument(
-        "--folds", "-f", type=int, default=5, metavar="N",
-        help="number of folds to use in cross-validation"
-    )
-    parser.add_argument(
-        "--log-step-interval", "-lsi", type=int, default=20, metavar="N",
-        help="log metrics every N training/validation steps"
-    )
-    parser.add_argument(
-        '--early-stopping-patience', '-esp', type=int, default=40, metavar='N',
-        help='number of epochs to train for'
-    )
-    parser.add_argument(
-        "--hours-per-fold", "-hpf", type=int, default=4,
-        help="maximum time in hours to spend training the model in each fold"
-    )
-    parser.add_argument(
-        "--cuda", "-c", action="store_true", default=False,
-        help="if enabled, check for GPUs and use them"
-    )
-    parser.add_argument(
-        "--image-size", "-is", type=int, nargs="+", default=None,
-        help="size of image, must specify if using `unet-r`"
-    )
-    parser.add_argument(
-        "--dice-loss", "-dl", action="store_true", default=False,
-        help="enable this flag to use Dice loss instead of Cross-Entropy"
-    )
-
-    return parser
+from parser import create_parser
 
 
 # we need a factory function for creating a loss function that can be used for the unet++
@@ -139,6 +32,11 @@ def create_unetplusplus_loss_function(loss_function):
 
 
 def train_unet_cv(args: Namespace) -> None:
+    # load the hyperparameters from file
+    # with open(os.path.join(args.log_dir, args.reference_label, args.reference_version, "hparams.yaml")) as f:
+    #     hparams = yaml.safe_load(f)
+    with open(os.path.join(args.log_dir, args.reference_label, args.reference_version, "ref_hparams.yaml")) as f:
+        ref_hparams = yaml.safe_load(f)
 
     # check if we are using CUDA and set accelerator, devices, strategy
     if args.cuda:
@@ -156,10 +54,9 @@ def train_unet_cv(args: Namespace) -> None:
         strategy = None
 
     # create datasets
-    transformer = TensorOneHotEncoder(num_classes=args.output_channels) if args.dice_loss else None
     datasets = []
     for data_dir in args.data_dirs:
-        datasets.append(PickledDataset(data_dir, transformer=transformer))
+        datasets.append(PickledDataset(data_dir))
     dataset = ConcatDataset(datasets)
 
     # create the fold index lists
@@ -177,9 +74,8 @@ def train_unet_cv(args: Namespace) -> None:
 
     # start the cross-validation loop
     for f in range(args.folds):
-
         print("=" * 40)
-        print(f"FOLD {f+1} / {args.folds}")
+        print(f"FOLD {f + 1} / {args.folds}")
         print("=" * 40)
 
         # create dataloaders
@@ -197,66 +93,82 @@ def train_unet_cv(args: Namespace) -> None:
 
         # create the model
         model_kwargs = {
-            "spatial_dims": 3 if args.is_3d else 2,
-            "in_channels": args.input_channels,
-            "out_channels": args.output_channels,
+            "spatial_dims": 3 if ref_hparams["is_3d"] else 2,
+            "in_channels": ref_hparams["input_channels"],
+            "out_channels": ref_hparams["output_channels"],
         }
-        if args.dropout < 0 or args.dropout > 1:
+        if ref_hparams["dropout"] < 0 or ref_hparams["dropout"] > 1:
             raise ValueError("dropout must be between 0 and 1")
-        if args.model_architecture == "unet":
-            if len(args.model_channels) < 2:
+        if ref_hparams.get("model_architecture") == "unet" or ref_hparams.get("model_architecture") is None:
+            if len(ref_hparams["model_channels"]) < 2:
                 raise ValueError("model channels must be sequence of integers of at least length 2")
-            model_kwargs["channels"] = args.model_channels
-            model_kwargs["strides"] = [1 for _ in range(len(args.model_channels) - 1)]
-            model_kwargs["dropout"] = args.dropout
+            model_kwargs["channels"] = ref_hparams["model_channels"]
+            model_kwargs["strides"] = [1 for _ in range(len(ref_hparams["model_channels"]) - 1)]
+            model_kwargs["dropout"] = ref_hparams["dropout"]
             model = UNet(**model_kwargs)
-        elif args.model_architecture == "attention-unet":
-            if len(args.model_channels) < 2:
+        elif ref_hparams.get("model_architecture") == "attention-unet":
+            if len(ref_hparams["model_channels"]) < 2:
                 raise ValueError("model channels must be sequence of integers of at least length 2")
-            model_kwargs["channels"] = args.model_channels
-            model_kwargs["strides"] = [1 for _ in range(len(args.model_channels) - 1)]
-            model_kwargs["dropout"] = args.dropout
+            model_kwargs["channels"] = ref_hparams["model_channels"]
+            model_kwargs["strides"] = [1 for _ in range(len(ref_hparams["model_channels"]) - 1)]
+            model_kwargs["dropout"] = ref_hparams["dropout"]
             model = AttentionUnet(**model_kwargs)
-        elif args.model_architecture == "unet-r":
-            if args.image_size is None:
+        elif ref_hparams.get("model_architecture") == "unet-r":
+            if ref_hparams["image_size"] is None:
                 raise ValueError("if model architecture set to `unet-r`, you must specify image size")
-            if args.is_3d and len(args.image_size) != 3:
+            if ref_hparams["is_3d"] and len(ref_hparams["image_size"]) != 3:
                 raise ValueError("if 3D, image_size must be integer or length-3 sequence of integers")
-            if not args.is_3d and len(args.image_size) != 2:
+            if not ref_hparams["is_3d"] and len(ref_hparams["image_size"]) != 2:
                 raise ValueError("if not 3D, image_size must be integer or length-2 sequence of integers")
-            model_kwargs["img_size"] = args.image_size
-            model_kwargs["dropout_rate"] = args.dropout
-            model_kwargs["feature_size"] = args.unet_r_feature_size
-            model_kwargs["hidden_size"] = args.unet_r_hidden_size
-            model_kwargs["mlp_dim"] = args.unet_r_mlp_dim
-            model_kwargs["num_heads"] = args.unet_r_num_heads
+            model_kwargs["img_size"] = ref_hparams["image_size"]
+            model_kwargs["dropout_rate"] = ref_hparams["dropout"]
+            model_kwargs["feature_size"] = ref_hparams["unet_r_feature_size"]
+            model_kwargs["hidden_size"] = ref_hparams["unet_r_hidden_size"]
+            model_kwargs["mlp_dim"] = ref_hparams["unet_r_mlp_dim"]
+            model_kwargs["num_heads"] = ref_hparams["unet_r_num_heads"]
             model = UNETR(**model_kwargs)
-        elif args.model_architecture == "unet++":
-            if len(args.model_channels) != 6:
+        elif ref_hparams.get("model_architecture") == "unet++":
+            if len(ref_hparams["model_channels"]) != 6:
                 raise ValueError("if model architecture set to `unet++`, model channels must be length-6 sequence of "
                                  "integers")
-            model_kwargs["features"] = args.model_channels
-            model_kwargs["dropout"] = args.dropout
+            model_kwargs["features"] = ref_hparams["model_channels"]
+            model_kwargs["dropout"] = ref_hparams["dropout"]
             model = BasicUNetPlusPlus(**model_kwargs)
             if strategy == "ddp_find_unused_parameters_false":
                 strategy = "ddp"
                 print(f"using `unet++`, so changing strategy to {strategy}")
         else:
             raise ValueError(f"model architecture must be `unet`, `attention-unet`, `unet++`, or `unet-r`, "
-                             f"given {args.model_architecture}")
+                             f"given {ref_hparams['model_architecture']}")
 
         model.float()
 
         # create loss function
-        loss_function = DiceLoss() if args.dice_loss else CrossEntropyLoss()
-        if args.model_architecture == "unet++":
+        loss_function = CrossEntropyLoss()
+        if ref_hparams.get("model_architecture") == "unet++":
             loss_function = create_unetplusplus_loss_function(loss_function)
+
+        checkpoint_path = glob(
+            os.path.join(
+                args.log_dir,
+                args.reference_label,
+                args.reference_version,
+                "checkpoints",
+                "*.ckpt"
+            )
+        )[0]
+        print(f"Loading model and task from: {checkpoint_path}")
 
         # create the task
         task = SegmentationTask(
-            model, loss_function,
-            learning_rate=args.learning_rate,
-            ohe_targets=args.dice_loss
+            model=model, loss_function=loss_function,
+            learning_rate=ref_hparams["learning_rate"]
+        )
+
+        task = task.load_from_checkpoint(
+            checkpoint_path,
+            model=model, loss_function=loss_function,
+            learning_rate=ref_hparams["learning_rate"]
         )
 
         # create loggers
@@ -289,9 +201,10 @@ def train_unet_cv(args: Namespace) -> None:
         trainer.fit(task, train_dataloader, val_dataloader)
 
 
-def main() -> None:
+
+def main():
     # get parameters from command line
-    args = create_parser().parse_args()
+    args = create_parser("UNet").parse_args()
 
     training_complete = False
 

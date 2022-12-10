@@ -31,7 +31,7 @@ def create_unetplusplus_loss_function(loss_function):
     return unetplusplus_loss_function
 
 
-def train_unet_2d_cv(args: Namespace) -> None:
+def train_unet_cv(args: Namespace) -> None:
     # load the hyperparameters from file
     with open(os.path.join(args.log_dir, args.reference_label, args.reference_version, "hparams.yaml")) as f:
         hparams = yaml.safe_load(f)
@@ -171,7 +171,7 @@ def main() -> None:
     while not training_complete:
         try:
             # attempt to train at current batch size
-            train_unet_2d_cv(args)
+            train_unet_cv(args)
             # if successful, set the flag to end the while loop
             training_complete = True
         except RuntimeError as err:
