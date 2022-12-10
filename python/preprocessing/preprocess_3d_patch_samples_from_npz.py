@@ -72,6 +72,7 @@ def main():
     if not args.idx_end:
         args.idx_end = len(dataset)
     idxs = np.arange(args.idx_start, args.idx_end, dtype=int)
+    print(idxs)
     dataset.pickle_dataset(args.pickle_dir, idxs, args.epochs, args=args)
 
 
