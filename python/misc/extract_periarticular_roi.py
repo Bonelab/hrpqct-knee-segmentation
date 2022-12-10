@@ -25,6 +25,8 @@ def create_parser() -> ArgumentParser:
         help='the directory where the images are stored'
     )
 
+    return parser
+
 
 def get_roi_codes(bone: str):
     # for each bone/side, codes are given in a tuple in order: sc plate, shallow, medium, deep
@@ -43,6 +45,8 @@ def get_roi_codes(bone: str):
 
 
 def read_image_to_numpy(reader: vtkboneAIMReader, filename: str, image_type: ImageType) -> Tuple[np.ndarray, list]:
+    if not os.path.isfile(filename):
+        raise FileNotFoundError(f"{filename} does not exist!")
     reader.SetFileName(filename)
     reader.Update()
     data = vtkImageData_to_numpy(reader.GetOutput())
@@ -105,7 +109,7 @@ def main():
                 try:
                     os.mkdir(os.path.join(args.image_dir, side))
                 except FileExistsError:
-                    print(f"Directory already exists: {os.path.join(args.image_dir, side)}")
+                    pass
                 aims = [(image, image_position), (cort, cort_position), (trab, trab_position)]
                 for roi_code in roi_code_list:
                     aims.append(
@@ -124,7 +128,7 @@ def main():
                     os.path.join(args.image_dir, side, f"{Path(image_fn).stem}.npz"),
                     image=cropped_image, cort_mask=cropped_cort, trab_mask=cropped_trab
                 )
-                print(f"succeeded for {image_fn}")
+            print(f"succeeded for {image_fn}")
 
         except FileNotFoundError:
             print(f"failed for {image_fn}")
