@@ -1,4 +1,4 @@
-from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter, Namespace
 import yaml
 
 
@@ -51,6 +51,11 @@ def create_parser():
     return parser
 
 
+def write_script(config: dict) -> None:
+    pass
+
+
+
 def main():
     config = vars(create_parser().parse_args())
 
@@ -61,8 +66,7 @@ def main():
                 if k != "yaml_file":
                     config[k] = v
 
-
-
+    write_script(config)
 
 
 if __name__ == "__main__":
