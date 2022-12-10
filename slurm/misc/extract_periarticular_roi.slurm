@@ -18,4 +18,4 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 source activate blptl_11.1
 
 ####### Run your script #########################
-python -u python/misc/extract_periarticular_roi.py /home/njneetes/work/data/SALTAC/visit_1/femur
+python -u python/misc/extract_periarticular_roi.py /home/njneetes/work/data/SALTAC/visit_"$VISIT_NUM"/"$BONE"
