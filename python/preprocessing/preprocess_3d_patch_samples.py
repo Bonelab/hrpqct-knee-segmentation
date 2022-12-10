@@ -11,7 +11,7 @@ from blpytorchlightning.dataset_components.datasets.ComposedDataset import Compo
 
 def create_parser():
     parser = ArgumentParser(
-        description='HRpQCT Segmentation 2.5D UNet - 3D Fusion Preprocessing Script',
+        description='HRpQCT Segmentation 3D Preprocessing Script',
         formatter_class=ArgumentDefaultsHelpFormatter
     )
 
