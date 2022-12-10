@@ -82,11 +82,12 @@ def get_bounding_box(img):
 
 
 def main():
-    # args = create_parser().parse_args()
-    args = Namespace()
-    args.image_dir = "/Users/nathanneeteson/Documents/Data/Images/SALTAC/visit_1/tibia"
+    args = create_parser().parse_args()
 
     image_fn_list = glob(os.path.join(args.image_dir, "*_?.AIM"))
+
+    print("Images found:")
+    print(image_fn_list)
 
     reader = vtkboneAIMReader()
     reader.DataOnCellsOff()
