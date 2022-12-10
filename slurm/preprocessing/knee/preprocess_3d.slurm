@@ -18,7 +18,7 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 source activate blptl
 
 ####### Run your script #########################
-python -u python/preprocessing/preprocess_3d_patch_samples.py \
+python -u python/preprocessing/preprocess_3d_patch_samples_from_npz.py \
 /home/njneetes/work/data/"$STUDY"/visit_"$VISIT_NUM"/"$BONE"/"$COMPARTMENT" \
 /home/njneetes/work/data/"$STUDY"/visit_"$VISIT_NUM"/"$BONE"/"$COMPARTMENT"_pickled_3d \
 --patch-width 64 -e 20
