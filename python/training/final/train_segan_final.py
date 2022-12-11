@@ -3,7 +3,6 @@ import os
 import torch
 import yaml
 from torch.nn import L1Loss
-from torch.nn import CrossEntropyLoss
 from torch.utils.data import DataLoader, ConcatDataset, Subset
 from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import CSVLogger
