@@ -40,4 +40,5 @@ segresnetvae_3d_final version_16825519 \
 --folds 5 \
 --num-workers 6 \
 --batch-size 128 \
---log-step-interval 3
+--log-step-interval 3 \
+--cuda

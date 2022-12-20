@@ -40,4 +40,5 @@ unetr_3d_final version_16826609 \
 --folds 5 \
 --num-workers 6 \
 --batch-size 16 \
---log-step-interval 3
+--log-step-interval 3 \
+--cuda
