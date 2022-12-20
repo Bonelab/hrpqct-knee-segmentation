@@ -23,20 +23,20 @@ def train_segan_cv(args: Namespace) -> None:
     with open(os.path.join(args.log_dir, args.reference_label, args.reference_version, "ref_hparams.yaml")) as f:
         ref_hparams = yaml.safe_load(f)
 
-    # check if we are using CUDA and set accelerator, devices, strategy
-    if args.cuda:
-        if torch.cuda.is_available():
-            accelerator = "gpu"
-            num_devices = torch.cuda.device_count()
-            strategy = "ddp_find_unused_parameters_false" if num_devices > 1 else None
-            print(f"CUDA enabled and available, using {num_devices} GPUs with strategy: {strategy}")
+        # check if we are using CUDA and set accelerator, devices, strategy
+        if args.cuda:
+            if torch.cuda.is_available():
+                accelerator = "gpu"
+                num_devices = torch.cuda.device_count()
+                strategy = "ddp" if num_devices > 1 else None
+                print(f"CUDA enabled and available, using {num_devices} GPUs with strategy: {strategy}")
+            else:
+                raise RuntimeError("CUDA enabled but not available.")
         else:
-            raise RuntimeError("CUDA enabled but not available.")
-    else:
-        print("CUDA not requested, training on CPU.")
-        accelerator = "cpu"
-        num_devices = 1
-        strategy = None
+            print("CUDA not requested, training on CPU.")
+            accelerator = "cpu"
+            num_devices = 1
+            strategy = None
 
     # create datasets
     datasets = []
