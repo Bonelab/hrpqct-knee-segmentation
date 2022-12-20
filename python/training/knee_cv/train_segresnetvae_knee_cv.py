@@ -1,22 +1,22 @@
-from argparse import Namespace
 import numpy as np
 import os
 import torch
 import yaml
-from torch.nn import L1Loss
+from torch.nn import CrossEntropyLoss
+from torchmetrics import Dice
 from torch.utils.data import DataLoader, ConcatDataset, Subset
 from pytorch_lightning import Trainer
-from pytorch_lightning.tuner.tuning import Tuner
-from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
+from pytorch_lightning.loggers import CSVLogger
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-from blpytorchlightning.tasks.SeGANTask import SeGANTask
+from blpytorchlightning.tasks.SegResNetVAETask import SegResNetVAETask
 from blpytorchlightning.dataset_components.datasets.PickledDataset import PickledDataset
-from blpytorchlightning.models.SeGAN import get_segmentor_and_discriminators
+from blpytorchlightning.loss_functions.DiceLoss import DiceLoss
+from monai.networks.nets.segresnet import SegResNetVAE
 from glob import glob
 from parser import create_parser
 
 
-def train_segan_cv(args: Namespace) -> None:
+def train_segresnetvae_cv(args):
     # load the hyperparameters from file
     # with open(os.path.join(args.log_dir, args.reference_label, args.reference_version, "hparams.yaml")) as f:
     #     hparams = yaml.safe_load(f)
@@ -28,7 +28,7 @@ def train_segan_cv(args: Namespace) -> None:
         if torch.cuda.is_available():
             accelerator = "gpu"
             num_devices = torch.cuda.device_count()
-            strategy = "ddp_find_unused_parameters_false" if num_devices > 1 else None
+            strategy = "ddp" if num_devices > 1 else None
             print(f"CUDA enabled and available, using {num_devices} GPUs with strategy: {strategy}")
         else:
             raise RuntimeError("CUDA enabled but not available.")
@@ -76,20 +76,24 @@ def train_segan_cv(args: Namespace) -> None:
             **dataloader_kwargs
         )
 
-        # create the model
+        # create model
         model_kwargs = {
-            'input_channels': ref_hparams["input_channels"],
-            'output_classes': ref_hparams["output_channels"],
-            'num_filters': ref_hparams["model_channels"],
-            'channels_per_group': ref_hparams["channels_per_group"],
-            'upsample_mode': ref_hparams["upsample_mode"],
-            'is_3d': ref_hparams["is_3d"]
+            "spatial_dims": 3 if ref_hparams["is_3d"] else 2,
+            "input_image_size": ref_hparams["image_size"],
+            "in_channels": ref_hparams["input_channels"],
+            "out_channels": ref_hparams["output_channels"],
+            "dropout_prob": ref_hparams["dropout"],
+            "init_filters": ref_hparams["init_filters"],
+            "blocks_down": tuple(ref_hparams["blocks_down"]),
+            "blocks_up": tuple(ref_hparams["blocks_up"]),
+            "upsample_mode": "pixelshuffle"
         }
-        segmentor, discriminators = get_segmentor_and_discriminators(**model_kwargs)
-        segmentor.float()
-        for d in discriminators:
-            d.float()
+        model = SegResNetVAE(**model_kwargs)
 
+        # create loss function
+        loss_function = CrossEntropyLoss()
+
+        # create checkpoint path
         checkpoint_path = glob(
             os.path.join(
                 args.log_dir,
@@ -101,19 +105,15 @@ def train_segan_cv(args: Namespace) -> None:
         )[0]
         print(f"Loading model and task from: {checkpoint_path}")
 
-        # create the task
-        task = SeGANTask(
-            segmentor,
-            discriminators,
-            L1Loss(),
+        # create task
+        task = SegResNetVAETask(
+            model, loss_function,
             learning_rate=ref_hparams["learning_rate"]
         )
 
-        task = task.load_from_checkpoint(
+        task.load_from_checkpoint(
             checkpoint_path,
-            segmentor=segmentor,
-            discriminators=discriminators,
-            loss_function=L1Loss(),
+            model=model, loss_function=loss_function,
             learning_rate=ref_hparams["learning_rate"]
         )
 
@@ -121,13 +121,13 @@ def train_segan_cv(args: Namespace) -> None:
         logger_kwargs = {
             "save_dir": args.log_dir,
             "name": args.label,
-            "version": f"{args.version}_f{f}"
+            "version": args.version
         }
         csv_logger = CSVLogger(**logger_kwargs)
 
         # create callbacks
         early_stopping = EarlyStopping(
-            monitor='val_dsc_0',
+            monitor='train_dsc_0',
             mode='max',
             patience=args.early_stopping_patience
         )
@@ -147,9 +147,9 @@ def train_segan_cv(args: Namespace) -> None:
         trainer.fit(task, train_dataloader, val_dataloader)
 
 
-def main():
+def main() -> None:
     # get parameters from command line
-    args = create_parser("SeGAN").parse_args()
+    args = create_parser("SegResNetVAE").parse_args()
 
     training_complete = False
 
@@ -157,7 +157,7 @@ def main():
     while not training_complete:
         try:
             # attempt to train at current batch size
-            train_segan_cv(args)
+            train_segresnetvae_cv(args)
             # if successful, set the flag to end the while loop
             training_complete = True
         except RuntimeError as err:
