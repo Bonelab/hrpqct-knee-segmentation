@@ -121,7 +121,7 @@ def train_segresnetvae_cv(args):
         logger_kwargs = {
             "save_dir": args.log_dir,
             "name": args.label,
-            "version": args.version
+            "version": f"{args.version}_f{f}"
         }
         csv_logger = CSVLogger(**logger_kwargs)
 
