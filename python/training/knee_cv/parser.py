@@ -37,7 +37,7 @@ def create_parser(model_type: str) -> ArgumentParser:
         help="number of CPU workers to use to load data in parallel"
     )
     parser.add_argument(
-        "--epochs", "-e", type=int, default=100, metavar="N",
+        "--epochs", "-e", type=int, default=1000, metavar="N",
         help="number of epochs to train for"
     )
     parser.add_argument(
