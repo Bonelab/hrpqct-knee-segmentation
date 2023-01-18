@@ -17,8 +17,20 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 
 ####### Run your script #########################
 source activate blptl_11.1
-python -u python/training/knee_cv/train_segresnetvae_knee_cv.py \
-segresnetvae_3d_final version_16825519 \
+python -u python/training/cv/train_segresnetvae_cv.py \
+--image-size 64 64 64 \
+--label segresnetvae_3d_knee_base_cv \
+--version "$SLURM_JOB_ID" \
+--input-channels 1 \
+--output-channels 3 \
+--batch-size 128 \
+--dropout "$DROPOUT" \
+--learning-rate "$LEARNING_RATE" \
+--log-step-interval 3 \
+--cuda \
+--folds 5 \
+--num-workers 4 \
+--is-3d \
 /home/njneetes/work/data/SALTAC/visit_1/femur/medial_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_1/femur/lateral_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_1/tibia/medial_pickled_3d \
@@ -34,11 +46,4 @@ segresnetvae_3d_final version_16825519 \
 /home/njneetes/work/data/SALTAC/visit_4/femur/medial_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_4/femur/lateral_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_4/tibia/medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_4/tibia/lateral_pickled_3d \
---label segresnetvae_3d_knee_cv \
---version "$SLURM_JOB_ID" \
---folds 5 \
---num-workers 6 \
---batch-size 128 \
---log-step-interval 3 \
---cuda
+/home/njneetes/work/data/SALTAC/visit_4/tibia/lateral_pickled_3d

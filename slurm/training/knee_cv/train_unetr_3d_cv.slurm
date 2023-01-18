@@ -17,8 +17,22 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 
 ####### Run your script #########################
 source activate blptl_11.1
-python -u python/training/knee_cv/train_unet_knee_cv.py \
-unetr_3d_final version_16826609 \
+# shellcheck disable=SC2068
+python -u python/training/cv/train_unet_cv.py \
+--model-architecture unet-r \
+--image-size 64 64 64 \
+--label unetr_3d_knee_base_cv \
+--version "$SLURM_JOB_ID" \
+--input-channels 1 \
+--output-channels 3 \
+--batch-size 16 \
+--dropout "$DROPOUT" \
+--learning-rate "$LEARNING_RATE" \
+--log-step-interval 3 \
+--cuda \
+--folds 5 \
+--num-workers 4 \
+--is-3d \
 /home/njneetes/work/data/SALTAC/visit_1/femur/medial_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_1/femur/lateral_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_1/tibia/medial_pickled_3d \
@@ -34,11 +48,4 @@ unetr_3d_final version_16826609 \
 /home/njneetes/work/data/SALTAC/visit_4/femur/medial_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_4/femur/lateral_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_4/tibia/medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_4/tibia/lateral_pickled_3d \
---label unetr_3d_knee_cv \
---version "$SLURM_JOB_ID" \
---folds 5 \
---num-workers 6 \
---batch-size 16 \
---log-step-interval 3 \
---cuda
+/home/njneetes/work/data/SALTAC/visit_4/tibia/lateral_pickled_3d
