@@ -298,7 +298,7 @@ def train_unet_cv(args: Namespace) -> None:
         classification_loss_function = DiceLoss() if args.dice_loss else CrossEntropyLoss()
 
         curvature_kwargs = {
-            "voxel_width": args.voxel_width
+            "voxel_width": args.voxel_width,
             "curvature_threshold": args.curvature_regularization_threshold
         }
         curvature_loss_function = (
