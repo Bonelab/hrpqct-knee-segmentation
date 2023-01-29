@@ -292,7 +292,7 @@ def train_unet_cv(args: Namespace) -> None:
         )
 
         # create the model
-        model, strategy = create_model(args)
+        model, strategy = create_model(args, strategy)
 
         # create loss functions and embedding conversion functions
         classification_loss_function = DiceLoss() if args.dice_loss else CrossEntropyLoss()
