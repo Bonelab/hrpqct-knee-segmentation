@@ -3,8 +3,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --time=12:00:00
-#SBATCH --mem=32G
+#SBATCH --time=6:00:00
+#SBATCH --mem=64G
 #SBATCH --job-name=Preprocess_Train
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
