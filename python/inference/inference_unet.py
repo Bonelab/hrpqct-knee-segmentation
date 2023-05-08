@@ -205,18 +205,20 @@ def infer_segmentation(
     print(f"After padding, image has shape: {image.shape}")
 
     # step 6: perform inference one patch at a time
-    ni, nj, nk = [s//patch_width for s in image.shape]
-    print(f"Total number of patches: {ni*nj*nk}")
-    for i, j, k in tqdm(np.ndindex(ni, nj, nk)):
-        st = (
-            slice(i * patch_width, (i + 1) * patch_width),
-            slice(j * patch_width, (j + 1) * patch_width),
-            slice(k * patch_width, (k + 1) * patch_width)
-        )
-        y_hat = task(torch.from_numpy(image[st]).unsqueeze(0).unsqueeze(0).float())
-        if isinstance(y_hat, list):
-            y_hat = y_hat[-1]
-        mask[st] = torch.argmax(y_hat.squeeze(0), dim=0).numpy()
+    task.model.eval()
+    with torch.no_grad():
+        ni, nj, nk = [s//patch_width for s in image.shape]
+        print(f"Total number of patches: {ni*nj*nk}")
+        for i, j, k in tqdm(np.ndindex(ni, nj, nk)):
+            st = (
+                slice(i * patch_width, (i + 1) * patch_width),
+                slice(j * patch_width, (j + 1) * patch_width),
+                slice(k * patch_width, (k + 1) * patch_width)
+            )
+            y_hat = task(torch.from_numpy(image[st]).unsqueeze(0).unsqueeze(0).float())
+            if isinstance(y_hat, list):
+                y_hat = y_hat[-1]
+            mask[st] = torch.argmax(y_hat.squeeze(0), dim=0).numpy()
     print("Inference complete.")
 
     # step 7: trim back to original size
