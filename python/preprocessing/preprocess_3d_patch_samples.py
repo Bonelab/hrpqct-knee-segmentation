@@ -57,7 +57,7 @@ def main():
 
     # create dataset
     file_loader = AIMLoader(args.data_dir, '*_*_??.AIM')
-    sampler = ForegroundPatchSampler(patch_width=args.patch_width)
+    sampler = ForegroundPatchSampler(patch_width=args.patch_width, prob=0.5)
     transformer = ComposedTransformers([
         Rescaler(intensity_bounds=[args.min_density, args.max_density]),
         TensorConverter()

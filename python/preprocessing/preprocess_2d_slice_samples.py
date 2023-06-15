@@ -61,7 +61,7 @@ def main():
     file_loader = AIMLoader(args.data_dir, '*_*_??.AIM')
     sampler = ComposedSampler([
         SliceSampler(),
-        ForegroundPatchSampler(patch_width=args.patch_width)
+        ForegroundPatchSampler(patch_width=args.patch_width, prob=0.5)
     ])
     transformer = ComposedTransformers([
         Rescaler(intensity_bounds=[args.min_density, args.max_density]),
