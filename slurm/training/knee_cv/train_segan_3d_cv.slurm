@@ -33,19 +33,19 @@ python -u python/training/cv/train_segan_cv.py \
 --folds 5 \
 --num-workers 6 \
 --upsample-mode trilinear --is-3d \
-/home/njneetes/work/data/SALTAC/visit_1/femur/preprocessed/medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_1/femur/preprocessed/lateral_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_1/tibia/preprocessed/medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_1/tibia/preprocessed/lateral_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_2/femur/preprocessed/medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_2/femur/preprocessed/lateral_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_2/tibia/preprocessed/medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_2/tibia/preprocessed/lateral_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_3/femur/preprocessed/medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_3/femur/preprocessed/lateral_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_3/tibia/preprocessed/medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_3/tibia/preprocessed/lateral_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_4/femur/preprocessed/medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_4/femur/preprocessed/lateral_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_4/tibia/preprocessed/medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_4/tibia/preprocessed/lateral_pickled_3d
+/home/njneetes/work/data/SALTAC/visit_1/preprocessed/femur_medial_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_1/preprocessed/femur_lateral_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_1/preprocessed/tibia_medial_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_1/preprocessed/tibia_lateral_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_2/preprocessed/femur_medial_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_2/preprocessed/femur_lateral_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_2/preprocessed/tibia_medial_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_2/preprocessed/tibia_lateral_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_3/preprocessed/femur_medial_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_3/preprocessed/femur_lateral_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_3/preprocessed/tibia_medial_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_3/preprocessed/tibia_lateral_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_4/preprocessed/femur_medial_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_4/preprocessed/femur_lateral_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_medial_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_lateral_pickled_3d
