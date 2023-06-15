@@ -61,7 +61,7 @@ def main():
         inputs_keys=["image"], targets_keys=["cort_mask", "trab_mask"],
         inputs_type=float, targets_type=int, binarize_targets=True, add_null_class_to_targets=True
     )
-    sampler = ForegroundPatchSampler(patch_width=args.patch_width)
+    sampler = ForegroundPatchSampler(patch_width=args.patch_width, prob=0.5)
     transformer = ComposedTransformers([
         Rescaler(intensity_bounds=[args.min_density, args.max_density]),
         TensorConverter()
