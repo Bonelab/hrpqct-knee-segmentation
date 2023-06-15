@@ -33,7 +33,7 @@ python -u python/training/cv/train_unet_cv.py \
 --folds 5 \
 --num-workers 4 \
 --is-3d \
-/home/njneetes/work/data/NORMXTII/radius_pickled_3d \
-/home/njneetes/work/data/NORMXTII/tibia_pickled_3d \
-/home/njneetes/work/data/HIPFX/radius_pickled_3d \
-/home/njneetes/work/data/HIPFX/tibia_pickled_3d
+/home/njneetes/work/data/NORMXTII/preprocessed/radius_pickled_3d \
+/home/njneetes/work/data/NORMXTII/preprocessed/tibia_pickled_3d \
+/home/njneetes/work/data/HIPFX/preprocessed/radius_pickled_3d \
+/home/njneetes/work/data/HIPFX/preprocessed/tibia_pickled_3d

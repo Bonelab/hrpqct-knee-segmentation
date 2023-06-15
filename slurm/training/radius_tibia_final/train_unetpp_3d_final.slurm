@@ -19,10 +19,10 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 source activate blptl_11.1
 python -u python/training/final/train_unet_final.py \
 unetpp_3d_cv 16639320_f0 \
-/home/njneetes/work/data/NORMXTII/radius_pickled_3d \
-/home/njneetes/work/data/NORMXTII/tibia_pickled_3d \
-/home/njneetes/work/data/HIPFX/radius_pickled_3d \
-/home/njneetes/work/data/HIPFX/tibia_pickled_3d \
+/home/njneetes/work/data/NORMXTII/preprocessed/radius_pickled_3d \
+/home/njneetes/work/data/NORMXTII/preprocessed/tibia_pickled_3d \
+/home/njneetes/work/data/HIPFX/preprocessed/radius_pickled_3d \
+/home/njneetes/work/data/HIPFX/preprocessed/tibia_pickled_3d \
 --label unetpp_3d_final \
 --version "$SLURM_JOB_ID" \
 --batch-size 16 \

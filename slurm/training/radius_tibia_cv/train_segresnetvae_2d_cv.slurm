@@ -30,7 +30,7 @@ python -u python/training/cv/train_segresnetvae_cv.py \
 --cuda \
 --folds 5 \
 --num-workers 4 \
-/home/njneetes/work/data/NORMXTII/radius_pickled_2d \
-/home/njneetes/work/data/NORMXTII/tibia_pickled_2d \
-/home/njneetes/work/data/HIPFX/radius_pickled_2d \
-/home/njneetes/work/data/HIPFX/tibia_pickled_2d
+/home/njneetes/work/data/NORMXTII/preprocessed/radius_pickled_2d \
+/home/njneetes/work/data/NORMXTII/preprocessed/tibia_pickled_2d \
+/home/njneetes/work/data/HIPFX/preprocessed/radius_pickled_2d \
+/home/njneetes/work/data/HIPFX/preprocessed/tibia_pickled_2d
