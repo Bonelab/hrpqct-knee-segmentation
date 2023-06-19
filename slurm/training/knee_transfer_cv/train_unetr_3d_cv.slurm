@@ -18,7 +18,7 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 ####### Run your script #########################
 source activate blptl_11.1
 python -u python/training/knee_cv/train_unet_knee_cv.py \
-unetr_3d_final version_16826609 \
+unetr_3d_final version_21096526 \
 /home/njneetes/work/data/SALTAC/visit_1/preprocessed/femur_medial_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_1/preprocessed/femur_lateral_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_1/preprocessed/tibia_medial_pickled_3d \
@@ -35,7 +35,7 @@ unetr_3d_final version_16826609 \
 /home/njneetes/work/data/SALTAC/visit_4/preprocessed/femur_lateral_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_medial_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_lateral_pickled_3d \
---label unetr_3d_knee_cv \
+--label unetr_3d_knee_transfer_cv \
 --version "$SLURM_JOB_ID" \
 --folds 5 \
 --num-workers 6 \
