@@ -18,7 +18,7 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 ####### Run your script #########################
 source activate blptl_11.1
 python -u python/training/final/train_segresnetvae_final.py \
-segresnetvae_3d_cv 16639327_f0 \
+segresnetvae_3d_cv 20956391_f0 \
 /home/njneetes/work/data/NORMXTII/preprocessed/radius_pickled_3d \
 /home/njneetes/work/data/NORMXTII/preprocessed/tibia_pickled_3d \
 /home/njneetes/work/data/HIPFX/preprocessed/radius_pickled_3d \

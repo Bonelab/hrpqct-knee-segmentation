@@ -1,20 +1,20 @@
 #!/bin/bash
-sbatch slurm/training/radius_tibia_final/train_segan_2d_final.slurm
+#sbatch slurm/training/radius_tibia_final/train_segan_2d_final.slurm
 sleep 1
 sbatch slurm/training/radius_tibia_final/train_segan_3d_final.slurm
 sleep 1
-sbatch slurm/training/radius_tibia_final/train_segresnetvae_2d_final.slurm
+#sbatch slurm/training/radius_tibia_final/train_segresnetvae_2d_final.slurm
 sleep 1
 sbatch slurm/training/radius_tibia_final/train_segresnetvae_3d_final.slurm
 sleep 1
-sbatch slurm/training/radius_tibia_final/train_unet_2d_final.slurm
+#sbatch slurm/training/radius_tibia_final/train_unet_2d_final.slurm
 sleep 1
 sbatch slurm/training/radius_tibia_final/train_unet_3d_final.slurm
 sleep 1
-sbatch slurm/training/radius_tibia_final/train_unetpp_2d_final.slurm
+#sbatch slurm/training/radius_tibia_final/train_unetpp_2d_final.slurm
 sleep 1
 sbatch slurm/training/radius_tibia_final/train_unetpp_3d_final.slurm
 sleep 1
-sbatch slurm/training/radius_tibia_final/train_unetr_2d_final.slurm
+#sbatch slurm/training/radius_tibia_final/train_unetr_2d_final.slurm
 sleep 1
 sbatch slurm/training/radius_tibia_final/train_unetr_3d_final.slurm
