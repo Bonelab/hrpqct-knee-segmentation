@@ -1,0 +1,52 @@
+#!/bin/bash
+####### Reserve computing resources #############
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=8:00:00
+#SBATCH --mem=32G
+#SBATCH --job-name=Atlas-CV
+#SBATCH --mail-user=njneetes@ucalgary.ca
+#SBATCH --mail-type=BEGIN
+#SBATCH --mail-type=END
+#SBATCH --mail-type=FAIL
+
+####### Set environment variables ###############
+export PATH="$HOME/software/miniconda3/bin:$PATH"
+export SCRATCH_DIR="/home/njneetes/work/scratch/nathan/atlas_cv"
+
+####### Run your script #########################
+source activate blptl_11.1
+# STEP 0: move all images into the scratch directory
+# STEP 1: construct an atlas using all but one image
+python python/atlas/generate_affine_atlas.py \
+/scratch/"${SLURM_JOB_ID}"/atlas.nii \
+/scratch/"${SLURM_JOB_ID}"/atlas_mask.nii.gz \
+-img \
+"$ATLAS_IMAGES" \
+-msk \
+"$ATLAS_MASKS" \
+-dss 0.5 -dsf 8 -ow -ss 8 4 2 1 -sf 16 8 4 2 \
+-mai 100 -opt Powell -sm Correlation -smss Regular -smsr 0.3 \
+-ds 2 -us 2 -dt diffeomorphic -mdi 60
+# STEP 2: register that one image to the atlas
+blRegistrationDemons \
+"$VALIDATION_IMAGE" \
+/scratch/"${SLURM_JOB_ID}"/atlas.nii \
+/scratch/"${SLURM_JOB_ID}"/transform.nii \
+-ow -mida -dsf 8 -dss 0.5 -ci Moments -dt diffeomorphic -mi 60 -ds 2 -us 2 -sf 16 8 4 2 -ss 8 4 2 1 -pmh
+# STEP 3: transform the atlas mask to that one image
+blRegistrationApplyTransform \
+/scratch/"${SLURM_JOB_ID}"/atlas_mask.nii.gz \
+/scratch/"${SLURM_JOB_ID}"/transform.nii \
+/scratch/"${SLURM_JOB_ID}"/transformed_mask.nii.gz \
+-fi "$VALIDATION_IMAGE" \
+-ow -int NearestNeighbour
+# STEP 4: combine the ALL_ROI mask into a MED_LAT mask for the one image
+python python/atlas/combine_roi_masks.py "$VALIDATION_MASK" /scratch/"${SLURM_JOB_ID}"/reference_mask.nii.gz
+# STEP 5: compute overlap metrics
+blImageComputeOverlap \
+/scratch/"${SLURM_JOB_ID}"/transformed_mask.nii.gz \
+/scratch/"${SLURM_JOB_ID}"/reference_mask.nii.gz \
+"$SCRATCH_DIR"/"${SLURM_JOB_ID}".csv \
+-cl 1 2

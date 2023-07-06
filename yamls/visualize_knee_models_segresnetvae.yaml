@@ -1,0 +1,26 @@
+hparams:
+  - /Users/nathanneeteson/Projects/hrpqct-knee-segmentation/from_arc/segresnetvae_3d_knee_transfer_cv/ref_hparams.yaml
+  - /Users/nathanneeteson/Projects/hrpqct-knee-segmentation/from_arc/segresnetvae_3d_knee_transfer_cv/ref_hparams.yaml
+  - /Users/nathanneeteson/Projects/hrpqct-knee-segmentation/from_arc/segresnetvae_3d_knee_transfer_cv/ref_hparams.yaml
+  - /Users/nathanneeteson/Projects/hrpqct-knee-segmentation/from_arc/segresnetvae_3d_knee_transfer_cv/ref_hparams.yaml
+  - /Users/nathanneeteson/Projects/hrpqct-knee-segmentation/from_arc/segresnetvae_3d_knee_transfer_cv/ref_hparams.yaml
+checkpoints:
+  - /Users/nathanneeteson/Projects/hrpqct-knee-segmentation/from_arc/segresnetvae_3d_knee_transfer_cv/21115374_f0/checkpoints/epoch=135-step=272.ckpt
+  - /Users/nathanneeteson/Projects/hrpqct-knee-segmentation/from_arc/segresnetvae_3d_knee_transfer_cv/21115374_f1/checkpoints/epoch=276-step=554.ckpt
+  - /Users/nathanneeteson/Projects/hrpqct-knee-segmentation/from_arc/segresnetvae_3d_knee_transfer_cv/21115374_f2/checkpoints/epoch=197-step=396.ckpt
+  - /Users/nathanneeteson/Projects/hrpqct-knee-segmentation/from_arc/segresnetvae_3d_knee_transfer_cv/21115374_f3/checkpoints/epoch=119-step=240.ckpt
+  - /Users/nathanneeteson/Projects/hrpqct-knee-segmentation/from_arc/segresnetvae_3d_knee_transfer_cv/21115374_f4/checkpoints/epoch=231-step=464.ckpt
+label: "SegResNetVAE"
+data_dirs:
+  - /Users/nathanneeteson/Projects/hrpqct-knee-segmentation/from_arc/data/SALTAC/preprocessed/femur_lateral_pickled_3d
+  - /Users/nathanneeteson/Projects/hrpqct-knee-segmentation/from_arc/data/SALTAC/preprocessed/femur_medial_pickled_3d
+  - /Users/nathanneeteson/Projects/hrpqct-knee-segmentation/from_arc/data/SALTAC/preprocessed/tibia_lateral_pickled_3d
+  - /Users/nathanneeteson/Projects/hrpqct-knee-segmentation/from_arc/data/SALTAC/preprocessed/tibia_medial_pickled_3d
+num_plots: 5
+cort_color: "Greens"
+trab_color: "Blues"
+error_color: "Reds"
+video: False
+dim: 0
+ensemble_mode: mean
+
