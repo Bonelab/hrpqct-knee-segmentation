@@ -111,7 +111,7 @@ do
   echo ""
   echo "---------"
   sbatch \
-  --export=ATLAS_IMAGES=atlas_images,ATLAS_MASKS=atlas_masks,VALIDATION_IMAGE=validation_image,VALIDATION_MASK=validation_mask \
+  --export=ATLAS_IMAGES="$atlas_images",ATLAS_MASKS="$atlas_masks",VALIDATION_IMAGE="$validation_image",VALIDATION_MASK="$validation_mask" \
   slurm/atlas/cross-validation.slurm
   sleep 1
   echo "======================"
