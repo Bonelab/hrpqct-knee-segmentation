@@ -89,29 +89,31 @@ echo ""
 
 
 #for (( i=0; i<${#images[@]}; i++ ))
-for (( i=0; i<2; i++ ))
+for (( i=0; i<1; i++ ))
 do
-  VALIDATION_IMAGE=${images[$i]}
-  VALIDATION_MASK=${masks[$i]}
-  ATLAS_IMAGES=("${images[@]:0:$i}" "${images[@]:$((i+1)):${#images[@]}}")
-  ATLAS_MASKS=("${masks[@]:0:$i}" "${masks[@]:$((i+1)):${#images[@]}}")
+  validation_image=${images[$i]}
+  validation_mask=${masks[$i]}
+  atlas_images=("${images[@]:0:$i}" "${images[@]:$((i+1)):${#images[@]}}")
+  atlas_masks=("${masks[@]:0:$i}" "${masks[@]:$((i+1)):${#images[@]}}")
   echo "======================"
   echo "Index: $i"
   echo "---------"
   echo "Validation Image:"
-  echo "$VALIDATION_IMAGE"
+  echo "$validation_image"
   echo ""
   echo "Validation Mask:"
-  echo "$VALIDATION_MASK"
+  echo "$validation_mask"
   echo ""
   echo "Atlas Images:"
-  echo "${ATLAS_IMAGES[@]}"
+  echo "${atlas_images[@]}"
   echo ""
   echo "Atlas Masks:"
-  echo "${ATLAS_MASKS[@]}"
+  echo "${atlas_masks[@]}"
   echo ""
   echo "---------"
-  sbatch --export=ALL slurm/atlas/cross-validation.slurm
+  sbatch \
+  --export=ATLAS_IMAGES="${atlas_images[*]}",ATLAS_MASKS="${atlas_masks[*]}",VALIDATION_IMAGE="$validation_image",VALIDATION_MASK="$validation_mask" \
+  slurm/atlas/cross-validation.slurm
   sleep 1
   echo "======================"
 done
