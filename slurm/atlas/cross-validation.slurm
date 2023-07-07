@@ -50,3 +50,6 @@ blImageComputeOverlap \
 /scratch/"${SLURM_JOB_ID}"/reference_mask.nii.gz \
 "$SCRATCH_DIR"/"${SLURM_JOB_ID}".csv \
 -cl 1 2
+# STEP 6: move the yaml files so we have records of what was done to get the corresponding metrics
+mv /scratch/"${SLURM_JOB_ID}"/atlas.yaml "$SCRATCH_DIR"/"${SLURM_JOB_ID}"_atlas_generation.yaml
+mv /scratch/"${SLURM_JOB_ID}"/transform.yaml "$SCRATCH_DIR"/"${SLURM_JOB_ID}"_registration.yaml
