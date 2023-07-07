@@ -14,6 +14,7 @@
 ####### Set environment variables ###############
 export PATH="$HOME/software/miniconda3/bin:$PATH"
 export SCRATCH_DIR="/home/njneetes/work/scratch/nathan/atlas_cv"
+export PYTHONUNBUFFERED=1
 
 ####### Run your script #########################
 source activate blptl_11.1
