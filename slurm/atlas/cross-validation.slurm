@@ -23,9 +23,9 @@ python python/atlas/generate_affine_atlas.py \
 /scratch/"${SLURM_JOB_ID}"/atlas.nii \
 /scratch/"${SLURM_JOB_ID}"/atlas_mask.nii.gz \
 -img \
-"$ATLAS_IMAGES" \
+"${ATLAS_IMAGES[@]}" \
 -msk \
-"$ATLAS_MASKS" \
+"${ATLAS_MASKS[@]}" \
 -dss 0.5 -dsf 8 -ow -ss 8 4 2 1 -sf 16 8 4 2 \
 -mai 100 -opt Powell -sm Correlation -smss Regular -smsr 0.3 \
 -ds 2 -us 2 -dt diffeomorphic -mdi 60

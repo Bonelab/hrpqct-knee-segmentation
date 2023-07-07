@@ -88,7 +88,8 @@ echo ""
 echo ""
 
 
-for (( i=0; i<${#images[@]}; i++ ))
+#for (( i=0; i<${#images[@]}; i++ ))
+for (( i=0; i<1; i++ ))
 do
   validation_image=${images[$i]}
   validation_mask=${masks[$i]}
@@ -110,9 +111,9 @@ do
   echo "$atlas_masks"
   echo ""
   echo "---------"
-  sbatch \
-  --export=ATLAS_IMAGES="$atlas_images",ATLAS_MASKS="$atlas_masks",VALIDATION_IMAGE="$validation_image",VALIDATION_MASK="$validation_mask" \
-  slurm/atlas/cross-validation.slurm
+  #sbatch \
+  #--export=ATLAS_IMAGES="$atlas_images",ATLAS_MASKS="$atlas_masks",VALIDATION_IMAGE="$validation_image",VALIDATION_MASK="$validation_mask" \
+  #slurm/atlas/cross-validation.slurm
   sleep 1
   echo "======================"
 done

@@ -88,7 +88,8 @@ echo ""
 echo ""
 
 
-for (( i=0; i<${#images[@]}; i++ ))
+#for (( i=0; i<${#images[@]}; i++ ))
+for (( i=0; i<1; i++ ))
 do
   validation_image=${images[$i]}
   validation_mask=${masks[$i]}
