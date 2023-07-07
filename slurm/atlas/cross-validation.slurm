@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --time=8:00:00
-#SBATCH --mem=90G
+#SBATCH --mem=32G
 #SBATCH --job-name=Atlas-CV
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN

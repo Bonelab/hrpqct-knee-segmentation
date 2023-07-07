@@ -192,6 +192,10 @@ def create_parser() -> ArgumentParser:
         help="site code to use in final atlas mask for the combined medial VOI"
     )
     parser.add_argument(
+        "--STAPLE-binarization-threshold", "-Sbt", type=float, default=0.5, metavar="X",
+        help="threshold to use to binarize STAPLE output masks"
+    )
+    parser.add_argument(
         "--silent", "-s", default=False, action="store_true",
         help="enable this flag to suppress terminal output about how the registration is proceeding"
     )
@@ -347,6 +351,7 @@ def generate_affine_atlas(args: Namespace) -> None:
     )
     # write args to yaml file
     write_args_to_yaml(output_yaml, args, args.silent)
+    '''
     # load all the images and masks up front
     data = [
         (
@@ -363,26 +368,52 @@ def generate_affine_atlas(args: Namespace) -> None:
         )
         for i, (img_fn, mask_fn) in enumerate(zip(args.images, args.masks))
     ]
+    '''
     # create the atlas
     message_s("Atlas creation starting..", args.silent)
-    atlas = data[0][0]
+    atlas = read_and_downsample_image(
+        args.images[0], f"image 0",
+        args.downsampling_shrink_factor,
+        args.downsampling_smoothing_sigma,
+        args.pad_amount,
+        args.silent
+    )
     average_image = sitk.Image(*atlas.GetSize(), atlas.GetPixelID())
     average_image.CopyInformation(atlas)
     average_image = sitk.Add(average_image, atlas)
-    for i, (image, _) in enumerate(data[1:]):
+    for i, img_fn in enumerate(args.images[1:]):
         message_s(f"-- Image {i+1}.", args.silent)
+        image = read_and_downsample_image(
+            img_fn, f"image {i+1}",
+            args.downsampling_shrink_factor,
+            args.downsampling_smoothing_sigma,
+            args.pad_amount,
+            args.silent
+        )
         transform = affine_registration(atlas, image, args)
         message_s("Adding transformed image to average image...", args.silent)
         average_image = sitk.Add(average_image, sitk.Resample(image, atlas, transform, sitk.sitkLinear))
     message_s("Dividing accumulated average image by number of images...", args.silent)
-    atlas = sitk.Divide(average_image, len(data))
+    atlas = sitk.Divide(average_image, len(args.images))
     message_s(f"Saving atlas to {args.atlas_average}", args.silent)
     sitk.WriteImage(atlas, args.atlas_average)
     message_s(f"Deformably registering images and transforming masks to atlas space...", args.silent)
-    transformed_masks = [
-        deformable_registration_and_masks_transformation(atlas, image, masks, f"image {i}", args)
-        for i, (image, masks) in enumerate(data)
-    ]
+    transformed_masks = []
+    for i, (img_fn, mask_fn) in enumerate(zip(args.images, args.masks)):
+        message_s(f"-- Image {i}", args.silent)
+        image = read_and_downsample_image(
+            img_fn, f"image {i}",
+            args.downsampling_shrink_factor,
+            args.downsampling_smoothing_sigma,
+            args.pad_amount,
+            args.silent
+        )
+        masks = get_medial_and_lateral_masks(
+            mask_fn, f"mask {i}", args.medial_site_codes, args.lateral_site_codes, args.silent
+        )
+        transformed_masks.append(
+            deformable_registration_and_masks_transformation(atlas, image, masks, f"image {i}", args)
+        )
     message_s("Initializing the atlas mask", args.silent)
     atlas_mask = sitk.Image(*atlas.GetSize(), atlas.GetPixelIDValue())
     atlas_mask.CopyInformation(atlas)
@@ -390,13 +421,13 @@ def generate_affine_atlas(args: Namespace) -> None:
     message_s("Using STAPLE to get a consensus medial mask for the atlas", args.silent)
     atlas_mask += (
         args.medial_output_code * sitk.BinaryThreshold(
-            sitk.STAPLE([masks[0] for masks in transformed_masks]), 0.5, 100
+            sitk.STAPLE([masks[0] for masks in transformed_masks]), args.STAPLE_binarization_threshold, 1e6
         )
     )
     message_s("Using STAPLE to get a consensus lateral mask for the atlas", args.silent)
     atlas_mask += (
         args.lateral_output_code * sitk.BinaryThreshold(
-            sitk.STAPLE([masks[1] for masks in transformed_masks]), 0.5, 100
+            sitk.STAPLE([masks[1] for masks in transformed_masks]), args.STAPLE_binarization_threshold, 1e6
         )
     )
     message_s(f"Writing atlas mask to {args.atlas_mask}", args.silent)
