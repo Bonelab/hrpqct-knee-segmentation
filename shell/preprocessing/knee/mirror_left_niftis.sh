@@ -49,16 +49,25 @@ femurs=(
   "SLTC047"
 )
 
+ax=0
+
 for i in "${tibias[@]}"
 do
   echo "Mirroring ${i}"
-  blImageMirror "${tibia_dir}${i}L_T.nii.gz" "0" "${tibia_dir}${i}LM_T.nii.gz"
+  img="${tibia_dir}${i}L_T.nii.gz"
+  img_mirror="${tibia_dir}${i}LM_T.nii.gz"
+  sbatch --export=IMG="$img",AX="$ax",IMG_MIRROR="$img_mirror" slurm/preprocessing/knee/mirror_image.slurm
+  sleep 1
 done
 
 for i in "${femurs[@]}"
 do
   echo "Mirroring ${i}"
-  blImageMirror "${femur_dir}${i}L_F.nii.gz" "0" "${femur_dir}${i}LM_F.nii.gz"
+  img="${femur_dir}${i}L_F.nii.gz"
+  img_mirror="${femur_dir}${i}LM_F.nii.gz"
+  sbatch --export=IMG="$img",AX="$ax",IMG_MIRROR="$img_mirror" slurm/preprocessing/knee/mirror_image.slurm
+  sleep 1
 done
+
 
 
