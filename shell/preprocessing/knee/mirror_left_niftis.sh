@@ -1,8 +1,8 @@
 #!/bin/bash
 # Mirror the images
 
-tibia_dir="/home/njneetes/work/data/SALTAC/visit_1/tibia/"
-femur_dir="/home/njneetes/work/data/SALTAC/visit_1/femur/"
+tibia_dir="/home/njneetes/work/data/SALTAC/visit_1/tibia/niftis/"
+femur_dir="/home/njneetes/work/data/SALTAC/visit_1/femur/niftis/"
 
 
 tibias=(
