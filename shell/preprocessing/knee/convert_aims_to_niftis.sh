@@ -90,7 +90,7 @@ for tibia in "${tibias[@]}"
 do
   aim="${tibia_dir}${tibia}.AIM"
   nii="${tibia_dir}/niftis/${tibia}.nii.gz"
-  sbatch --EXPORT=AIM="${aim}",NII="${nii}" slurm/preprocessing/knee/convert_aim_to_nifti.slurm
+  sbatch --export=AIM="${aim}",NII="${nii}" slurm/preprocessing/knee/convert_aim_to_nifti.slurm
   sleep 1
 done
 
@@ -98,6 +98,6 @@ for femur in "${femurs[@]}"
 do
   aim="${femur_dir}${femur}.AIM"
   nii="${femur_dir}/niftis/${femur}.nii.gz"
-  sbatch --EXPORT=AIM="${aim}",NII="${nii}" slurm/preprocessing/knee/convert_aim_to_nifti.slurm
+  sbatch --export=AIM="${aim}",NII="${nii}" slurm/preprocessing/knee/convert_aim_to_nifti.slurm
   sleep 1
 done
