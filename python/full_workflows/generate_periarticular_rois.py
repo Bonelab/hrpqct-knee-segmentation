@@ -99,7 +99,6 @@ def read_aim(fn: str) -> Tuple[vtkbone.vtkboneAIMReader, sitk.Image]:
     image = sitk.GetImageFromArray(density_slope*vtkImageData_to_numpy(reader.GetOutput()) + density_intercept)
     image.SetSpacing(reader.GetOutput().GetSpacing())
     image.SetOrigin(reader.GetOutput().GetOrigin())
-    image.SetDirection(reader.GetOutput().GetDirection())
     return reader, image
 
 

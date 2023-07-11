@@ -86,7 +86,7 @@ def convert_aim_to_nifti(args: Namespace):
     arr = density_slope * vtkImageData_to_numpy(reader.GetOutput()) + density_intercept
     # convert to SimpleITK image
     message_s("Converting to SimpleITK image", args.silent)
-    img = sitk.GetImageFromArray(arr)
+    img = sitk.GetImageFromArray(np.moveaxis(arr, [0, 1, 2], [2, 1, 0]))
     img.SetSpacing(reader.GetOutput().GetSpacing())
     img.SetOrigin(reader.GetOutput().GetOrigin())
     # write image
