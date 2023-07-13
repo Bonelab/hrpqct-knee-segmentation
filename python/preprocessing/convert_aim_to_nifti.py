@@ -31,6 +31,9 @@ def create_parser() -> ArgumentParser:
         "output", type=str, help="The output NIfTI file."
     )
     parser.add_argument(
+        "image_type", choices=["density", "mask"], help="The type of image to convert."
+    )
+    parser.add_argument(
         "--overwrite", "-ow", action="store_true", help="Overwrite output file if it exists."
     )
     parser.add_argument(
@@ -81,9 +84,14 @@ def convert_aim_to_nifti(args: Namespace):
     reader.DataOnCellsOff()
     reader.SetFileName(args.input)
     reader.Update()
-    processing_log = reader.GetProcessingLog()
-    density_slope, density_intercept = get_aim_density_equation(processing_log)
-    arr = density_slope * vtkImageData_to_numpy(reader.GetOutput()) + density_intercept
+    if args.image_type == "density":
+        processing_log = reader.GetProcessingLog()
+        density_slope, density_intercept = get_aim_density_equation(processing_log)
+        arr = density_slope * vtkImageData_to_numpy(reader.GetOutput()) + density_intercept
+    elif args.image_type == "mask":
+        arr = vtkImageData_to_numpy(reader.GetOutput())
+    else:
+        raise ArgumentTypeError(f"Image type {args.image_type} not recognized.")
     # convert to SimpleITK image
     message_s("Converting to SimpleITK image", args.silent)
     img = sitk.GetImageFromArray(np.moveaxis(arr, [0, 1, 2], [2, 1, 0]))

@@ -18,4 +18,4 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 source activate blptl
 
 ####### Run your script #########################
-python -u python/preprocessing/convert_aim_to_nifti.py "${AIM}" "${NII}" density
+python -u python/preprocessing/convert_aim_to_nifti.py "${AIM}" "${NII}" mask

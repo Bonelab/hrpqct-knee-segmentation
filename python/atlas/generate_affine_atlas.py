@@ -70,6 +70,10 @@ def create_parser() -> ArgumentParser:
         help="how much to pad images by after downsampling"
     )
     parser.add_argument(
+        "--background-value", "-pv", default=-400, type=int, metavar="X",
+        help="default value to assign to voxels during padding, resampling"
+    )
+    parser.add_argument(
         "--shrink-factors", "-sf", default=None, type=int, nargs="+", metavar="X",
         help="factors by which to shrink the fixed and moving image at each stage of the multiscale progression. you "
              "must give the same number of arguments here as you do for `smoothing-sigmas`"
@@ -214,8 +218,40 @@ def read_and_downsample_image(
         downsampling_shrink_factor: float,
         downsampling_smoothing_sigma: float,
         pad_amount: int,
+        pad_value: float,
         silent: bool
 ) -> sitk.Image:
+    """
+    Read an image and downsample it if requested.
+
+    Parameters
+    ----------
+    image : str
+        Filename of image to read.
+
+    label : str
+        Label for image, used for terminal output.
+
+    downsampling_shrink_factor : float
+        Downsampling factor.
+
+    downsampling_smoothing_sigma : float
+        Downsampling smoothing sigma.
+
+    pad_amount : int
+        Amount to pad image by on all sides.
+
+    pad_value : float
+        The value to use for padding.
+
+    silent : bool
+        Suppress terminal output.
+
+    Returns
+    -------
+    sitk.Image
+
+    """
     # load images, cast to single precision float
     image = sitk.Cast(read_image(image, label, silent), sitk.sitkFloat32)
     # optionally, downsample the fixed and moving images
@@ -232,7 +268,12 @@ def read_and_downsample_image(
         raise ValueError("one of `downsampling-shrink-factor` or `downsampling-smoothing-sigma` have not been specified"
                          " - you must either leave both as the default `None` or specify both")
     message_s(f"Padding {label} by {pad_amount}", silent)
-    return sitk.ConstantPad(image, (pad_amount, pad_amount, pad_amount), (pad_amount, pad_amount, pad_amount))
+    return sitk.ConstantPad(
+        image,
+        (pad_amount, pad_amount, pad_amount),
+        (pad_amount, pad_amount, pad_amount),
+        pad_value
+    )
 
 
 def affine_registration(atlas: sitk.Image, image: sitk.Image, args: Namespace) -> sitk.Transform:
@@ -351,31 +392,13 @@ def generate_affine_atlas(args: Namespace) -> None:
     )
     # write args to yaml file
     write_args_to_yaml(output_yaml, args, args.silent)
-    '''
-    # load all the images and masks up front
-    data = [
-        (
-            read_and_downsample_image(
-                img_fn, f"image {i}",
-                args.downsampling_shrink_factor,
-                args.downsampling_smoothing_sigma,
-                args.pad_amount,
-                args.silent
-            ),
-            get_medial_and_lateral_masks(
-                mask_fn, f"mask {i}", args.medial_site_codes, args.lateral_site_codes, args.silent
-            )
-        )
-        for i, (img_fn, mask_fn) in enumerate(zip(args.images, args.masks))
-    ]
-    '''
     # create the atlas
     message_s("Atlas creation starting..", args.silent)
     atlas = read_and_downsample_image(
         args.images[0], f"image 0",
         args.downsampling_shrink_factor,
         args.downsampling_smoothing_sigma,
-        args.pad_amount,
+        args.pad_amount, args.background_value,
         args.silent
     )
     average_image = sitk.Image(*atlas.GetSize(), atlas.GetPixelID())
@@ -387,12 +410,14 @@ def generate_affine_atlas(args: Namespace) -> None:
             img_fn, f"image {i+1}",
             args.downsampling_shrink_factor,
             args.downsampling_smoothing_sigma,
-            args.pad_amount,
+            args.pad_amount, args.background_value,
             args.silent
         )
         transform = affine_registration(atlas, image, args)
         message_s("Adding transformed image to average image...", args.silent)
-        average_image = sitk.Add(average_image, sitk.Resample(image, atlas, transform, sitk.sitkLinear))
+        average_image = sitk.Add(
+            average_image, sitk.Resample(image, atlas, transform, sitk.sitkLinear, useNearestNeighborExtrapolator=True)
+        )
     message_s("Dividing accumulated average image by number of images...", args.silent)
     atlas = sitk.Divide(average_image, len(args.images))
     message_s(f"Saving atlas to {args.atlas_average}", args.silent)
@@ -405,7 +430,7 @@ def generate_affine_atlas(args: Namespace) -> None:
             img_fn, f"image {i}",
             args.downsampling_shrink_factor,
             args.downsampling_smoothing_sigma,
-            args.pad_amount,
+            args.pad_amount, args.background_value,
             args.silent
         )
         masks = get_medial_and_lateral_masks(
