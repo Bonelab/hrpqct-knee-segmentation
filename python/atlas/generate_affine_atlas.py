@@ -329,7 +329,7 @@ def deformable_registration_and_masks_transformation(
         atlas, image,
         sitk.Euler3DTransform(), sitk.CenteredTransformInitializerFilter.MOMENTS
     )
-    image = sitk.Resample(image, atlas, transform)
+    image = sitk.Resample(image, atlas, transform, sitk.sitkLinear, defaultPixelValue=args.background_value)
     displacement, _ = multiscale_demons(
         atlas, image,
         demons_type=args.demons_type,
@@ -416,7 +416,8 @@ def generate_affine_atlas(args: Namespace) -> None:
         transform = affine_registration(atlas, image, args)
         message_s("Adding transformed image to average image...", args.silent)
         average_image = sitk.Add(
-            average_image, sitk.Resample(image, atlas, transform, sitk.sitkLinear, useNearestNeighborExtrapolator=True)
+            average_image,
+            sitk.Resample(image, atlas, transform, sitk.sitkLinear, defaultPixelValue=args.background_value)
         )
     message_s("Dividing accumulated average image by number of images...", args.silent)
     atlas = sitk.Divide(average_image, len(args.images))
