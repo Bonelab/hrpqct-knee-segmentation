@@ -35,14 +35,15 @@ blRegistrationDemons \
 "$VALIDATION_IMAGE" \
 /scratch/"${SLURM_JOB_ID}"/atlas.nii \
 /scratch/"${SLURM_JOB_ID}"/transform.nii \
--ow -mida -dsf 8 -dss 0.5 -ci Moments -dt diffeomorphic -mi 60 -ds 2 -us 2 -sf 16 8 4 2 -ss 8 4 2 1 -pmh
+-ow -mida -dsf 8 -dss 0.5 -ci Moments -dt diffeomorphic \
+-bv -400 -mi 60 -ds 2 -us 2 -sf 16 8 4 2 -ss 8 4 2 1 -pmh
 # STEP 3: transform the atlas mask to that one image
 blRegistrationApplyTransform \
 /scratch/"${SLURM_JOB_ID}"/atlas_mask.nii.gz \
 /scratch/"${SLURM_JOB_ID}"/transform.nii \
 /scratch/"${SLURM_JOB_ID}"/transformed_mask.nii.gz \
 -fi "$VALIDATION_IMAGE" \
--ow -int NearestNeighbour
+-ow -int NearestNeighbour -bv -400
 # STEP 4: combine the ALL_ROI mask into a MED_LAT mask for the one image
 python python/atlas/combine_roi_masks.py "$VALIDATION_MASK" /scratch/"${SLURM_JOB_ID}"/reference_mask.nii.gz
 # STEP 5: compute overlap metrics

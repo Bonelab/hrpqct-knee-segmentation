@@ -70,7 +70,7 @@ def create_parser() -> ArgumentParser:
         help="how much to pad images by after downsampling"
     )
     parser.add_argument(
-        "--background-value", "-pv", default=-400, type=int, metavar="X",
+        "--background-value", "-bv", default=-400, type=int, metavar="X",
         help="default value to assign to voxels during padding, resampling"
     )
     parser.add_argument(
