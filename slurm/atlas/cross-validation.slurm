@@ -18,7 +18,6 @@ export PYTHONUNBUFFERED=1
 
 ####### Run your script #########################
 source activate blptl_11.1
-# STEP 0: move all images into the scratch directory
 # STEP 1: construct an atlas using all but one image
 python python/atlas/generate_affine_atlas.py \
 /scratch/"${SLURM_JOB_ID}"/atlas.nii \
@@ -43,7 +42,7 @@ blRegistrationApplyTransform \
 /scratch/"${SLURM_JOB_ID}"/transform.nii \
 /scratch/"${SLURM_JOB_ID}"/transformed_mask.nii.gz \
 -fi "$VALIDATION_IMAGE" \
--ow -int NearestNeighbour -bv -400
+-ow -int NearestNeighbour
 # STEP 4: combine the ALL_ROI mask into a MED_LAT mask for the one image
 python python/atlas/combine_roi_masks.py "$VALIDATION_MASK" /scratch/"${SLURM_JOB_ID}"/reference_mask.nii.gz
 # STEP 5: compute overlap metrics
