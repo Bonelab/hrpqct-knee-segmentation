@@ -34,7 +34,7 @@ blRegistrationDemons \
 "$VALIDATION_IMAGE" \
 /scratch/"${SLURM_JOB_ID}"/atlas.nii \
 /scratch/"${SLURM_JOB_ID}"/transform.nii \
--ow -mida -dsf 8 -dss 0.5 -ci Moments -dt diffeomorphic \
+-ow -mida -dsf 8 -dss 0.5 -ci Geometry -dt diffeomorphic \
 -bv -400 -mi 60 -ds 2 -us 2 -sf 16 8 4 2 -ss 8 4 2 1 -pmh
 # STEP 3: transform the atlas mask to that one image
 blRegistrationApplyTransform \

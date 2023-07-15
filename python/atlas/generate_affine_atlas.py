@@ -327,7 +327,7 @@ def deformable_registration_and_masks_transformation(
     message_s(f"Deformably registering {label}", args.silent)
     transform = sitk.CenteredTransformInitializer(
         atlas, image,
-        sitk.Euler3DTransform(), sitk.CenteredTransformInitializerFilter.MOMENTS
+        sitk.Euler3DTransform(), sitk.CenteredTransformInitializerFilter.GEOMETRY
     )
     image = sitk.Resample(image, atlas, transform, sitk.sitkLinear, defaultPixelValue=args.background_value)
     displacement, _ = multiscale_demons(
