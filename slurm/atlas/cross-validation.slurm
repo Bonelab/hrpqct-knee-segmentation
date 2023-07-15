@@ -28,14 +28,14 @@ ${ATLAS_IMAGES} \
 ${ATLAS_MASKS} \
 -dss 0.5 -dsf 8 -ow -ss 8 4 2 1 -sf 16 8 4 2 \
 -mai 100 -opt Powell -sm Correlation -smss Regular -smsr 0.3 \
--ds 2 -us 2 -dt diffeomorphic -mdi 60
+-ds 2 -us 2 -dt diffeomorphic -mdi 200
 # STEP 2: register that one image to the atlas
 blRegistrationDemons \
 "$VALIDATION_IMAGE" \
 /scratch/"${SLURM_JOB_ID}"/atlas.nii \
 /scratch/"${SLURM_JOB_ID}"/transform.nii \
 -ow -mida -dsf 8 -dss 0.5 -ci Geometry -dt diffeomorphic \
--bv -400 -mi 60 -ds 2 -us 2 -sf 16 8 4 2 -ss 8 4 2 1 -pmh
+-bv -400 -mi 200 -ds 2 -us 2 -sf 16 8 4 2 -ss 8 4 2 1 -pmh
 # STEP 3: transform the atlas mask to that one image
 blRegistrationApplyTransform \
 /scratch/"${SLURM_JOB_ID}"/atlas_mask.nii.gz \
