@@ -86,4 +86,4 @@ atlas_dir="/home/njneetes/work/data/Atlases/Knee/periarticular/femur"
 
 sbatch \
 --export=ATLAS_DIR="${atlas_dir}",ATLAS_IMAGES="${images[*]}",ATLAS_MASKS="${masks[*]}" \
-slurm/atlas/cross-validation.slurm
+slurm/atlas/create-final-atlas.slurm
