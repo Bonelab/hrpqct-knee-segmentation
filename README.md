@@ -47,3 +47,25 @@ pip install -e .
 
 | Warning: When setting up an environment, you should install things with `conda` first and then `pip`. <br/>If you flip back and forth you'll end up breaking your environment eventually! |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+## Full Workflow
+
+This README explains all the steps for generating peri-articular ROIs
+for a single longitudinal image series (e.g. the left tibia of one participant).
+
+### 1. Data Import
+
+1. Transfer AIMs from the OpenVMS system to your computer (or to ARC).
+
+2. Convert AIMs to NIfTI format using `python/aim_nifti/convert_aims_to_nifti.py`. This should be done one one image at a time, this script
+
+At the end of this step, you should have a directory containing one
+NIfTI file for each image in the longitudinal series.
+
+### 2. Baseline ROI Generation
+
+
+### 3. Follow-up ROI Generation
+
+
+### 4. Data Export

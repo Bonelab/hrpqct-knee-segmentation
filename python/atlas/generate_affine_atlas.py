@@ -8,18 +8,18 @@ from scipy import stats
 from typing import Tuple, List
 
 from bonelab.util.echo_arguments import echo_arguments
-from bonelab.cli.registration import (
+from bonelab.util.registration_util import (
     read_image, check_inputs_exist, check_for_output_overwrite, write_args_to_yaml,
     create_file_extension_checker, create_string_argument_checker,
     INPUT_EXTENSIONS, get_output_base, write_metrics_to_csv, create_and_save_metrics_plot,
     setup_optimizer, setup_interpolator, setup_similarity_metric, setup_multiscale_progression,
     check_percentage, check_image_size_and_shrink_factors, INTERPOLATORS
 )
-from bonelab.cli.demons_registration import (
+from bonelab.util.demons_registration_util import (
+    multiscale_demons, smooth_and_resample,
     IMAGE_EXTENSIONS, DEMONS_FILTERS, demons_type_checker, construct_multiscale_progression
 )
 from bonelab.util.time_stamp import message
-from bonelab.util.multiscale_registration import multiscale_demons, smooth_and_resample
 
 
 def create_parser() -> ArgumentParser:
@@ -279,12 +279,12 @@ def read_and_downsample_image(
 def affine_registration(atlas: sitk.Image, image: sitk.Image, args: Namespace) -> sitk.Transform:
     message_s("Affinely registering...", args.silent)
     registration_method = sitk.ImageRegistrationMethod()
-    # hard-code to use the moments initialization of the transform
+    # hard-code to use the geometry initialization of the transform
     registration_method.SetInitialTransform(
         sitk.CenteredTransformInitializer(
             atlas, image,
             sitk.AffineTransform(atlas.GetDimension()),
-            sitk.CenteredTransformInitializerFilter.MOMENTS
+            sitk.CenteredTransformInitializerFilter.GEOMETRY
         )
     )
     # but set up the optimizer, similarity metric, interpolator, and multiscale progression as normal using args
