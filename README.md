@@ -83,7 +83,7 @@ You can organize it differently if you want, but the instructions below assume y
 
 (2C) Use the `blVisualizeSegmentation` utility to visually check the atlas-based masks. Registration is finicky, particularly deformable registration. It's possible you may have to go back to step 1 of this section and choose different registration parameters if the registration was botched.
 
-(2D) .... generate periarticular ROIs using deep learning model(s)
+(2D) Use the `hrpqct-knee-segmentation/python/generate_rois/generate_rois.py` script to generate the periarticular ROIs from the image and atlas mask using one or more deep learning models (multiple models will be ensembled). You'll need to specify the bone you are processing, and make sure to set the minimum and maximum density values to the same values as were used to preprocess data when training the models you are using. The outputs should be sent to the `roi_masks` subdirectory. You will need some trained knee segmentation models to use this so if you don't know where/how to get some of those, you'll need to ask someone.
 
 ### 3. (Optional) Follow-up ROI Generation
 
@@ -97,10 +97,10 @@ If you do have a longitudinal (or repeat-measures) dataset, then you need to hav
 
 (3B) Use `blVisualizeSegmentation` to check the follow-up masks overlaid on the corresponding images. Longitudinal registration can be finicky just like deformable registration, so you may need to iterate on the registration parameters to get good registrations. Make sure you're happy with the transformed masks before moving on to the next sub-step.
 
-(3C) .... generate periarticular ROIs using deep learning model(s)
+(3C) Use the `hrpqct-knee-segmentation/python/generate_rois/generate_rois.py` script to generate the periarticular ROIs from the image and atlas mask using one or more deep learning models (multiple models will be ensembled). You'll need to specify the bone you are processing, and make sure to set the minimum and maximum density values to the same values as were used to preprocess data when training the models you are using. The outputs should be sent to the `roi_masks` subdirectory. You will need some trained knee segmentation models to use this so if you don't know where/how to get some of those, you'll need to ask someone.
 
 ### 4. Data Export
 
-(4A) Convert all generated NIfTI ROI masks to AIM files using the `hrpqct-knee-segmentation/python/aim_nifti/convert_mask_to_aim.py` script. Ensure that you set the corresponding original AIM image for each mask so that it gets the correct processing log and metadata and can be read by the VMS system.
+(4A) Convert all generated NIfTI ROI masks (of the form `*_roi??_mask.nii.gz`) to AIM files using the `hrpqct-knee-segmentation/python/aim_nifti/convert_mask_to_aim.py` script. Ensure that you set the corresponding original AIM image for each mask so that it gets the correct processing log and metadata and can be read by the VMS system.
 
 (4B) Transfer your periarticular AIM masks to the OpenVMS system, using `ftp` or `sftp`, for further processing.
