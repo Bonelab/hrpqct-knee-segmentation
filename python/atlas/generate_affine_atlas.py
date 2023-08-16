@@ -185,7 +185,7 @@ def create_parser() -> ArgumentParser:
     )
     parser.add_argument(
         "--medial-site-codes", "-msc", default=[10, 11, 12, 16, 30, 31, 32, 36], type=int, nargs="+", metavar="N",
-        help="the site codes for the lateral VOIs"
+        help="the site codes for the medial VOIs"
     )
     parser.add_argument(
         "--lateral-output-code", "-loc", default=2, type=int, metavar="N",

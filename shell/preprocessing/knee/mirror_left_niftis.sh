@@ -68,6 +68,3 @@ do
   sbatch --export=IMG="$img",AX="$ax",IMG_MIRROR="$img_mirror" slurm/preprocessing/knee/mirror_image.slurm
   sleep 1
 done
-
-
-
