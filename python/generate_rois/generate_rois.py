@@ -269,27 +269,19 @@ def generate_rois(args: Namespace):
     if args.bone == "femur":
         medial_site_codes = args.femur_medial_site_codes
         lateral_site_codes = args.femur_lateral_site_codes
-        medial_roi_mask_fns = [
-            os.path.join(args.output_dir, f"{args.output_label}_roi{code}_mask.nii.gz")
-            for code in args.femur_medial_site_codes
-        ]
-        lateral_roi_mask_fns = [
-            os.path.join(args.output_dir, f"{args.output_label}_roi{code}_mask.nii.gz")
-            for code in args.femur_lateral_site_codes
-        ]
     elif args.bone == "tibia":
         medial_site_codes = args.tibia_medial_site_codes
         lateral_site_codes = args.tibia_lateral_site_codes
-        medial_roi_mask_fns = [
-            os.path.join(args.output_dir, f"{args.output_label}_roi{code}_mask.nii.gz")
-            for code in args.tibia_medial_site_codes
-        ]
-        lateral_roi_mask_fns = [
-            os.path.join(args.output_dir, f"{args.output_label}_roi{code}_mask.nii.gz")
-            for code in args.tibia_lateral_site_codes
-        ]
     else:
         raise ValueError(f"bone must be `femur` or `tibia`, given {args.bone}")
+    medial_roi_mask_fns = [
+        os.path.join(args.output_dir, f"{args.output_label}_roi{code}_mask.nii.gz")
+        for code in medial_site_codes
+    ]
+    lateral_roi_mask_fns = [
+        os.path.join(args.output_dir, f"{args.output_label}_roi{code}_mask.nii.gz")
+        for code in lateral_site_codes
+    ]
     # check for output overwrite
     check_for_output_overwrite(
         [yaml_fn, model_mask_fn, allrois_mask_fn] + medial_roi_mask_fns + lateral_roi_mask_fns,
@@ -362,8 +354,8 @@ def generate_rois(args: Namespace):
     message_s("Performing inference on image...", args.silent)
     model_mask = np.zeros_like(atlas_mask)
     message_s("Performing inference on medial side...", args.silent)
-    # medial_bounds = [(min(w), max(w)) for w in np.where(atlas_mask == args.medial_atlas_code)]
-    medial_bounds = [(250, 350), (350, 510), (260, 420)]  # DEBUGGING!!
+    medial_bounds = [(min(w), max(w)) for w in np.where(atlas_mask == args.medial_atlas_code)]
+    #medial_bounds = [(250, 350), (350, 510), (260, 420)]  # DEBUGGING!!
     medial_widths = [mb[1] - mb[0] for mb in medial_bounds]
     medial_padding = [args.patch_width - (mw % args.patch_width) for mw in medial_widths]
     medial_st = tuple([
