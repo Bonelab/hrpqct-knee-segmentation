@@ -63,7 +63,7 @@ class EnsembleSegmentationModel:
             if isinstance(pred, list) or isinstance(pred, tuple):
                 pred = pred[-1]
             y_hat += pred.squeeze(0).squeeze(0)
-        return torch.argmax(y_hat.squeeze(0), dim=0).numpy()
+        return torch.argmax(y_hat.squeeze(0), dim=0).cpu().numpy()
 
 
 def create_unetplusplus_loss_function(loss_function):
