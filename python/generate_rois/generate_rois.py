@@ -15,13 +15,14 @@ import SimpleITK as sitk
 import torch
 import yaml
 import os
-from tqdm import tqdm
+from tqdm import tqdm, trange
 from torch.nn import L1Loss, CrossEntropyLoss
 from monai.networks.nets.unet import UNet
 from monai.networks.nets.unetr import UNETR
 from monai.networks.nets.basic_unetplusplus import BasicUNetPlusPlus
 from monai.networks.nets.segresnet import SegResNetVAE
 from monai.inferers import SlidingWindowInferer
+from skimage import morphology as skmorph
 
 
 class EnsembleSegmentationModel:
@@ -164,10 +165,10 @@ def load_task(
         segmentor.float()
         for d in discriminators:
             d.float()
-        task = SeGANTask(segmentor, discriminators, L1Loss(), learning_rate=args.learning_rate)
+        task = SeGANTask(segmentor, discriminators, L1Loss(), learning_rate=hparams["learning_rate"])
         task.load_from_checkpoint(
             checkpoint_fn,
-            segmentor, discriminators, L1Loss(), learning_rate=args.learning_rate
+            segmentor, discriminators, L1Loss(), learning_rate=hparams["learning_rate"]
         )
         task.to(device)
         return task
@@ -185,13 +186,62 @@ def load_task(
             "upsample_mode": "pixelshuffle"
         }
         model = SegResNetVAE(**model_kwargs)
-        task = SegResNetVAETask(model, CrossEntropyLoss(), learning_rate=args.learning_rate)
-        task.load_from_checkpoint(checkpoint_fn, model, CrossEntropyLoss(), learning_rate=args.learning_rate)
+        task = SegResNetVAETask(model, CrossEntropyLoss(), learning_rate=hparams["learning_rate"])
+        task.load_from_checkpoint(
+            checkpoint_fn,
+            model=model,
+            loss_function=CrossEntropyLoss(),
+            learning_rate=hparams["learning_rate"]
+        )
         task.to(device)
         return task
 
     else:
         raise ValueError(f"model type must be `unet`, `segan`, or `segresnetvae`, given {model_type}")
+
+
+def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
+        subchondral_bone_plate_mask: np.ndarray,
+        trabecular_bone_mask: np.ndarray,
+        dilation_kernel_up: np.ndarray,
+        dilation_kernel_down: np.ndarray,
+        compartment_depth: int,
+        minimum_bone_plate_thickness: int,
+        silent: bool
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    # combine the bone plate and trabecular bone masks to get the bone mask, then find the top layer of bone
+    message_s("Finding top layer of bone...", silent)
+    bone_mask = subchondral_bone_plate_mask | trabecular_bone_mask
+    top_layer_mask = (
+            skmorph.binary_dilation(bone_mask, dilation_kernel_up) & ~bone_mask
+    ).astype(int)
+    # project down into the bone to find the minimum subchondral bone plate mask, combine with the original
+    # subchondral bone plate mask to get the final subchondral bone plate mask
+    message_s("Finding minimum subchondral bone plate...", silent)
+    minimum_subchondral_bone_plate = top_layer_mask
+    for _ in trange(minimum_bone_plate_thickness, disable=silent):
+        minimum_subchondral_bone_plate = skmorph.binary_dilation(minimum_subchondral_bone_plate, dilation_kernel_down)
+    minimum_subchondral_bone_plate = minimum_subchondral_bone_plate & ~top_layer_mask
+    subchondral_bone_plate_mask = (subchondral_bone_plate_mask | minimum_subchondral_bone_plate).astype(int)
+    # dilate down into the bone to get the shallow mask
+    message_s("Dilating down into the bone to get the shallow mask...", silent)
+    shallow_mask = top_layer_mask
+    for _ in trange(compartment_depth, disable=silent):
+        shallow_mask = skmorph.binary_dilation(shallow_mask, dilation_kernel_down)
+    shallow_mask = (shallow_mask & trabecular_bone_mask & ~subchondral_bone_plate_mask & ~top_layer_mask).astype(int)
+    # dilate down into the bone to get the mid mask
+    message_s("Dilating down into the bone to get the mid mask...", silent)
+    mid_mask = shallow_mask
+    for _ in trange(compartment_depth, disable=silent):
+        mid_mask = skmorph.binary_dilation(mid_mask, dilation_kernel_down)
+    mid_mask = (mid_mask & trabecular_bone_mask & ~shallow_mask).astype(int)
+    # dilate down into the bone to get the deep mask
+    message_s("Dilating down into the bone to get the deep mask...", silent)
+    deep_mask = mid_mask
+    for _ in trange(compartment_depth, disable=silent):
+        deep_mask = skmorph.binary_dilation(deep_mask, dilation_kernel_down)
+    deep_mask = (deep_mask & trabecular_bone_mask & ~mid_mask).astype(int)
+    return subchondral_bone_plate_mask, shallow_mask, mid_mask, deep_mask
 
 
 def generate_rois(args: Namespace):
@@ -215,7 +265,10 @@ def generate_rois(args: Namespace):
     # generate filenames for outputs
     yaml_fn = os.path.join(args.output_dir, f"{args.output_label}.yaml")
     model_mask_fn = os.path.join(args.output_dir, f"{args.output_label}_model_mask.nii.gz")
+    allrois_mask_fn = os.path.join(args.output_dir, f"{args.output_label}_allrois_mask.nii.gz")
     if args.bone == "femur":
+        medial_site_codes = args.femur_medial_site_codes
+        lateral_site_codes = args.femur_lateral_site_codes
         medial_roi_mask_fns = [
             os.path.join(args.output_dir, f"{args.output_label}_roi{code}_mask.nii.gz")
             for code in args.femur_medial_site_codes
@@ -225,6 +278,8 @@ def generate_rois(args: Namespace):
             for code in args.femur_lateral_site_codes
         ]
     elif args.bone == "tibia":
+        medial_site_codes = args.tibia_medial_site_codes
+        lateral_site_codes = args.tibia_lateral_site_codes
         medial_roi_mask_fns = [
             os.path.join(args.output_dir, f"{args.output_label}_roi{code}_mask.nii.gz")
             for code in args.tibia_medial_site_codes
@@ -237,7 +292,7 @@ def generate_rois(args: Namespace):
         raise ValueError(f"bone must be `femur` or `tibia`, given {args.bone}")
     # check for output overwrite
     check_for_output_overwrite(
-        [yaml_fn, model_mask_fn] + medial_roi_mask_fns + lateral_roi_mask_fns,
+        [yaml_fn, model_mask_fn, allrois_mask_fn] + medial_roi_mask_fns + lateral_roi_mask_fns,
         args.overwrite, args.silent
     )
     # write yaml
@@ -250,7 +305,7 @@ def generate_rois(args: Namespace):
     atlas_mask_sitk = sitk.ReadImage(args.atlas_mask)
     # dilate the atlas mask in the axial direction to ensure that it contains the subchondral bone plate, for both
     # the lateral and medial sides
-    message_s("Dilating atlas mask...", not args.silent)
+    message_s("Dilating atlas mask...", args.silent)
     atlas_mask_sitk = sitk.BinaryDilate(
         sitk.BinaryDilate(
             atlas_mask_sitk,
@@ -289,12 +344,26 @@ def generate_rois(args: Namespace):
         ),
         args.silent
     )
+    # create dilation kernels for constructing the periarticular ROIs
+    message_s("Creating dilation kernels...", args.silent)
+    dilation_kernel_up = np.zeros((3, 3, 3), dtype=int)
+    dilation_kernel_up[1, 1, 1] = 1
+    dilation_kernel_down = np.zeros((3, 3, 3), dtype=int)
+    dilation_kernel_down[1, 1, 1] = 1
+    if args.bone == "femur":
+        dilation_kernel_up[0, 1, 1] = 1
+        dilation_kernel_down[2, 1, 1] = 1
+    elif args.bone == "tibia":
+        dilation_kernel_up[2, 1, 1] = 1
+        dilation_kernel_down[0, 1, 1] = 1
+    else:
+        raise ValueError(f"bone must be `femur` or `tibia`, given {args.bone}")
     # perform inference on the image at the medial and lateral masks
     message_s("Performing inference on image...", args.silent)
     model_mask = np.zeros_like(atlas_mask)
     message_s("Performing inference on medial side...", args.silent)
     # medial_bounds = [(min(w), max(w)) for w in np.where(atlas_mask == args.medial_atlas_code)]
-    medial_bounds = [(250, 350), (400, 510), (260, 420)]  # DEBUGGING!!
+    medial_bounds = [(250, 350), (350, 510), (260, 420)]  # DEBUGGING!!
     medial_widths = [mb[1] - mb[0] for mb in medial_bounds]
     medial_padding = [args.patch_width - (mw % args.patch_width) for mw in medial_widths]
     medial_st = tuple([
@@ -311,6 +380,20 @@ def generate_rois(args: Namespace):
         (model_mask == args.model_trabecular_bone_class)
         & (atlas_mask == args.medial_atlas_code)
     ).astype(int)
+    message_s("Generating medial ROIs...", args.silent)
+    # DEBUGGING!!
+    medial_roi_masks = [np.zeros_like(medial_subchondral_bone_plate_mask) for _ in range(4)]
+    medial_roi_masks_patches = generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
+        medial_subchondral_bone_plate_mask[medial_st],
+        medial_trabecular_bone_mask[medial_st],
+        dilation_kernel_up,
+        dilation_kernel_down,
+        args.compartment_depth,
+        args.minimum_subchondral_bone_plate_thickness,
+        args.silent
+    )
+    for (roi_mask, roi_mask_patch) in zip(medial_roi_masks, medial_roi_masks_patches):
+        roi_mask[medial_st] = roi_mask_patch
     '''  DEBUGGING!!
     message_s("Performing inference on lateral side...", args.silent)
     lateral_st = tuple([
@@ -327,10 +410,19 @@ def generate_rois(args: Namespace):
     model_mask_sitk = sitk.GetImageFromArray(model_mask)
     model_mask_sitk.CopyInformation(atlas_mask_sitk)
     sitk.WriteImage(sitk.Cast(model_mask_sitk, sitk.sitkInt32), model_mask_fn)
+    # create an all rois mask to start adding to
+    all_rois_mask = sitk.Image(*model_mask_sitk.GetSize(), model_mask_sitk.GetPixelID())
+    all_rois_mask = sitk.Cast(all_rois_mask, sitk.sitkInt32)
+    all_rois_mask.CopyInformation(model_mask_sitk)
     message_s("Writing medial ROI masks...", args.silent)
-    medial_subchondral_bone_plate_mask_sitk = sitk.GetImageFromArray(medial_subchondral_bone_plate_mask)
-    medial_subchondral_bone_plate_mask_sitk.CopyInformation(atlas_mask_sitk)
-    sitk.WriteImage(sitk.Cast(medial_subchondral_bone_plate_mask_sitk, sitk.sitkInt32), medial_roi_mask_fns[0])
+    for mask, fn, msc in zip(medial_roi_masks, medial_roi_mask_fns, medial_site_codes):
+        mask_sitk = sitk.GetImageFromArray(mask)
+        mask_sitk.CopyInformation(atlas_mask_sitk)
+        sitk.WriteImage(sitk.Cast(mask_sitk, sitk.sitkInt32), fn)
+        all_rois_mask += msc * sitk.Cast(mask_sitk, sitk.sitkInt32)
+
+    message_s("Writing all rois mask...", args.silent)
+    sitk.WriteImage(all_rois_mask, allrois_mask_fn)
 
 
 def create_parser() -> ArgumentParser:
@@ -411,6 +503,14 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         '--max-density', '-maxd', type=float, default=1400, metavar='D',
         help='maximum physiologically relevant density in the image [mg HA/ccm]'
+    )
+    parser.add_argument(
+        "--compartment-depth", "-cd", type=int, default=41, metavar="N",
+        help="depth of shallow, mid, deep compartments, in voxels"
+    )
+    parser.add_argument(
+        "--minimum-subchondral-bone-plate-thickness", "-msbpt", type=int, default=4, metavar="N",
+        help="minimum thickness of the subchondral bone plate, in voxels"
     )
     parser.add_argument("--cuda", "-c", action="store_true", help="Use CUDA if available.")
     parser.add_argument("--overwrite", "-ow", action="store_true", help="Overwrite output files if they exist.")
