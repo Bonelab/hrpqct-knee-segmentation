@@ -22,7 +22,9 @@ from monai.networks.nets.unetr import UNETR
 from monai.networks.nets.basic_unetplusplus import BasicUNetPlusPlus
 from monai.networks.nets.segresnet import SegResNetVAE
 from monai.inferers import SlidingWindowInferer
-from skimage import morphology as skmorph
+from skimage.morphology import binary_dilation, binary_erosion
+from skimage.measure import label as sklabel
+from skimage.filters import gaussian, median
 
 
 class EnsembleSegmentationModel:
@@ -200,6 +202,87 @@ def load_task(
         raise ValueError(f"model type must be `unet`, `segan`, or `segresnetvae`, given {model_type}")
 
 
+def keep_largest_connected_component_skimage(mask: np.ndarray, background: bool = False) -> np.ndarray:
+    mask = np.logical_not(mask) if background else mask
+    mask = sklabel(mask, background=0)
+    mask = mask == np.argmax(np.bincount(mask.flat)[1:]) + 1
+    mask = np.logical_not(mask) if background else mask
+    return mask
+
+
+def remove_islands_from_mask(mask: np.ndarray, erosion_dilation: int = 1) -> np.ndarray:
+    mask = np.pad(mask, ((1, 1), (1, 1), (1, 1)), mode='constant')
+    for _ in range(erosion_dilation):
+        mask = binary_erosion(mask)
+    mask = keep_largest_connected_component_skimage(mask, background=False)
+    for _ in range(erosion_dilation):
+        mask = binary_dilation(mask)
+    return mask[1:-1, 1:-1, 1:-1]
+
+
+def fill_in_gaps_in_mask(mask: np.ndarray, dilation_erosion: int = 1) -> np.ndarray:
+    pad_width = 2 * dilation_erosion if dilation_erosion else 1
+    mask = np.pad(mask, ((pad_width, pad_width), (pad_width, pad_width), (pad_width, pad_width)), mode='constant')
+    for _ in range(dilation_erosion):
+        mask = binary_dilation(mask)
+    mask = keep_largest_connected_component_skimage(mask, background=True)
+    for _ in range(dilation_erosion):
+        mask = binary_erosion(mask)
+    return keep_largest_connected_component_skimage(
+        mask[pad_width:-pad_width, pad_width:-pad_width, pad_width:-pad_width],
+        background=True
+    )
+
+
+def iterative_filter(mask: np.ndarray, n_islands: int, n_gaps: int) -> np.ndarray:
+    for n in range(min(n_islands, n_gaps) + 1):
+        mask = remove_islands_from_mask(mask, erosion_dilation=n)
+        mask = fill_in_gaps_in_mask(mask, dilation_erosion=n)
+    if n_islands > n_gaps:
+        mask = remove_islands_from_mask(mask, erosion_dilation=n_islands)
+    elif n_gaps > n_islands:
+        mask = fill_in_gaps_in_mask(mask, dilation_erosion=n_gaps)
+    return mask
+
+
+def dilate_and_subtract(mask: np.ndarray, thickness: int) -> np.ndarray:
+    dilated_mask = mask.copy()
+    for _ in range(thickness):
+        dilated_mask = binary_dilation(dilated_mask)
+    return np.logical_and(dilated_mask, np.logical_not(mask))
+
+
+def erode_and_subtract(mask: np.ndarray, thickness: int) -> np.ndarray:
+    eroded_mask = mask.copy()
+    for _ in range(thickness):
+        eroded_mask = binary_erosion(eroded_mask)
+    return np.logical_and(np.logical_not(eroded_mask), mask)
+
+
+def extract_bone(image, threshold=-0.25):
+    bone_mask = image >= threshold
+    bone_mask = median(bone_mask, selem=np.ones((3, 3, 1)))
+    bone_mask = remove_islands_from_mask(bone_mask, erosion_dilation=3)
+    bone_mask = fill_in_gaps_in_mask(bone_mask, dilation_erosion=15)
+    return bone_mask
+
+
+def postprocess_model_masks(
+        subchondral_bone_plate_mask: np.ndarray,
+        trabecular_bone_mask: np.ndarray,
+        min_subchondral_bone_plate_thickness: int = 4,
+        num_iterations_remove_islands: int = 2,
+        num_iterations_fill_gaps: int = 2,
+) -> np.ndarray:
+    trabecular_bone_mask = iterative_filter(trabecular_bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
+    bone_mask = subchondral_bone_plate_mask | trabecular_bone_mask
+    bone_mask = iterative_filter(bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
+    minimum_subchondral_bone_plate_mask = erode_and_subtract(bone_mask, min_subchondral_bone_plate_thickness)
+    subchondral_bone_plate_mask = subchondral_bone_plate_mask | minimum_subchondral_bone_plate_mask
+    trabecular_bone_mask = bone_mask & ~subchondral_bone_plate_mask
+    return subchondral_bone_plate_mask, trabecular_bone_mask
+
+
 def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
         subchondral_bone_plate_mask: np.ndarray,
         trabecular_bone_mask: np.ndarray,
@@ -213,33 +296,33 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
     message_s("Finding top layer of bone...", silent)
     bone_mask = subchondral_bone_plate_mask | trabecular_bone_mask
     top_layer_mask = (
-            skmorph.binary_dilation(bone_mask, dilation_kernel_up) & ~bone_mask
+            binary_dilation(bone_mask, dilation_kernel_up) & ~bone_mask
     ).astype(int)
     # project down into the bone to find the minimum subchondral bone plate mask, combine with the original
     # subchondral bone plate mask to get the final subchondral bone plate mask
     message_s("Finding minimum subchondral bone plate...", silent)
     minimum_subchondral_bone_plate = top_layer_mask
     for _ in trange(minimum_bone_plate_thickness, disable=silent):
-        minimum_subchondral_bone_plate = skmorph.binary_dilation(minimum_subchondral_bone_plate, dilation_kernel_down)
+        minimum_subchondral_bone_plate = binary_dilation(minimum_subchondral_bone_plate, dilation_kernel_down)
     minimum_subchondral_bone_plate = minimum_subchondral_bone_plate & ~top_layer_mask
     subchondral_bone_plate_mask = (subchondral_bone_plate_mask | minimum_subchondral_bone_plate).astype(int)
     # dilate down into the bone to get the shallow mask
     message_s("Dilating down into the bone to get the shallow mask...", silent)
     shallow_mask = top_layer_mask
     for _ in trange(compartment_depth, disable=silent):
-        shallow_mask = skmorph.binary_dilation(shallow_mask, dilation_kernel_down)
+        shallow_mask = binary_dilation(shallow_mask, dilation_kernel_down)
     shallow_mask = (shallow_mask & trabecular_bone_mask & ~subchondral_bone_plate_mask & ~top_layer_mask).astype(int)
     # dilate down into the bone to get the mid mask
     message_s("Dilating down into the bone to get the mid mask...", silent)
     mid_mask = shallow_mask
     for _ in trange(compartment_depth, disable=silent):
-        mid_mask = skmorph.binary_dilation(mid_mask, dilation_kernel_down)
+        mid_mask = binary_dilation(mid_mask, dilation_kernel_down)
     mid_mask = (mid_mask & trabecular_bone_mask & ~shallow_mask).astype(int)
     # dilate down into the bone to get the deep mask
     message_s("Dilating down into the bone to get the deep mask...", silent)
     deep_mask = mid_mask
     for _ in trange(compartment_depth, disable=silent):
-        deep_mask = skmorph.binary_dilation(deep_mask, dilation_kernel_down)
+        deep_mask = binary_dilation(deep_mask, dilation_kernel_down)
     deep_mask = (deep_mask & trabecular_bone_mask & ~mid_mask).astype(int)
     return subchondral_bone_plate_mask, shallow_mask, mid_mask, deep_mask
 
@@ -351,14 +434,22 @@ def generate_rois(args: Namespace):
     else:
         raise ValueError(f"bone must be `femur` or `tibia`, given {args.bone}")
     message_s("Performing inference on image...", args.silent)
-    # TODO: post-process the segmentation here a bit first
     model_mask = ensemble_model(image)
+    message_s("Postprocessing model masks...", args.silent)
+    subchondral_bone_plate_mask, trabecular_bone_mask = postprocess_model_mask(
+        (model_mask == args.model_subchondral_bone_plate_class).astype(int),
+        (model_mask == args.model_trabecular_bone_class).astype(int),
+        args.model_subchondral_bone_plate_class,
+        args.model_trabecular_bone_class,
+        args.minimum_subchondral_bone_plate_thickness,
+    )
+    model_mask = subchondral_bone_plate_mask + 2 * trabecular_bone_mask
     medial_subchondral_bone_plate_mask = (
-        (model_mask == args.model_subchondral_bone_plate_class)
+        subchondral_bone_plate_mask
         & (atlas_mask == args.medial_atlas_code)
     ).astype(int)
     medial_trabecular_bone_mask = (
-        (model_mask == args.model_trabecular_bone_class)
+        trabecular_bone_mask
         & (atlas_mask == args.medial_atlas_code)
     ).astype(int)
     message_s("Generating medial ROIs...", args.silent)
