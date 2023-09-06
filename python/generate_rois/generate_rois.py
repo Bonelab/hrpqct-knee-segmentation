@@ -22,7 +22,7 @@ from monai.networks.nets.unetr import UNETR
 from monai.networks.nets.basic_unetplusplus import BasicUNetPlusPlus
 from monai.networks.nets.segresnet import SegResNetVAE
 from monai.inferers import SlidingWindowInferer
-from skimage.morphology import binary_dilation, binary_erosion
+from skimage.morphology import binary_dilation, binary_erosion, ball
 from skimage.measure import label as sklabel
 from skimage.filters import gaussian, median
 
@@ -212,22 +212,18 @@ def keep_largest_connected_component_skimage(mask: np.ndarray, background: bool 
 
 def remove_islands_from_mask(mask: np.ndarray, erosion_dilation: int = 1) -> np.ndarray:
     mask = np.pad(mask, ((1, 1), (1, 1), (1, 1)), mode='constant')
-    for _ in range(erosion_dilation):
-        mask = binary_erosion(mask)
+    mask = binary_erosion(mask, footprint=ball(erosion_dilation))
     mask = keep_largest_connected_component_skimage(mask, background=False)
-    for _ in range(erosion_dilation):
-        mask = binary_dilation(mask)
+    mask = binary_dilation(mask, footprint=ball(erosion_dilation))
     return mask[1:-1, 1:-1, 1:-1]
 
 
 def fill_in_gaps_in_mask(mask: np.ndarray, dilation_erosion: int = 1) -> np.ndarray:
-    pad_width = 2 * dilation_erosion if dilation_erosion else 1
+    pad_width = 2 * dilation_erosion
     mask = np.pad(mask, ((pad_width, pad_width), (pad_width, pad_width), (pad_width, pad_width)), mode='constant')
-    for _ in range(dilation_erosion):
-        mask = binary_dilation(mask)
+    mask = binary_dilation(mask, footprint=ball(dilation_erosion))
     mask = keep_largest_connected_component_skimage(mask, background=True)
-    for _ in range(dilation_erosion):
-        mask = binary_erosion(mask)
+    mask = binary_erosion(mask, footprint=ball(dilation_erosion))
     return keep_largest_connected_component_skimage(
         mask[pad_width:-pad_width, pad_width:-pad_width, pad_width:-pad_width],
         background=True
@@ -341,13 +337,13 @@ def generate_rois(args: Namespace):
     # check if we asked for cuda and if available
     if args.cuda:
         if torch.cuda.is_available():
-            message_s("CUDA requested and available, using cuda...", args.silent)
+            message_s("cuda requested and available, using cuda...", args.silent)
             device = torch.device("cuda")
         else:
-            message_s("CUDA requested but unavailable, using cpu...", args.silent)
+            message_s("cuda requested but unavailable, using cpu...", args.silent)
             device = torch.device("cpu")
     else:
-        message_s("CUDA not requested, using cpu...", args.silent)
+        message_s("cuda not requested, using cpu...", args.silent)
         device = torch.device("cpu")
     # check inputs exist
     check_inputs_exist(
