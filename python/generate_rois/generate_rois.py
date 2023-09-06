@@ -436,7 +436,7 @@ def generate_rois(args: Namespace):
     message_s("Performing inference on image...", args.silent)
     model_mask = ensemble_model(image)
     message_s("Postprocessing model masks...", args.silent)
-    subchondral_bone_plate_mask, trabecular_bone_mask = postprocess_model_mask(
+    subchondral_bone_plate_mask, trabecular_bone_mask = postprocess_model_masks(
         (model_mask == args.model_subchondral_bone_plate_class).astype(int),
         (model_mask == args.model_trabecular_bone_class).astype(int),
         args.model_subchondral_bone_plate_class,
