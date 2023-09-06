@@ -362,19 +362,15 @@ def generate_rois(args: Namespace):
         & (atlas_mask == args.medial_atlas_code)
     ).astype(int)
     message_s("Generating medial ROIs...", args.silent)
-    # DEBUGGING!!
-    medial_roi_masks = [np.zeros_like(medial_subchondral_bone_plate_mask) for _ in range(4)]
-    medial_roi_masks_patches = generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
-        medial_subchondral_bone_plate_mask[medial_st],
-        medial_trabecular_bone_mask[medial_st],
+    medial_roi_masks = generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
+        medial_subchondral_bone_plate_mask,
+        medial_trabecular_bone_mask,
         dilation_kernel_up,
         dilation_kernel_down,
         args.compartment_depth,
         args.minimum_subchondral_bone_plate_thickness,
         args.silent
     )
-    for (roi_mask, roi_mask_patch) in zip(medial_roi_masks, medial_roi_masks_patches):
-        roi_mask[medial_st] = roi_mask_patch
     message_s("Writing model mask...", args.silent)
     model_mask_sitk = sitk.GetImageFromArray(model_mask)
     model_mask_sitk.CopyInformation(atlas_mask_sitk)
