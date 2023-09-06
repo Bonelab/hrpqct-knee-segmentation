@@ -350,20 +350,9 @@ def generate_rois(args: Namespace):
         dilation_kernel_down[0, 1, 1] = 1
     else:
         raise ValueError(f"bone must be `femur` or `tibia`, given {args.bone}")
-    # perform inference on the image at the medial and lateral masks
     message_s("Performing inference on image...", args.silent)
-    model_mask = np.zeros_like(atlas_mask)
-    message_s("Performing inference on medial side...", args.silent)
-    medial_bounds = [(min(w), max(w)) for w in np.where(atlas_mask == args.medial_atlas_code)]
-    #medial_bounds = [(250, 350), (350, 510), (260, 420)]  # DEBUGGING!!
-    medial_widths = [mb[1] - mb[0] for mb in medial_bounds]
-    medial_padding = [args.patch_width - (mw % args.patch_width) for mw in medial_widths]
-    medial_st = tuple([
-        slice(mb[0] - math.floor(mp/2), mb[1] + math.ceil(mp/2))
-        for (mb, mp) in zip(medial_bounds, medial_padding)
-    ])
-    message_s(f"Medial slice tuple: {medial_st}", args.silent)
-    model_mask[medial_st] = ensemble_model(image[medial_st])
+    # TODO: post-process the segmentation here a bit first
+    model_mask = ensemble_model(image)
     medial_subchondral_bone_plate_mask = (
         (model_mask == args.model_subchondral_bone_plate_class)
         & (atlas_mask == args.medial_atlas_code)
@@ -386,18 +375,6 @@ def generate_rois(args: Namespace):
     )
     for (roi_mask, roi_mask_patch) in zip(medial_roi_masks, medial_roi_masks_patches):
         roi_mask[medial_st] = roi_mask_patch
-    '''  DEBUGGING!!
-    message_s("Performing inference on lateral side...", args.silent)
-    lateral_st = tuple([
-        slice(
-            min(z) - math.floor(((max(z) - min(z)) % args.patch_width) / 2),
-            max(z) + math.floor(((max(z) - min(z)) % args.patch_width) / 2)
-        )
-        for z in np.where(atlas_mask == args.lateral_atlas_code)
-    ])
-    message_s(f"Lateral slice tuple: {lateral_st}", args.silent)
-    model_mask[lateral_st] = ensemble_model(image[lateral_st])
-    '''
     message_s("Writing model mask...", args.silent)
     model_mask_sitk = sitk.GetImageFromArray(model_mask)
     model_mask_sitk.CopyInformation(atlas_mask_sitk)
