@@ -357,6 +357,7 @@ def generate_rois(args: Namespace):
     # generate filenames for outputs
     yaml_fn = os.path.join(args.output_dir, f"{args.output_label}.yaml")
     model_mask_fn = os.path.join(args.output_dir, f"{args.output_label}_model_mask.nii.gz")
+    post_model_mask_fn = os.path.join(args.output_dir, f"{args.output_label}_post_model_mask.nii.gz")
     allrois_mask_fn = os.path.join(args.output_dir, f"{args.output_label}_allrois_mask.nii.gz")
     if args.bone == "femur":
         medial_site_codes = args.femur_medial_site_codes
@@ -445,14 +446,17 @@ def generate_rois(args: Namespace):
     message_s("Performing inference on image...", args.silent)
     model_mask = ensemble_model(image)
     message_s("Postprocessing model masks...", args.silent)
+    subchondral_bone_plate_mask = (model_mask == args.model_subchondral_bone_plate_class).astype(int)
+    trabecular_bone_mask = (model_mask == args.model_trabecular_bone_class).astype(int)
+    model_mask = subchondral_bone_plate_mask + 2 * trabecular_bone_mask
     subchondral_bone_plate_mask, trabecular_bone_mask = postprocess_model_masks(
-        (model_mask == args.model_subchondral_bone_plate_class).astype(int),
-        (model_mask == args.model_trabecular_bone_class).astype(int),
+        subchondral_bone_plate_mask,
+        trabecular_bone_mask,
         args.model_subchondral_bone_plate_class,
         args.model_trabecular_bone_class,
         args.minimum_subchondral_bone_plate_thickness,
     )
-    model_mask = subchondral_bone_plate_mask + 2 * trabecular_bone_mask
+    post_model_mask = subchondral_bone_plate_mask + 2 * trabecular_bone_mask
     '''
     medial_subchondral_bone_plate_mask = (
         subchondral_bone_plate_mask
@@ -477,6 +481,10 @@ def generate_rois(args: Namespace):
     model_mask_sitk = sitk.GetImageFromArray(model_mask)
     model_mask_sitk.CopyInformation(atlas_mask_sitk)
     sitk.WriteImage(sitk.Cast(model_mask_sitk, sitk.sitkInt32), model_mask_fn)
+    message_s("Writing post-processed model mask...", args.silent)
+    post_model_mask_sitk = sitk.GetImageFromArray(post_model_mask)
+    post_model_mask_sitk.CopyInformation(atlas_mask_sitk)
+    sitk.WriteImage(sitk.Cast(post_model_mask_sitk, sitk.sitkInt32), post_model_mask_fn)
     '''
     # create an all rois mask to start adding to
     all_rois_mask = sitk.Image(*model_mask_sitk.GetSize(), model_mask_sitk.GetPixelID())
