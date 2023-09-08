@@ -248,13 +248,13 @@ def iterative_filter(mask: np.ndarray, n_islands: int, n_gaps: int) -> np.ndarra
 def dilate_and_subtract(mask: np.ndarray, thickness: int) -> np.ndarray:
     dilated_mask = mask.copy()
     binary_dilation(dilated_mask, footprint=ball(thickness), out=dilated_mask)
-    return np.logical_and(dilated_mask, np.logical_not(mask))
+    return np.logical_and(dilated_mask, np.logical_not(mask)).astype(int)
 
 
 def erode_and_subtract(mask: np.ndarray, thickness: int) -> np.ndarray:
     eroded_mask = mask.copy()
     binary_erosion(eroded_mask, footprint=ball(thickness), out=eroded_mask)
-    return np.logical_and(np.logical_not(eroded_mask), mask)
+    return np.logical_and(np.logical_not(eroded_mask), mask).astype(int)
 
 
 def extract_bone(image, threshold=-0.25):
@@ -285,26 +285,31 @@ def postprocess_model_masks(
         silent: bool = False
 ) -> np.ndarray:
     message_s("Iteratively filtering the trabecular mask...", silent)
-    trabecular_bone_mask = iterative_filter(trabecular_bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
-    debug_print(trabecular_bone_mask, "trabecular_bone_mask")
+    trabecular_bone_mask = iterative_filter(
+        trabecular_bone_mask,
+        num_iterations_remove_islands,
+        num_iterations_fill_gaps
+    )
     message_s("Iteratively filtering the subchondral mask...", silent)
-    subchondral_bone_plate_mask = iterative_filter(subchondral_bone_plate_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
-    debug_print(subchondral_bone_plate_mask, "subchondral_bone_plate_mask")
+    subchondral_bone_plate_mask = iterative_filter(
+        subchondral_bone_plate_mask,
+        num_iterations_remove_islands,
+        num_iterations_fill_gaps
+    )
     message_s("Combining the subchondral bone plate and trabecular bone masks into the bone mask...", silent)
-    bone_mask = subchondral_bone_plate_mask | trabecular_bone_mask
-    debug_print(bone_mask, "bone_mask")
+    bone_mask = np.logical_or(subchondral_bone_plate_mask, trabecular_bone_mask)
     message_s("Iteratively filtering the bone mask...", silent)
     bone_mask = iterative_filter(bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
-    debug_print(bone_mask, "bone_mask")
-    message_s("Eroding and subtracting the bone mask to get the minimum subchondral bone plate mask...", silent)
-    minimum_subchondral_bone_plate_mask = erode_and_subtract(bone_mask, min_subchondral_bone_plate_thickness)
-    debug_print(minimum_subchondral_bone_plate_mask, "minimum_subchondral_bone_plate_mask")
+    message_s("Dilating and subtracting the background mask to get the minimum subchondral bone plate mask...", silent)
+    minimum_subchondral_bone_plate_mask = dilate_and_subtract(
+        np.logical_not(bone_mask).astype(int),
+        min_subchondral_bone_plate_thickness
+    )
     message_s("Combining filtered and minimum subchondral bone plate masks...", silent)
-    subchondral_bone_plate_mask = subchondral_bone_plate_mask | minimum_subchondral_bone_plate_mask
-    debug_print(subchondral_bone_plate_mask, "subchondral_bone_plate_mask")
+    subchondral_bone_plate_mask = np.logical_or(subchondral_bone_plate_mask, minimum_subchondral_bone_plate_mask)
     message_s("Extracting final trabecular mask...", silent)
-    trabecular_bone_mask = bone_mask & ~subchondral_bone_plate_mask
-    return subchondral_bone_plate_mask, trabecular_bone_mask
+    trabecular_bone_mask = np.logical_and(bone_mask, np.logical_not(subchondral_bone_plate_mask))
+    return subchondral_bone_plate_mask.astype(int), trabecular_bone_mask.astype(int)
 
 
 def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
