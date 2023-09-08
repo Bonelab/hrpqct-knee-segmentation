@@ -468,9 +468,9 @@ def generate_rois(args: Namespace):
     subchondral_bone_plate_mask, trabecular_bone_mask = postprocess_model_masks(
         subchondral_bone_plate_mask,
         trabecular_bone_mask,
-        args.model_subchondral_bone_plate_class,
-        args.model_trabecular_bone_class,
         args.minimum_subchondral_bone_plate_thickness,
+        args.num_iterations_remove_islands,
+        args.num_iterations_fill_gaps,
     )
     post_model_mask = subchondral_bone_plate_mask + 2 * trabecular_bone_mask
     '''
@@ -604,6 +604,14 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         "--minimum-subchondral-bone-plate-thickness", "-msbpt", type=int, default=4, metavar="N",
         help="minimum thickness of the subchondral bone plate, in voxels"
+    )
+    parser.add_argument(
+        "--num-iterations-remove-islands", "-niri", type=int, default=2, metavar="N",
+        help="number of iterations of island removal to perform"
+    )
+    parser.add_argument(
+        "--num-iterations-fill-gaps", "-nifg", type=int, default=2, metavar="N",
+        help="number of iterations of gap filling to perform"
     )
     parser.add_argument("--cuda", "-c", action="store_true", help="Use CUDA if available.")
     parser.add_argument("--overwrite", "-ow", action="store_true", help="Overwrite output files if they exist.")
