@@ -223,15 +223,16 @@ def remove_islands_from_mask(mask: np.ndarray, erosion_dilation: int = 1) -> np.
 
 
 def fill_in_gaps_in_mask(mask: np.ndarray, dilation_erosion: int = 1) -> np.ndarray:
-    pad_width = 2 * dilation_erosion
-    mask = np.pad(mask, ((pad_width, pad_width), (pad_width, pad_width), (pad_width, pad_width)), mode='constant')
+    pad_width = 2 * dilation_erosion if (dilation_erosion > 0) else None
+    if pad_width:
+        pad_width = 2 * dilation_erosion
+        mask = np.pad(mask, ((pad_width, pad_width), (pad_width, pad_width), (pad_width, pad_width)), mode='constant')
     binary_dilation(mask, footprint=ball(dilation_erosion), out=mask)
     mask = keep_largest_connected_component_skimage(mask.astype(int), background=True)
     binary_erosion(mask, footprint=ball(dilation_erosion), out=mask)
-    return keep_largest_connected_component_skimage(
-        mask[pad_width:-pad_width, pad_width:-pad_width, pad_width:-pad_width].astype(int),
-        background=True
-    )
+    if pad_width:
+        mask = mask[pad_width:-pad_width, pad_width:-pad_width, pad_width:-pad_width]
+    return keep_largest_connected_component_skimage(mask.astype(int), background=True)
 
 
 def iterative_filter(mask: np.ndarray, n_islands: int, n_gaps: int) -> np.ndarray:
