@@ -232,12 +232,17 @@ def fill_in_gaps_in_mask(mask: np.ndarray, dilation_erosion: int = 1) -> np.ndar
 
 def iterative_filter(mask: np.ndarray, n_islands: int, n_gaps: int) -> np.ndarray:
     for n in range(min(n_islands, n_gaps) + 1):
+        debug_print(mask, f"n={n}, before")
         mask = remove_islands_from_mask(mask, erosion_dilation=n)
+        debug_print(mask, f"n={n}, after remove_islands_from_mask")
         mask = fill_in_gaps_in_mask(mask, dilation_erosion=n)
+        debug_print(mask, f"n={n}, after fill_in_gaps_in_mask")
     if n_islands > n_gaps:
         mask = remove_islands_from_mask(mask, erosion_dilation=n_islands)
+        debug_print(mask, f"post-iterative, after remove_islands_from_mask")
     elif n_gaps > n_islands:
         mask = fill_in_gaps_in_mask(mask, dilation_erosion=n_gaps)
+        debug_print(mask, f"post-iterative, after fill_in_gaps_in_mask")
     return mask
 
 
@@ -277,7 +282,7 @@ def postprocess_model_masks(
         trabecular_bone_mask: np.ndarray,
         min_subchondral_bone_plate_thickness: int = 4,
         num_iterations_remove_islands: int = 2,
-        num_iterations_fill_gaps: int = 4,
+        num_iterations_fill_gaps: int = 2,
         silent: bool = False
 ) -> np.ndarray:
     message_s("Iteratively filtering the trabecular mask...", silent)
