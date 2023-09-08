@@ -206,7 +206,6 @@ def keep_largest_connected_component_skimage(mask: np.ndarray, background: bool 
     mask = np.logical_not(mask) if background else mask
     labelled_mask = sklabel(mask, background=0)
     component_counts = np.bincount(labelled_mask.flat)
-    print(component_counts)
     if len(component_counts) < 2:
         return mask
     mask = labelled_mask == np.argmax(component_counts[1:]) + 1
@@ -236,18 +235,13 @@ def fill_in_gaps_in_mask(mask: np.ndarray, dilation_erosion: int = 1) -> np.ndar
 
 
 def iterative_filter(mask: np.ndarray, n_islands: int, n_gaps: int) -> np.ndarray:
-    for n in range(min(n_islands, n_gaps) + 1):
-        debug_print(mask, f"n={n}, before")
+    for n in range(1, min(n_islands, n_gaps) + 1):
         mask = remove_islands_from_mask(mask, erosion_dilation=n)
-        debug_print(mask, f"n={n}, after remove_islands_from_mask")
         mask = fill_in_gaps_in_mask(mask, dilation_erosion=n)
-        debug_print(mask, f"n={n}, after fill_in_gaps_in_mask")
     if n_islands > n_gaps:
         mask = remove_islands_from_mask(mask, erosion_dilation=n_islands)
-        debug_print(mask, f"post-iterative, after remove_islands_from_mask")
     elif n_gaps > n_islands:
         mask = fill_in_gaps_in_mask(mask, dilation_erosion=n_gaps)
-        debug_print(mask, f"post-iterative, after fill_in_gaps_in_mask")
     return mask
 
 
