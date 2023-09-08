@@ -261,6 +261,17 @@ def extract_bone(image, threshold=-0.25):
     return bone_mask
 
 
+def debug_print(arr: np.ndarray, label: str) -> None:
+    print(f"-------------------")
+    print(f"Debug print of {label}:")
+    print(f"-------------------")
+    print(f"Shape: {arr.shape}")
+    print(f"Min:   {arr.min()}")
+    print(f"Max:   {arr.max()}")
+    print(f"Type:  {arr.dtype}")
+    print(f"-------------------")
+
+
 def postprocess_model_masks(
         subchondral_bone_plate_mask: np.ndarray,
         trabecular_bone_mask: np.ndarray,
@@ -271,16 +282,22 @@ def postprocess_model_masks(
 ) -> np.ndarray:
     message_s("Iteratively filtering the trabecular mask...", silent)
     trabecular_bone_mask = iterative_filter(trabecular_bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
+    debug_print(trabecular_bone_mask, "trabecular_bone_mask")
     message_s("Iteratively filtering the subchondral mask...", silent)
     subchondral_bone_plate_mask = iterative_filter(subchondral_bone_plate_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
+    debug_print(subchondral_bone_plate_mask, "subchondral_bone_plate_mask")
     message_s("Combining the subchondral bone plate and trabecular bone masks into the bone mask...", silent)
     bone_mask = subchondral_bone_plate_mask | trabecular_bone_mask
+    debug_print(bone_mask, "bone_mask")
     message_s("Iteratively filtering the bone mask...", silent)
     bone_mask = iterative_filter(bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
+    debug_print(bone_mask, "bone_mask")
     message_s("Eroding and subtracting the bone mask to get the minimum subchondral bone plate mask...", silent)
     minimum_subchondral_bone_plate_mask = erode_and_subtract(bone_mask, min_subchondral_bone_plate_thickness)
+    debug_print(minimum_subchondral_bone_plate_mask, "minimum_subchondral_bone_plate_mask")
     message_s("Combining filtered and minimum subchondral bone plate masks...", silent)
     subchondral_bone_plate_mask = subchondral_bone_plate_mask | minimum_subchondral_bone_plate_mask
+    debug_print(subchondral_bone_plate_mask, "subchondral_bone_plate_mask")
     message_s("Extracting final trabecular mask...", silent)
     trabecular_bone_mask = bone_mask & ~subchondral_bone_plate_mask
     return subchondral_bone_plate_mask, trabecular_bone_mask
@@ -451,7 +468,6 @@ def generate_rois(args: Namespace):
         args.minimum_subchondral_bone_plate_thickness,
     )
     post_model_mask = subchondral_bone_plate_mask + 2 * trabecular_bone_mask
-    breakpoint()
     '''
     medial_subchondral_bone_plate_mask = (
         subchondral_bone_plate_mask
