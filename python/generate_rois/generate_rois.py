@@ -206,7 +206,8 @@ def keep_largest_connected_component_skimage(mask: np.ndarray, background: bool 
     mask = np.logical_not(mask) if background else mask
     labelled_mask = sklabel(mask, background=0)
     component_counts = np.bincount(labelled_mask.flat)
-    if len(component_counts) == 1:
+    print(component_counts)
+    if len(component_counts) < 2:
         return mask
     mask = labelled_mask == np.argmax(component_counts[1:]) + 1
     mask = np.logical_not(mask) if background else mask
