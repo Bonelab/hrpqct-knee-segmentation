@@ -451,6 +451,7 @@ def generate_rois(args: Namespace):
         args.minimum_subchondral_bone_plate_thickness,
     )
     post_model_mask = subchondral_bone_plate_mask + 2 * trabecular_bone_mask
+    breakpoint()
     '''
     medial_subchondral_bone_plate_mask = (
         subchondral_bone_plate_mask
