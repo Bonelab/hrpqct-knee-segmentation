@@ -204,8 +204,11 @@ def load_task(
 
 def keep_largest_connected_component_skimage(mask: np.ndarray, background: bool = False) -> np.ndarray:
     mask = np.logical_not(mask) if background else mask
-    mask = sklabel(mask, background=0)
-    mask = mask == np.argmax(np.bincount(mask.flat)[1:]) + 1
+    labelled_mask = sklabel(mask, background=0)
+    component_counts = np.bincount(labelled_mask.flat)
+    if len(component_counts) == 1:
+        return mask
+    mask = labelled_mask == np.argmax(component_counts[1:]) + 1
     mask = np.logical_not(mask) if background else mask
     return mask.astype(int)
 
