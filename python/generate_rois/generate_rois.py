@@ -469,14 +469,16 @@ def generate_rois(args: Namespace):
     subchondral_bone_plate_mask = (model_mask == args.model_subchondral_bone_plate_class).astype(int)
     trabecular_bone_mask = (model_mask == args.model_trabecular_bone_class).astype(int)
     model_mask = subchondral_bone_plate_mask + 2 * trabecular_bone_mask
-    subchondral_bone_plate_mask, trabecular_bone_mask = postprocess_model_masks(
+    post_subchondral_bone_plate_mask, post_trabecular_bone_mask = postprocess_model_masks(
         subchondral_bone_plate_mask,
         trabecular_bone_mask,
         args.minimum_subchondral_bone_plate_thickness,
         args.num_iterations_remove_islands,
         args.num_iterations_fill_gaps,
     )
-    post_model_mask = subchondral_bone_plate_mask + 2 * trabecular_bone_mask
+    post_model_mask = post_subchondral_bone_plate_mask + 2 * post_trabecular_bone_mask
+    print(f"# different voxels, subchondral bone plate mask: {np.sum(subchondral_bone_plate_mask != post_subchondral_bone_plate_mask)}")
+    print(f"# different voxels, trabecular bone mask: {np.sum(trabecular_bone_mask != post_trabecular_bone_mask)}")
     '''
     medial_subchondral_bone_plate_mask = (
         subchondral_bone_plate_mask
