@@ -203,6 +203,8 @@ def load_task(
 
 
 def keep_largest_connected_component_skimage(mask: np.ndarray, background: bool = False) -> np.ndarray:
+    if not(isinstance(mask, np.ndarray)) or (len(mask.shape) != 3):
+        raise ValueError("`mask` must be a 3D numpy array")
     mask = np.logical_not(mask) if background else mask
     labelled_mask = sklabel(mask, background=0)
     component_counts = np.bincount(labelled_mask.flat)
@@ -214,6 +216,10 @@ def keep_largest_connected_component_skimage(mask: np.ndarray, background: bool 
 
 
 def remove_islands_from_mask(mask: np.ndarray, erosion_dilation: int = 1) -> np.ndarray:
+    if not(isinstance(erosion_dilation, int)) or (erosion_dilation < 0):
+        raise ValueError("`erosion_dilation` must be a positive integer")
+    if not(isinstance(mask, np.ndarray)) or (len(mask.shape) != 3):
+        raise ValueError("`mask` must be a 3D numpy array")
     mask = np.pad(mask, ((1, 1), (1, 1), (1, 1)), mode='constant')
     binary_erosion(mask, footprint=ball(erosion_dilation), out=mask)
     mask = keep_largest_connected_component_skimage(mask.astype(int), background=False)
@@ -222,6 +228,10 @@ def remove_islands_from_mask(mask: np.ndarray, erosion_dilation: int = 1) -> np.
 
 
 def fill_in_gaps_in_mask(mask: np.ndarray, dilation_erosion: int = 1) -> np.ndarray:
+    if not(isinstance(dilation_erosion, int)) or (dilation_erosion < 0):
+        raise ValueError("`dilation_erosion` must be a positive integer")
+    if not(isinstance(mask, np.ndarray)) or (len(mask.shape) != 3):
+        raise ValueError("`mask` must be a 3D numpy array")
     pad_width = 2 * dilation_erosion if (dilation_erosion > 0) else None
     if pad_width:
         pad_width = 2 * dilation_erosion
@@ -235,6 +245,12 @@ def fill_in_gaps_in_mask(mask: np.ndarray, dilation_erosion: int = 1) -> np.ndar
 
 
 def iterative_filter(mask: np.ndarray, n_islands: int, n_gaps: int) -> np.ndarray:
+    if not(isinstance(mask, np.ndarray)) or (len(mask.shape) != 3):
+        raise ValueError("`mask` must be a 3D numpy array")
+    if not(isinstance(n_islands, int)) or (n_islands < 0):
+        raise ValueError("`n_islands` must be a positive integer")
+    if not(isinstance(n_gaps, int)) or (n_gaps < 0):
+        raise ValueError("`n_gaps` must be a positive integer")
     for n in range(1, min(n_islands, n_gaps) + 1):
         mask = remove_islands_from_mask(mask, erosion_dilation=n)
         mask = fill_in_gaps_in_mask(mask, dilation_erosion=n)
@@ -246,18 +262,28 @@ def iterative_filter(mask: np.ndarray, n_islands: int, n_gaps: int) -> np.ndarra
 
 
 def dilate_and_subtract(mask: np.ndarray, thickness: int) -> np.ndarray:
+    if not(isinstance(mask, np.ndarray)) or (len(mask.shape) != 3):
+        raise ValueError("`mask` must be a 3D numpy array")
+    if not(isinstance(thickness, int)) or (thickness < 0):
+        raise ValueError("`thickness` must be a positive integer")
     dilated_mask = mask.copy()
     binary_dilation(dilated_mask, footprint=ball(thickness), out=dilated_mask)
     return np.logical_and(dilated_mask, np.logical_not(mask)).astype(int)
 
 
 def erode_and_subtract(mask: np.ndarray, thickness: int) -> np.ndarray:
+    if not(isinstance(mask, np.ndarray)) or (len(mask.shape) != 3):
+        raise ValueError("`mask` must be a 3D numpy array")
+    if not(isinstance(thickness, int)) or (thickness < 0):
+        raise ValueError("`thickness` must be a positive integer")
     eroded_mask = mask.copy()
     binary_erosion(eroded_mask, footprint=ball(thickness), out=eroded_mask)
     return np.logical_and(np.logical_not(eroded_mask), mask).astype(int)
 
 
-def extract_bone(image, threshold=-0.25):
+def extract_bone(image, threshold: float = -0.25):
+    if not(isinstance(mask, np.ndarray)) or (len(mask.shape) != 3):
+        raise ValueError("`mask` must be a 3D numpy array")
     bone_mask = image >= threshold
     bone_mask = median(bone_mask, selem=np.ones((3, 3, 1)))
     bone_mask = remove_islands_from_mask(bone_mask, erosion_dilation=3)
@@ -322,16 +348,16 @@ def postprocess_model_masks(
 ) -> np.ndarray:
     message_s("Combining the subchondral bone plate and trabecular bone masks into the bone mask...", silent)
     bone_mask = np.logical_or(subchondral_bone_plate_mask, trabecular_bone_mask)
-    message_s("Iteratively filtering the bone mask...", silent)
-    bone_mask = iterative_filter(bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
+    message_s("Filtering the bone mask...", silent)
+    #bone_mask = iterative_filter(bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
+    bone_mask = remove_islands_from_mask(bone_mask, erosion_dilation=num_iterations_remove_islands)
+    bone_mask = fill_in_gaps_in_mask(bone_mask, dilation_erosion=num_iterations_fill_gaps)
     message_s("Eroding and subtracting the bone mask to get the minimum subchondral bone plate mask...", silent)
     minimum_subchondral_bone_plate_mask = erode_and_subtract(bone_mask, min_subchondral_bone_plate_thickness)
-    message_s("Iteratively filtering the subchondral bone plate mask...", silent)
-    subchondral_bone_plate_mask = iterative_filter(
-        subchondral_bone_plate_mask,
-        num_iterations_remove_islands,
-        num_iterations_fill_gaps
-    )
+    message_s("Filtering the subchondral bone plate mask...", silent)
+    #subchondral_bone_plate_mask = iterative_filter(subchondral_bone_plate_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
+    subchondral_bone_plate_mask = remove_islands_from_mask(subchondral_bone_plate_mask, erosion_dilation=num_iterations_remove_islands)
+    subchondral_bone_plate_mask = fill_in_gaps_in_mask(subchondral_bone_plate_mask, dilation_erosion=num_iterations_fill_gaps)
     message_s("Combining filtered and minimum subchondral bone plate masks...", silent)
     subchondral_bone_plate_mask = np.logical_or(subchondral_bone_plate_mask, minimum_subchondral_bone_plate_mask)
     message_s(
@@ -340,16 +366,16 @@ def postprocess_model_masks(
         silent
     )
     subchondral_bone_plate_mask = np.logical_or(subchondral_bone_plate_mask, minimum_subchondral_bone_plate_mask)
-    message_s("Iteratively filtering the trabecular bone mask...", silent)
-    trabecular_bone_mask = iterative_filter(
-        trabecular_bone_mask,
-        num_iterations_remove_islands,
-        num_iterations_fill_gaps
-    )
+    message_s("Filtering the trabecular bone mask...", silent)
+    #trabecular_bone_mask = iterative_filter(trabecular_bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
+    trabecular_bone_mask = remove_islands_from_mask(trabecular_bone_mask, erosion_dilation=num_iterations_remove_islands)
+    trabecular_bone_mask = fill_in_gaps_in_mask(trabecular_bone_mask, dilation_erosion=num_iterations_fill_gaps)
     message_s("Combining filtered trabecular and final subchondral bone plate masks into the bone mask...", silent)
     bone_mask = np.logical_or(subchondral_bone_plate_mask, trabecular_bone_mask)
-    message_s("Iteratively filtering the bone mask...", silent)
-    bone_mask = iterative_filter(bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
+    message_s("Filtering the bone mask...", silent)
+    #bone_mask = iterative_filter(bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
+    bone_mask = remove_islands_from_mask(bone_mask, erosion_dilation=num_iterations_remove_islands)
+    bone_mask = fill_in_gaps_in_mask(bone_mask, dilation_erosion=num_iterations_fill_gaps)
     message_s("Extracting final trabecular mask...", silent)
     trabecular_bone_mask = np.logical_and(bone_mask, np.logical_not(subchondral_bone_plate_mask))
     return subchondral_bone_plate_mask.astype(int), trabecular_bone_mask.astype(int)
