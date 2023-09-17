@@ -22,7 +22,7 @@ from monai.networks.nets.unetr import UNETR
 from monai.networks.nets.basic_unetplusplus import BasicUNetPlusPlus
 from monai.networks.nets.segresnet import SegResNetVAE
 from monai.inferers import SlidingWindowInferer
-from skimage.morphology import binary_dilation, binary_erosion, ball
+from skimage.morphology import binary_dilation, binary_erosion, binary_closing, ball
 from skimage.measure import label as sklabel
 from skimage.filters import gaussian, median
 
@@ -344,21 +344,26 @@ def postprocess_model_masks(
         min_subchondral_bone_plate_thickness: int = 4,
         num_iterations_remove_islands: int = 2,
         num_iterations_fill_gaps: int = 2,
+        subchondral_bone_plate_closing: int = 4,
         silent: bool = False
 ) -> np.ndarray:
     message_s("", silent)
-    message_s("Step 1: Tb  <- f(Tb, ni, ng)", silent)
+    message_s("Step 1: Tb  <- f(Tb, ni, ng) | Iteratively filtering trabecular mask", silent)
     trabecular_bone_mask = iterative_filter(trabecular_bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
-    message_s("Step 2: B   <- Tb ∪ Sc", silent)
+    message_s("Step 2: B   <- Tb ∪ Sc | Combining filtered trabecular and subchondral bone plate masks into bone mask", silent)
     bone_mask = np.logical_or(trabecular_bone_mask, subchondral_bone_plate_mask)
-    message_s("Step 3: B   <- f(B, ni, ng)", silent)
+    message_s("Step 3: B   <- f(B, ni, ng) | Iteratively filtering bone mask", silent)
     bone_mask = iterative_filter(bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
-    message_s("Step 4: MSc <- B  ∩ (¬ erode(B, ne))", silent)
+    message_s("Step 4: MSc <- B  ∩ (¬ erode(B, ne)) | Eroding and subtracting bone mask to get minimum subchondral bone plate mask", silent)
     minimum_subchondral_bone_plate_mask = erode_and_subtract(bone_mask, min_subchondral_bone_plate_thickness)
-    message_s("Step 5: Tb  <- Tb ∩ (¬ MSc)", silent)
+    message_s("Step 5: Tb  <- Tb ∩ (¬ MSc) | Subtracting the minimum subchondral bone plate mask from the trabecular mask", silent)
     trabecular_bone_mask = np.logical_and(trabecular_bone_mask, np.logical_not(minimum_subchondral_bone_plate_mask))
-    message_s("Step 6: Sc  <- B  ∩ (¬ Tb)", silent)
+    message_s("Step 6: Sc  <- B  ∩ (¬ Tb) | Subtracting the trabecular mask from the bone mask to get the subchondral bone plate mask", silent)
     subchondral_bone_plate_mask = np.logical_and(bone_mask, np.logical_not(trabecular_bone_mask))
+    message_s("Step 7: Sc  <- close(Sc, nc) | Performing closing on subchondral bone plate mask", silent)
+    subchondral_bone_plate_mask = binary_closing(subchondral_bone_plate_mask, ball(subchondral_bone_plate_closing))
+    message_s("Step 8: Tb  <- Tb  ∩ (¬ Sc) | Subtracting the subchondral bone plate mask from the trabecular mask", silent)
+    trabecular_bone_mask = np.logical_and(trabecular_bone_mask, np.logical_not(subchondral_bone_plate_mask))
     return subchondral_bone_plate_mask.astype(int), trabecular_bone_mask.astype(int)
 
 
@@ -525,6 +530,8 @@ def generate_rois(args: Namespace):
         args.minimum_subchondral_bone_plate_thickness,
         args.num_iterations_remove_islands,
         args.num_iterations_fill_gaps,
+        args.subchondral_bone_plate_closing,
+        args.silent
     )
     post_model_mask = post_subchondral_bone_plate_mask + 2 * post_trabecular_bone_mask
     print(f"# different voxels, subchondral bone plate mask: {np.sum(subchondral_bone_plate_mask != post_subchondral_bone_plate_mask)}")
@@ -668,6 +675,10 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         "--num-iterations-fill-gaps", "-nifg", type=int, default=2, metavar="N",
         help="number of iterations of gap filling to perform"
+    )
+    parser.add_argument(
+        "--subchondral-bone-plate-closing", "-sbpc", type=int, default=4, metavar="N",
+        help="radius of structural element when performing closing on the subchondral bone plate mask"
     )
     parser.add_argument("--cuda", "-c", action="store_true", help="Use CUDA if available.")
     parser.add_argument("--overwrite", "-ow", action="store_true", help="Overwrite output files if they exist.")
