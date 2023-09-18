@@ -342,7 +342,7 @@ def get_regional_subchondral_bone_plate_mask(
     if np.max(labelled_mask) == 0:
         raise ValueError("No subchondral bone plate detected in the contact region ROI")
     z_centers = [np.mean(np.nonzero(labelled_mask == label)[2]) for label in range(1, np.max(labelled_mask) + 1)]
-    return (labelled_mask == (np.argmax(z_centers) + 1 if keep_lower else np.argmin(z_centers) + 1)).astype(int)
+    return (labelled_mask == (np.argmin(z_centers) + 1 if keep_lower else np.argmax(z_centers) + 1)).astype(int)
 
 
 def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
@@ -354,6 +354,9 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
         minimum_bone_plate_thickness: int,
         silent: bool
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    # extract a sub-image to work with so it's faster
+    message_s("Extracting sub-image to work with...", silent)
+    
     # combine the bone plate and trabecular bone masks to get the bone mask, then find the top layer of bone
     message_s("Finding top layer of bone...", silent)
     top_layer_mask = (
