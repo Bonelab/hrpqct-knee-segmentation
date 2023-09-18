@@ -356,18 +356,10 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     # combine the bone plate and trabecular bone masks to get the bone mask, then find the top layer of bone
     message_s("Finding top layer of bone...", silent)
-    bone_mask = subchondral_bone_plate_mask | trabecular_bone_mask
     top_layer_mask = (
-            binary_dilation(bone_mask, dilation_kernel_up) & ~bone_mask
+            binary_dilation(subchondral_bone_plate_mask, dilation_kernel_up)
+            & ~subchondral_bone_plate_mask
     ).astype(int)
-    # project down into the bone to find the minimum subchondral bone plate mask, combine with the original
-    # subchondral bone plate mask to get the final subchondral bone plate mask
-    message_s("Finding minimum subchondral bone plate...", silent)
-    minimum_subchondral_bone_plate = top_layer_mask
-    for _ in trange(minimum_bone_plate_thickness, disable=silent):
-        minimum_subchondral_bone_plate = binary_dilation(minimum_subchondral_bone_plate, dilation_kernel_down)
-    minimum_subchondral_bone_plate = minimum_subchondral_bone_plate & ~top_layer_mask
-    subchondral_bone_plate_mask = (subchondral_bone_plate_mask | minimum_subchondral_bone_plate).astype(int)
     # dilate down into the bone to get the shallow mask
     message_s("Dilating down into the bone to get the shallow mask...", silent)
     shallow_mask = top_layer_mask
