@@ -355,7 +355,7 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     # extract a sub-image to work with so it's faster
     message_s("Extracting sub-image to work with...", silent)
-    
+
     # combine the bone plate and trabecular bone masks to get the bone mask, then find the top layer of bone
     message_s("Finding top layer of bone...", silent)
     top_layer_mask = (
@@ -374,7 +374,7 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
     # dilate down into the bone to get the mid mask
     message_s("Dilating down into the bone to get the mid mask...", silent)
     mid_mask = top_layer_mask
-    for _ in trange(2*compartment_depth, disable=silent):
+    for _ in trange(2 * compartment_depth, disable=silent):
         mid_mask = binary_dilation(mid_mask, dilation_kernel_down)
     mid_mask = (
             mid_mask & trabecular_bone_mask
@@ -383,7 +383,7 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
     # dilate down into the bone to get the deep mask
     message_s("Dilating down into the bone to get the deep mask...", silent)
     deep_mask = top_layer_mask
-    for _ in trange(3*compartment_depth, disable=silent):
+    for _ in trange(3 * compartment_depth, disable=silent):
         deep_mask = binary_dilation(deep_mask, dilation_kernel_down)
     deep_mask = (
             deep_mask & trabecular_bone_mask
