@@ -304,19 +304,19 @@ def postprocess_model_masks(
     message_s(f"Step 1: Tb  <- filter(Tb | ni={num_iterations_remove_islands}, ng={num_iterations_fill_gaps}) | Iteratively filtering trabecular mask", silent)
     trabecular_bone_mask = iterative_filter(trabecular_bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
     message_s("Step 2: B   <- Tb ∪ Sc | Combining filtered trabecular and subchondral bone plate masks into bone mask", silent)
-    bone_mask = trabecular_bone_mask | subchondral_bone_plate_mask
+    bone_mask = np.logical_or(trabecular_bone_mask, subchondral_bone_plate_mask)
     message_s(f"Step 3: B   <- filter(B | ni={num_iterations_remove_islands}, ng={num_iterations_fill_gaps}) | Iteratively filtering bone mask", silent)
     bone_mask = iterative_filter(bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
     message_s(f"Step 4: MSc <- B  ∩ (¬ erode(B | ne={min_subchondral_bone_plate_thickness})) | Eroding and subtracting bone mask to get minimum subchondral bone plate mask", silent)
     minimum_subchondral_bone_plate_mask = erode_and_subtract(bone_mask, min_subchondral_bone_plate_thickness)
     message_s("Step 5: Tb  <- Tb ∩ (¬ MSc) | Subtracting the minimum subchondral bone plate mask from the trabecular mask", silent)
-    trabecular_bone_mask = trabecular_bone_mask & (~minimum_subchondral_bone_plate_mask)
+    trabecular_bone_mask = np.logical_and(trabecular_bone_mask, np.logical_not(minimum_subchondral_bone_plate_mask))
     message_s("Step 6: Sc  <- B  ∩ (¬ Tb) | Subtracting the trabecular mask from the bone mask to get the subchondral bone plate mask", silent)
-    subchondral_bone_plate_mask = bone_mask & (~trabecular_bone_mask)
+    subchondral_bone_plate_mask = np.logical_and(bone_mask, np.logical_not(trabecular_bone_mask))
     message_s(f"Step 7: Sc  <- close(Sc, nc={subchondral_bone_plate_closing}) | Performing closing on subchondral bone plate mask", silent)
     subchondral_bone_plate_mask = binary_closing(subchondral_bone_plate_mask, ball(subchondral_bone_plate_closing))
     message_s("Step 8: Tb  <- Tb  ∩ (¬ Sc) | Subtracting the subchondral bone plate mask from the trabecular mask", silent)
-    trabecular_bone_mask = trabecular_bone_mask & (~subchondral_bone_plate_mask)
+    trabecular_bone_mask = np.logical_and(trabecular_bone_mask, np.logical_not(subchondral_bone_plate_mask))
     return subchondral_bone_plate_mask.astype(int), trabecular_bone_mask.astype(int)
 
 
@@ -353,9 +353,6 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
         compartment_depth: int,
         silent: bool
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    # extract a sub-image to work with so it's faster
-    message_s("Extracting sub-image to work with...", silent)
-
     # combine the bone plate and trabecular bone masks to get the bone mask, then find the top layer of bone
     message_s("Finding top layer of bone...", silent)
     top_layer_mask = (
@@ -374,7 +371,7 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
     # dilate down into the bone to get the mid mask
     message_s("Dilating down into the bone to get the mid mask...", silent)
     mid_mask = top_layer_mask
-    for _ in trange(2 * compartment_depth, disable=silent):
+    for _ in trange(2*compartment_depth, disable=silent):
         mid_mask = binary_dilation(mid_mask, dilation_kernel_down)
     mid_mask = (
             mid_mask & trabecular_bone_mask
@@ -383,7 +380,7 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
     # dilate down into the bone to get the deep mask
     message_s("Dilating down into the bone to get the deep mask...", silent)
     deep_mask = top_layer_mask
-    for _ in trange(3 * compartment_depth, disable=silent):
+    for _ in trange(3*compartment_depth, disable=silent):
         deep_mask = binary_dilation(deep_mask, dilation_kernel_down)
     deep_mask = (
             deep_mask & trabecular_bone_mask
