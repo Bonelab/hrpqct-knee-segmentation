@@ -528,6 +528,24 @@ def generate_rois(args: Namespace):
         args.compartment_depth,
         args.silent
     )
+    lateral_subchondral_bone_plate_mask = get_regional_subchondral_bone_plate_mask(
+        post_subchondral_bone_plate_mask,
+        atlas_mask == args.lateral_atlas_code,
+        args.bone
+    )
+    lateral_trabecular_bone_mask = (
+            trabecular_bone_mask
+            & (atlas_mask == args.lateral_atlas_code)
+    ).astype(int)
+    message_s("Generating lateral ROIs...", args.silent)
+    lateral_roi_masks = generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
+        lateral_subchondral_bone_plate_mask,
+        lateral_trabecular_bone_mask,
+        dilation_kernel_up,
+        dilation_kernel_down,
+        args.compartment_depth,
+        args.silent
+    )
     message_s("Writing model mask...", args.silent)
     model_mask_sitk = sitk.GetImageFromArray(model_mask)
     model_mask_sitk.CopyInformation(atlas_mask_sitk)
@@ -546,7 +564,12 @@ def generate_rois(args: Namespace):
         mask_sitk.CopyInformation(atlas_mask_sitk)
         sitk.WriteImage(sitk.Cast(mask_sitk, sitk.sitkInt32), fn)
         all_rois_mask += msc * sitk.Cast(mask_sitk, sitk.sitkInt32)
-
+    message_s("Writing lateral ROI masks...", args.silent)
+    for mask, fn, msc in zip(lateral_roi_masks, lateral_roi_mask_fns, lateral_site_codes):
+        mask_sitk = sitk.GetImageFromArray(mask)
+        mask_sitk.CopyInformation(atlas_mask_sitk)
+        sitk.WriteImage(sitk.Cast(mask_sitk, sitk.sitkInt32), fn)
+        all_rois_mask += msc * sitk.Cast(mask_sitk, sitk.sitkInt32)
     message_s("Writing all rois mask...", args.silent)
     sitk.WriteImage(all_rois_mask, allrois_mask_fn)
 
