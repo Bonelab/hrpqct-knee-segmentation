@@ -266,8 +266,7 @@ def dilate_and_subtract(mask: np.ndarray, thickness: int) -> np.ndarray:
         raise ValueError("`mask` must be a 3D numpy array")
     if not(isinstance(thickness, int)) or (thickness < 0):
         raise ValueError("`thickness` must be a positive integer")
-    dilated_mask = mask.copy()
-    binary_dilation(dilated_mask, footprint=ball(thickness), out=dilated_mask)
+    dilated_mask = binary_dilation(mask, footprint=ball(thickness))
     return (dilated_mask & (~mask)).astype(int)
 
 
@@ -276,8 +275,7 @@ def erode_and_subtract(mask: np.ndarray, thickness: int) -> np.ndarray:
         raise ValueError("`mask` must be a 3D numpy array")
     if not(isinstance(thickness, int)) or (thickness < 0):
         raise ValueError("`thickness` must be a positive integer")
-    eroded_mask = mask.copy()
-    binary_erosion(eroded_mask, footprint=ball(thickness), out=eroded_mask)
+    eroded_mask = binary_erosion(mask, footprint=ball(thickness))
     return ((~eroded_mask) & mask).astype(int)
 
 
