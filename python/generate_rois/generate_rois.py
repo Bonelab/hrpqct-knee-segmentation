@@ -351,7 +351,7 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
         compartment_depth: int,
         silent: bool
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    # combine the bone plate and trabecular bone masks to get the bone mask, then find the top layer of bone
+    # find the top layer of bone
     message_s("Finding top layer of bone...", silent)
     top_layer_mask = (
             binary_dilation(subchondral_bone_plate_mask, dilation_kernel_up)
