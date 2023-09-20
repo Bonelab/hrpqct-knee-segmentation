@@ -54,11 +54,11 @@ echo "Step 6: generate the peri-articular ROIs"
 python python/generate_rois/generate_rois.py \
 ${NIFTI_DIR}/${IMAGE,,}.nii.gz ${BONE} ${ATLAS_REG_DIR}/${IMAGE,,}_atlas_mask_transformed.nii.gz \
 ${ROI_MASK_DIR}/ ${IMAGE,,} \
--hf /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/ref_hparams.yaml \
-/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/ref_hparams.yaml \
-/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/ref_hparams.yaml \
-/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/ref_hparams.yaml \
-/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/ref_hparams.yaml \
+-hf /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_final/version_21096522/ref_hparams.yaml \
+/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_final/version_21096522/ref_hparams.yaml \
+/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_final/version_21096522/ref_hparams.yaml \
+/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_final/version_21096522/ref_hparams.yaml \
+/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_final/version_21096522/ref_hparams.yaml \
 -cf /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f0/checkpoints/epoch\=135-step\=272.ckpt \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f1/checkpoints/epoch\=276-step\=554.ckpt \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f2/checkpoints/epoch\=197-step\=396.ckpt \
