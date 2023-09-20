@@ -26,7 +26,7 @@ source activate blptl_11.1
 python python/aim_nifti/convert_aims_to_nifti.py ${AIM_DIR}/${IMAGE}.AIM ${NIFTI_DIR}
 # step 2: register the nifti to the atlas
 blRegistrationDemons \
-${NIFTI_DIR}/${IMAGE}.nii.gz ${ATLAS_DIR}/${BONE}/atlas.nii \
+${NIFTI_DIR}/${IMAGE,,}.nii.gz ${ATLAS_DIR}/${BONE}/atlas.nii \
 ${ATLAS_REG_DIR}/${IMAGE,,}_atlas_transform.nii.gz \
 -mida -dsf 8 -dss 0.5 -ci Geometry -dt diffeomorphic -mi 200 -ds 2 -us 2 -sf 16 8 4 2 -ss 8 4 2 1 -pmh
 # step 3: transform the atlas mask to the image
