@@ -22,19 +22,19 @@ export ATLAS_DIR="/home/njneetes/work/data/Atlases/Knee/periarticular"
 
 ####### Run your script #########################
 source activate blptl_11.1
-# step 1: convert the AIM to a nifti
+echo "Step 1: convert the AIM to a nifti"
 python python/aim_nifti/convert_aims_to_nifti.py ${AIM_DIR}/${IMAGE}.AIM ${NIFTI_DIR}
-# step 2: register the nifti to the atlas
+echo "Step 2: register the nifti to the atlas"
 blRegistrationDemons \
 ${NIFTI_DIR}/${IMAGE,,}.nii.gz ${ATLAS_DIR}/${BONE}/atlas.nii \
 ${ATLAS_REG_DIR}/${IMAGE,,}_atlas_transform.nii.gz \
 -mida -dsf 8 -dss 0.5 -ci Geometry -dt diffeomorphic -mi 200 -ds 2 -us 2 -sf 16 8 4 2 -ss 8 4 2 1 -pmh
-# step 3: transform the atlas mask to the image
+echo "Step 3: transform the atlas mask to the image"
 blRegistrationApplyTransform \
 ${ATLAS_DIR}/${BONE}/atlas_mask.nii.gz ${ATLAS_REG_DIR}/${IMAGE,,}_atlas_transform.nii.gz \
 ${ATLAS_REG_DIR}/${IMAGE,,}_atlas_mask_transformed.nii.gz \
 --fixed-image ${NIFTI_DIR}/${IMAGE,,}.nii.gz -int NearestNeighbour
-# step 4: generate the peri-articular ROIs
+echo "Step 4: generate the peri-articular ROIs"
 python python/generate_rois/generate_rois.py \
 ${NIFTI_DIR}/${IMAGE,,}.nii.gz ${BONE} ${ATLAS_REG_DIR}/${IMAGE,,}_atlas_mask_transformed.nii.gz \
 ${ROI_MASK_DIR}/ ${IMAGE,,} \
@@ -49,7 +49,7 @@ ${ROI_MASK_DIR}/ ${IMAGE,,} \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f3/checkpoints/epoch\=119-step\=240.ckpt \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f4/checkpoints/epoch\=231-step\=464.ckpt \
 -mt segresnetvae segresnetvae segresnetvae segresnetvae segresnetvae -adf 20 -pw 64 -ow
-# step 5: convert roi mask niftis to AIMs
+echo "Step 5: convert roi mask niftis to AIMs"
 for i in ${ROI_MASK_DIR}/${IMAGE,,}_*.nii.gz; do
     python python/aim_nifti/convert_mask_to_aim.py ${i} ${AIM_DIR}/${IMAGE}.AIM ${i%.nii.gz}.AIM \
     -l "Generated using the code at: https://github.com/Bonelab/hrpqct-knee-segmentation"
