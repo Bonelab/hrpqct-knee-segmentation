@@ -23,7 +23,7 @@ export ATLAS_DIR="/home/njneetes/work/data/Atlases/Knee/periarticular"
 ####### Run your script #########################
 source activate blptl_11.1
 # step 1: convert the AIM to a nifti
-python python/aim_nifti/convert_aims_to_nifti.py ${AIM_DIR}/${IMAGE}.AIM ${NIFTI_DIR}/${IMAGE}.nii.gz
+python python/aim_nifti/convert_aims_to_nifti.py ${AIM_DIR}/${IMAGE}.AIM ${NIFTI_DIR}
 # step 2: register the nifti to the atlas
 blRegistrationDemons \
 ${NIFTI_DIR}/${IMAGE}.nii.gz ${ATLAS_DIR}/${BONE}/atlas.nii \
