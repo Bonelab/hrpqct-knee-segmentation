@@ -15,7 +15,7 @@ from bonelab.io.vtk_helpers import handle_filetype_writing_special_cases
 
 
 def convert_back_to_aim(args: Namespace) -> None:
-    print("Convert Back To AIM", vars(args))
+    print(echo_arguments("Convert Back To AIM", vars(args)))
     message("Checking inputs exist")
     check_inputs_exist([args.input_mask, args.reference_aim], False)
     message("Checking for output overwrite")
