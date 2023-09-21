@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --time=1:00:00
+#SBATCH --time=2:00:00
 #SBATCH --mem=100G
 #SBATCH --partition=gpu-v100 --gres=gpu:1
 #SBATCH --job-name=Inference
@@ -34,4 +34,4 @@ ${MODEL_MASK_DIR} ${IMAGE,,} \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f2/checkpoints/epoch\=197-step\=396.ckpt \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f3/checkpoints/epoch\=119-step\=240.ckpt \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f4/checkpoints/epoch\=231-step\=464.ckpt \
--mt segresnetvae segresnetvae segresnetvae segresnetvae segresnetvae -pw 64 -ow
+-mt segresnetvae segresnetvae segresnetvae segresnetvae segresnetvae -pw 64 -ow --cuda
