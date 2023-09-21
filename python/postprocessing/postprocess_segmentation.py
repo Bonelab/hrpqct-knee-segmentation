@@ -207,6 +207,10 @@ def create_parser() -> ArgumentParser:
         "--subchondral-bone-plate-closing", "-sbpc", type=int, default=4, metavar="N",
         help="radius of structural element when performing closing on the subchondral bone plate mask"
     )
+    parser.add_argument(
+        "--minimum-subchondral-bone-plate-thickness", "-msbpt", type=int, default=4, metavar="N",
+        help="minimum thickness of the subchondral bone plate, in voxels"
+    )
     parser.add_argument("--overwrite", "-ow", action="store_true", help="Overwrite output files if they exist.")
     parser.add_argument("--silent", "-s", action="store_true", help="Silence all terminal output.")
     return parser
