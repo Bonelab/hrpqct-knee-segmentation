@@ -2,7 +2,7 @@
 ####### Reserve computing resources #############
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=2
 #SBATCH --time=2:00:00
 #SBATCH --mem=100G
 #SBATCH --partition=gpu-v100 --gres=gpu:1
