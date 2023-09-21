@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --time=1:00:00
 #SBATCH --mem=100G
-#SBATCH --partition=gpu-a100 --gres=gpu:1
+#SBATCH --partition=gpu-v100 --gres=gpu:1
 #SBATCH --job-name=Inference
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
