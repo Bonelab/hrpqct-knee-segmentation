@@ -36,6 +36,8 @@ echo "Step 3: convert roi mask niftis to AIMs"
 for ROI_CODE in 10 11 12 13 14 15 16 17 30 31 32 33 34 35 36 37;
 do
     python python/aim_nifti/convert_mask_to_aim.py \
-    ${IMAGE,,}_roi${ROI_CODE}_mask.nii.gz ${AIM_DIR}/${IMAGE}.AIM ${IMAGE}_ROI${ROI_CODE}_MASK.AIM \
+    ${ROI_MASK_DIR}/${IMAGE,,}_roi${ROI_CODE}_mask.nii.gz \
+    ${AIM_DIR}/${IMAGE}.AIM \
+    ${ROI_MASK_DIR}/${IMAGE}_ROI${ROI_CODE}_MASK.AIM \
     -l "Generated using the code at: https://github.com/Bonelab/hrpqct-knee-segmentation"
 done
