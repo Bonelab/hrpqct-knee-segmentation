@@ -24,7 +24,7 @@ source activate blptl_11.1
 echo "Step 1: Post-process the bone mask"
 python python/postprocessing/postprocess_segmentation.py \
 ${MODEL_MASK_DIR}/${IMAGE,,}_ensemble_inference_mask.nii.gz \
-${MODEL_MASK_DIR} ${IMAGE,,}
+${MODEL_MASK_DIR} ${IMAGE,,} -ow
 echo ""
 echo "Step 2: generate the peri-articular ROIs"
 python python/generate_rois/generate_rois.py \
