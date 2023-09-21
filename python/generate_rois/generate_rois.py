@@ -154,6 +154,20 @@ def generate_rois(args: Namespace):
     message_s("Extract subchondral bone plate and trabecular bone masks from mask...", args.silent)
     subchondral_bone_plate_mask = (mask == args.subchondral_bone_plate_class).astype(int)
     trabecular_bone_mask = (mask == args.trabecular_bone_class).astype(int)
+    message_s("Creating dilation kernels...", args.silent)
+    dilation_kernel_up = np.zeros((3, 3, 3), dtype=int)
+    dilation_kernel_up[1, 1, 1] = 1
+    dilation_kernel_down = np.zeros((3, 3, 3), dtype=int)
+    dilation_kernel_down[1, 1, 1] = 1
+    if args.bone == "femur":
+        dilation_kernel_up[0, 1, 1] = 1
+        dilation_kernel_down[2, 1, 1] = 1
+    elif args.bone == "tibia":
+        dilation_kernel_up[2, 1, 1] = 1
+        dilation_kernel_down[0, 1, 1] = 1
+    else:
+        raise ValueError(f"bone must be `femur` or `tibia`, given {args.bone}")
+    message_s("Generating medial subchondral bone plate mask...", args.silent)
     medial_subchondral_bone_plate_mask = get_regional_subchondral_bone_plate_mask(
         subchondral_bone_plate_mask,
         atlas_mask == args.medial_atlas_code,
@@ -172,6 +186,7 @@ def generate_rois(args: Namespace):
         args.compartment_depth,
         args.silent
     )
+    message_s("Generating lateral subchondral bone plate mask...", args.silent)
     lateral_subchondral_bone_plate_mask = get_regional_subchondral_bone_plate_mask(
         subchondral_bone_plate_mask,
         atlas_mask == args.lateral_atlas_code,
