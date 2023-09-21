@@ -313,7 +313,7 @@ def create_parser() -> ArgumentParser:
              'used when training the models.'
     )
     parser.add_argument(
-        "--batch-size", "-bs", type=int, default=32, metavar="BS",
+        "--batch-size", "-bs", type=int, default=16, metavar="BS",
         help="batch size to use for inference"
     )
     parser.add_argument("--cuda", "-c", action="store_true", help="Use CUDA if available.")
