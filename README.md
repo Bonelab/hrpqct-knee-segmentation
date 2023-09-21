@@ -45,6 +45,11 @@ cd bonelab-pytorch-lightning
 pip install -e .
 ```
 
+### 4. Install `scikit-image` last
+```commandline
+pip install scikit-image
+```
+
 | Warning: When setting up an environment, you should install things with `conda` first and then `pip`. <br/>If you flip back and forth you'll end up breaking your environment eventually! |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
