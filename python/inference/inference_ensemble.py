@@ -27,22 +27,16 @@ from monai.inferers import SlidingWindowInferer
 class EnsembleSegmentationModel:
     def __init__(self,
                  models: List[Union[SegmentationTask, SeGANTask, SegResNetVAETask]],
-                 device: torch.device,
                  inferer: SlidingWindowInferer,
                  silent: bool
                  ):
         self._models = models
-        self._device = device
         self._inferer = inferer
         self._silent = silent
 
     @property
     def models(self) -> List[Union[SegmentationTask, SeGANTask, SegResNetVAETask]]:
         return self._models
-
-    @property
-    def device(self) -> torch.device:
-        return self._device
 
     @property
     def inferer(self) -> SlidingWindowInferer:
@@ -237,17 +231,16 @@ def inference_ensemble(args: Namespace):
         [
             load_task(hparams_fn, checkpoint_fn, model_type, device)
             for hparams_fn, checkpoint_fn, model_type in zip(
-            args.hparams_filenames, args.checkpoint_filenames, args.model_types,
-        )
+                args.hparams_filenames, args.checkpoint_filenames, args.model_types,
+            )
         ],
-        device,
         SlidingWindowInferer(
             roi_size=args.patch_width,
             sw_batch_size=args.batch_size,
             overlap=args.overlap,
             mode="gaussian",
             sw_device=device,
-            device=device,
+            device="cpu",
             progress=(~args.silent)
         ),
         args.silent
