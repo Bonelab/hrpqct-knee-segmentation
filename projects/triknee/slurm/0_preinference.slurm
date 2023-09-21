@@ -25,13 +25,12 @@ echo "Step 1: convert the AIM to a nifti"
 python python/aim_nifti/convert_aims_to_nifti.py ${AIM_DIR}/${IMAGE}.AIM ${NIFTI_DIR} -ow
 echo ""
 echo "Step 2: if the image is from a LEFT knee, need to mirror it"
-if [ ${LEFT} ]; then
+if [ ${SIDE} = "left" ]; then
   echo "Mirroring the image"
   blImageMirror ${NIFTI_DIR}/${IMAGE,,}.nii.gz 0 ${NIFTI_DIR}/${IMAGE,,}.nii.gz -ow
 else
   echo "Not mirroring the image"
 fi
-blImageMirror ${NIFTI_DIR}/${IMAGE,,}.nii.gz 0 ${NIFTI_DIR}/${IMAGE,,}.nii.gz -ow
 echo ""
 echo "Step 3: register the nifti to the atlas"
 blRegistrationDemons \
@@ -46,7 +45,7 @@ ${ATLAS_REG_DIR}/${IMAGE,,}_atlas_mask_transformed.nii.gz \
 --fixed-image ${NIFTI_DIR}/${IMAGE,,}.nii.gz -int NearestNeighbour
 echo ""
 echo "Step 5: if the image is from a LEFT knee, need to mirror the image and transformed mask back"
-if [ ${LEFT} ]; then
+if [ ${SIDE} = "left" ]; then
   echo "Mirroring the image and transformed mask"
   blImageMirror ${NIFTI_DIR}/${IMAGE,,}.nii.gz 0 ${NIFTI_DIR}/${IMAGE,,}.nii.gz -ow
   blImageMirror ${ATLAS_REG_DIR}/${IMAGE,,}_atlas_mask_transformed.nii.gz 0 ${ATLAS_REG_DIR}/${IMAGE,,}_atlas_mask_transformed.nii.gz -ow
