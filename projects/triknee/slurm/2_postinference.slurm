@@ -39,5 +39,5 @@ do
     ${ROI_MASK_DIR}/${IMAGE,,}_roi${ROI_CODE}_mask.nii.gz \
     ${AIM_DIR}/${IMAGE}.AIM \
     ${ROI_MASK_DIR}/${IMAGE}_ROI${ROI_CODE}_MASK.AIM \
-    -l "Generated using the code at: https://github.com/Bonelab/hrpqct-knee-segmentation"
+    -l "Generated using the code at: https://github.com/Bonelab/hrpqct-knee-segmentation" -ow
 done

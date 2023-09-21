@@ -4,24 +4,12 @@ from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter, Namespace
 
 from bonelab.util.echo_arguments import echo_arguments
 from bonelab.util.registration_util import check_inputs_exist, check_for_output_overwrite, message_s
-from blpytorchlightning.tasks.SegmentationTask import SegmentationTask
-from blpytorchlightning.tasks.SegResNetVAETask import SegResNetVAETask
-from blpytorchlightning.tasks.SeGANTask import SeGANTask
-from blpytorchlightning.models.SeGAN import get_segmentor_and_discriminators
 
-import math
 import numpy as np
 import SimpleITK as sitk
-import torch
 import yaml
 import os
 from tqdm import tqdm, trange
-from torch.nn import L1Loss, CrossEntropyLoss
-from monai.networks.nets.unet import UNet
-from monai.networks.nets.unetr import UNETR
-from monai.networks.nets.basic_unetplusplus import BasicUNetPlusPlus
-from monai.networks.nets.segresnet import SegResNetVAE
-from monai.inferers import SlidingWindowInferer
 from skimage.morphology import binary_dilation, binary_erosion, binary_closing, ball
 from skimage.measure import label as sklabel
 from skimage.filters import gaussian, median
