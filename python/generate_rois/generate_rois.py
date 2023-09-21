@@ -152,8 +152,8 @@ def generate_rois(args: Namespace):
     mask = sitk.GetArrayFromImage(mask_sitk)
     atlas_mask = sitk.GetArrayFromImage(atlas_mask_sitk)
     message_s("Extract subchondral bone plate and trabecular bone masks from mask...", args.silent)
-    subchondral_bone_plate_mask = (mask == args.model_subchondral_bone_plate_class).astype(int)
-    trabecular_bone_mask = (mask == args.model_trabecular_bone_class).astype(int)
+    subchondral_bone_plate_mask = (mask == args.subchondral_bone_plate_class).astype(int)
+    trabecular_bone_mask = (mask == args.trabecular_bone_class).astype(int)
     medial_subchondral_bone_plate_mask = get_regional_subchondral_bone_plate_mask(
         subchondral_bone_plate_mask,
         atlas_mask == args.medial_atlas_code,
