@@ -243,7 +243,7 @@ def inference_ensemble(args: Namespace):
         device,
         SlidingWindowInferer(
             roi_size=args.patch_width,
-            sw_batch_size=1,
+            sw_batch_size=args.batch_size,
             overlap=args.overlap,
             mode="gaussian",
             sw_device=device,
@@ -311,6 +311,10 @@ def create_parser() -> ArgumentParser:
         '--max-density', '-maxd', type=float, default=1400, metavar='D',
         help='maximum physiologically relevant density in the image [mg HA/ccm]. ensure this is the same value you '
              'used when training the models.'
+    )
+    parser.add_argument(
+        "--batch-size", "-bs", type=int, default=32, metavar="BS",
+        help="batch size to use for inference"
     )
     parser.add_argument("--cuda", "-c", action="store_true", help="Use CUDA if available.")
     parser.add_argument("--overwrite", "-ow", action="store_true", help="Overwrite output files if they exist.")
