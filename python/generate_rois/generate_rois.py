@@ -205,9 +205,9 @@ def generate_rois(args: Namespace):
         args.compartment_depth,
         args.silent
     )
-    all_rois_mask = sitk.Image(*model_mask_sitk.GetSize(), model_mask_sitk.GetPixelID())
+    all_rois_mask = sitk.Image(*mask_sitk.GetSize(), mask_sitk.GetPixelID())
     all_rois_mask = sitk.Cast(all_rois_mask, sitk.sitkInt32)
-    all_rois_mask.CopyInformation(model_mask_sitk)
+    all_rois_mask.CopyInformation(mask_sitk)
     message_s("Writing medial ROI masks...", args.silent)
     for mask, fn, msc in zip(medial_roi_masks, medial_roi_mask_fns, medial_site_codes):
         mask_sitk = sitk.GetImageFromArray(mask)
