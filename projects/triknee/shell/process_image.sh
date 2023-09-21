@@ -19,5 +19,5 @@ JID_PRE=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} projects/trik
 echo "Submitted job ${JID_PRE} to perform pre-inference processing."
 JID_INF=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_PRE} projects/triknee/slurm/1_inference.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_INF} to perform inference processing. Will not execute until job ${JID_PRE} is complete."
-JID_POST=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${jid} projects/triknee/slurm/2_postinference.slurm | tr -dc "0-9")
+JID_POST=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_INF} projects/triknee/slurm/2_postinference.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_POST} to perform post-inference processing. Will not execute until job ${JID_INF} is complete."
