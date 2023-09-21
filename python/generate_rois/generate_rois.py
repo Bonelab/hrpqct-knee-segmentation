@@ -124,7 +124,7 @@ def generate_rois(args: Namespace):
     ]
     # check for output overwrite
     check_for_output_overwrite(
-        [yaml_fn, model_mask_fn, allrois_mask_fn] + medial_roi_mask_fns + lateral_roi_mask_fns,
+        [yaml_fn, allrois_mask_fn] + medial_roi_mask_fns + lateral_roi_mask_fns,
         args.overwrite, args.silent
     )
     # write yaml
