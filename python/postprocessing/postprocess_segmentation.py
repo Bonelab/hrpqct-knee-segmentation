@@ -7,6 +7,8 @@ from bonelab.util.registration_util import check_inputs_exist, check_for_output_
 
 import numpy as np
 import SimpleITK as sitk
+import os
+import yaml
 
 from skimage.morphology import binary_dilation, binary_erosion, binary_closing, ball
 from skimage.measure import label as sklabel
