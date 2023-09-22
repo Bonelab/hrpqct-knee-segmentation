@@ -46,20 +46,19 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
         subchondral_bone_plate_mask: np.ndarray,
         trabecular_bone_mask: np.ndarray,
         dilation_kernel_up_single: np.ndarray,
-        dilation_kernel_up: np.ndarray,
-        dilation_kernel_down: np.ndarray,
+        dilation_kernel_down_compartment: np.ndarray,
         silent: bool
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     # find the top layer of bone
     message_s("Finding top layer of bone...", silent)
     top_layer_mask = (
             binary_dilation(subchondral_bone_plate_mask, dilation_kernel_up_single)
-            & ~subchondral_bone_plate_mask
+            & ~subchondral_bone_plate_mask & ~trabecular_bone_mask
     ).astype(int)
     # dilate down into the bone to get the shallow mask
     message_s("Dilating down into the bone to get the shallow mask...", silent)
     shallow_mask = top_layer_mask
-    shallow_mask = binary_dilation(shallow_mask, dilation_kernel_down)
+    shallow_mask = binary_dilation(shallow_mask, dilation_kernel_down_compartment)
     shallow_mask = (
         shallow_mask & trabecular_bone_mask
         & ~subchondral_bone_plate_mask & ~top_layer_mask
@@ -68,7 +67,7 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
     message_s("Dilating down into the bone to get the mid mask...", silent)
     mid_mask = top_layer_mask
     for _ in trange(2, disable=silent):
-        mid_mask = binary_dilation(mid_mask, dilation_kernel_down)
+        mid_mask = binary_dilation(mid_mask, dilation_kernel_down_compartment)
     mid_mask = (
         mid_mask & trabecular_bone_mask
         & ~shallow_mask & ~subchondral_bone_plate_mask & ~top_layer_mask
@@ -77,7 +76,7 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
     message_s("Dilating down into the bone to get the deep mask...", silent)
     deep_mask = top_layer_mask
     for _ in trange(3, disable=silent):
-        deep_mask = binary_dilation(deep_mask, dilation_kernel_down)
+        deep_mask = binary_dilation(deep_mask, dilation_kernel_down_compartment)
     deep_mask = (
         deep_mask & trabecular_bone_mask
         & ~mid_mask & ~shallow_mask & ~subchondral_bone_plate_mask & ~top_layer_mask
@@ -144,17 +143,14 @@ def generate_rois(args: Namespace):
     subchondral_bone_plate_mask = (mask == args.subchondral_bone_plate_class).astype(int)
     trabecular_bone_mask = (mask == args.trabecular_bone_class).astype(int)
     message_s("Creating dilation kernels...", args.silent)
-    dilation_kernel_up = np.zeros((2 * args.compartment_depth + 1, 1, 1), dtype=int)
     dilation_kernel_down = np.zeros((2 * args.compartment_depth + 1, 1, 1), dtype=int)
-    dilation_kernel_up_single = np.zeros((3, 1, 1), dtype=int)
-    dilation_kernel_up_single[1, 0, 0] = 1
+    dilation_kernel_up = np.zeros((3, 1, 1), dtype=int)
+    dilation_kernel_up[1, 0, 0] = 1
     if args.bone == "femur":
-        dilation_kernel_up_single[0, 0, 0] = 1
-        dilation_kernel_up[:(args.compartment_depth + 1), 0, 0] = 1
+        dilation_kernel_up[0, 0, 0] = 1
         dilation_kernel_down[(args.compartment_depth + 1):, 0, 0] = 1
     elif args.bone == "tibia":
-        dilation_kernel_up_single[2, 0, 0] = 1
-        dilation_kernel_up[(args.compartment_depth + 1):, 0, 0] = 1
+        dilation_kernel_up[2, 0, 0] = 1
         dilation_kernel_down[:(args.compartment_depth + 1), 0, 0] = 1
     else:
         raise ValueError(f"bone must be `femur` or `tibia`, given {args.bone}")
@@ -172,7 +168,6 @@ def generate_rois(args: Namespace):
         medial_subchondral_bone_plate_mask,
         medial_trabecular_bone_mask,
         dilation_kernel_up_single,
-        dilation_kernel_up,
         dilation_kernel_down,
         args.silent
     )
@@ -190,7 +185,6 @@ def generate_rois(args: Namespace):
         lateral_subchondral_bone_plate_mask,
         lateral_trabecular_bone_mask,
         dilation_kernel_up_single,
-        dilation_kernel_up,
         dilation_kernel_down,
         args.silent
     )
