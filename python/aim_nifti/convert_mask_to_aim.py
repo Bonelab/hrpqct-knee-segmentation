@@ -32,7 +32,7 @@ def convert_back_to_aim(args: Namespace) -> None:
         127 * (mask > 0),
         spacing=reader.GetOutput().GetSpacing(),
         origin=reader.GetOutput().GetOrigin(),
-        array_type=vtk.VTK_CHAR
+        array_type=VTK_CHAR
     )
     message(f"Adding to processing log")
     processing_log = (

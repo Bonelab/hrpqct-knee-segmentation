@@ -143,7 +143,7 @@ def generate_rois(args: Namespace):
     message_s("Extract subchondral bone plate and trabecular bone masks from mask...", args.silent)
     subchondral_bone_plate_mask = (mask == args.subchondral_bone_plate_class).astype(int)
     trabecular_bone_mask = (mask == args.trabecular_bone_class).astype(int)
-    message_s("Creating dilation kernels...", silent)
+    message_s("Creating dilation kernels...", args.silent)
     dilation_kernel_up = np.zeros((2 * args.compartment_depth + 1, 1, 1), dtype=int)
     dilation_kernel_down = np.zeros((2 * args.compartment_depth + 1, 1, 1), dtype=int)
     dilation_kernel_up_single = np.zeros((3, 1, 1), dtype=int)
