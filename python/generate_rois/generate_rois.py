@@ -31,13 +31,32 @@ def keep_largest_connected_component_skimage(mask: np.ndarray, background: bool 
 def get_regional_subchondral_bone_plate_mask(
         subchondral_bone_plate_mask: np.ndarray,
         roi_mask: np.ndarray,
+        roi_smoothing_sigma: float,
+        regional_subchondral_bone_plate_dilation_footprint: int,
+        silent: bool
 ) -> np.ndarray:
     if not isinstance(subchondral_bone_plate_mask, np.ndarray):
         raise ValueError("`subchondral_bone_plate_mask` must be a numpy array")
     if not isinstance(roi_mask, np.ndarray):
         raise ValueError("`roi_mask` must be a numpy array")
-    return keep_largest_connected_component_skimage(
+    message_s("Smooth out the roi_mask...", silent)
+    roi_mask = gaussian(roi_mask, sigma=roi_smoothing_sigma) > 0.5
+    message_s("Find the largest component of the intersection of the roi mask and subchondral bone...", silent)
+    regional_subchondral_bone_plate_mask = keep_largest_connected_component_skimage(
         subchondral_bone_plate_mask & roi_mask,
+        background=False
+    )
+    message_s("Axially dilate the regional subchondral bone plate mask and find the intersection with subchondral bone...", silent)
+    regional_subchondral_bone_plate_mask = (
+        binary_dilation(
+            regional_subchondral_bone_plate_mask,
+            np.ones((2 * regional_subchondral_bone_plate_dilation_footprint + 1, 1, 1))
+        )
+        & subchondral_bone_plate_mask
+    ).astype(int)
+    message_s("Keep only the largest connected component...", silent)
+    return keep_largest_connected_component_skimage(
+        regional_subchondral_bone_plate_mask,
         background=False
     )
 
@@ -158,6 +177,9 @@ def generate_rois(args: Namespace):
     medial_subchondral_bone_plate_mask = get_regional_subchondral_bone_plate_mask(
         subchondral_bone_plate_mask,
         atlas_mask == args.medial_atlas_code,
+        args.roi_smoothing_sigma,
+        args.regional_subchondral_bone_plate_dilation_footprint,
+        args.silent
     )
     medial_trabecular_bone_mask = (
         trabecular_bone_mask
@@ -175,6 +197,9 @@ def generate_rois(args: Namespace):
     lateral_subchondral_bone_plate_mask = get_regional_subchondral_bone_plate_mask(
         subchondral_bone_plate_mask,
         atlas_mask == args.lateral_atlas_code,
+        args.roi_smoothing_sigma,
+        args.regional_subchondral_bone_plate_dilation_footprint,
+        args.silent
     )
     lateral_trabecular_bone_mask = (
             trabecular_bone_mask
@@ -275,6 +300,16 @@ def create_parser() -> ArgumentParser:
         "--compartment-depth", "-cd", type=int, default=41, metavar="N",
         help="depth of shallow, mid, deep compartments, in voxels. Leave this as default to perform the same "
              "analysis as established by Andres Kroker (2019)"
+    )
+    parser.add_argument(
+        "--regional-subchondral-bone-plate-dilation-footprint", "-rsbp", type=int, default=5, metavar="N",
+        help="the footprint to use for the axial dilation of the regional subchondral bone plate mask, which is "
+             "performed to ensure that the regional subchondral bone plate mask contains the subchondral bone plate "
+             "from the endosteal to periosteal surface, and not just little bits at the sides"
+    )
+    parser.add_argument(
+        "--roi-smoothing-sigma", "-rss", type=float, default=1.0, metavar="N",
+        help="the sigma to use for smoothing the roi mask before intersecting with the subchondral bone plate mask. "
     )
     parser.add_argument("--overwrite", "-ow", action="store_true", help="Overwrite output files if they exist.")
     parser.add_argument("--silent", "-s", action="store_true", help="Silence all terminal output.")
