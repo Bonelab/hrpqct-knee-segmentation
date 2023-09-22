@@ -148,16 +148,16 @@ def generate_rois(args: Namespace):
     dilation_kernel_down = np.zeros((2 * args.compartment_depth + 1, 1, 1), dtype=int)
     dilation_kernel_up_single = np.zeros((3, 1, 1), dtype=int)
     dilation_kernel_up_single[1, 0, 0] = 1
-    if bone == "femur":
+    if args.bone == "femur":
         dilation_kernel_up_single[0, 0, 0] = 1
         dilation_kernel_up[:(args.compartment_depth + 1), 0, 0] = 1
         dilation_kernel_down[(args.compartment_depth + 1):, 0, 0] = 1
-    elif bone == "tibia":
+    elif args.bone == "tibia":
         dilation_kernel_up_single[2, 0, 0] = 1
         dilation_kernel_up[(args.compartment_depth + 1):, 0, 0] = 1
         dilation_kernel_down[:(args.compartment_depth + 1), 0, 0] = 1
     else:
-        raise ValueError(f"bone must be `femur` or `tibia`, given {bone}")
+        raise ValueError(f"bone must be `femur` or `tibia`, given {args.bone}")
     message_s("Generating medial subchondral bone plate mask...", args.silent)
     medial_subchondral_bone_plate_mask = get_regional_subchondral_bone_plate_mask(
         subchondral_bone_plate_mask,
