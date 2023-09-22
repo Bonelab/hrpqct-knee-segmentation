@@ -167,7 +167,7 @@ def generate_rois(args: Namespace):
     medial_roi_masks = generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
         medial_subchondral_bone_plate_mask,
         medial_trabecular_bone_mask,
-        dilation_kernel_up_single,
+        dilation_kernel_up,
         dilation_kernel_down,
         args.silent
     )
@@ -184,7 +184,7 @@ def generate_rois(args: Namespace):
     lateral_roi_masks = generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
         lateral_subchondral_bone_plate_mask,
         lateral_trabecular_bone_mask,
-        dilation_kernel_up_single,
+        dilation_kernel_up,
         dilation_kernel_down,
         args.silent
     )
