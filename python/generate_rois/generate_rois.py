@@ -15,29 +15,31 @@ from skimage.measure import label as sklabel
 from skimage.filters import gaussian, median
 
 
+def keep_largest_connected_component_skimage(mask: np.ndarray, background: bool = False) -> np.ndarray:
+    if not(isinstance(mask, np.ndarray)) or (len(mask.shape) != 3):
+        raise ValueError("`mask` must be a 3D numpy array")
+    mask = ~mask if background else mask
+    labelled_mask = sklabel(mask, background=0)
+    component_counts = np.bincount(labelled_mask.flat)
+    if len(component_counts) < 2:
+        return mask
+    mask = labelled_mask == np.argmax(component_counts[1:]) + 1
+    mask = ~mask if background else mask
+    return mask.astype(int)
+
+
 def get_regional_subchondral_bone_plate_mask(
         subchondral_bone_plate_mask: np.ndarray,
         roi_mask: np.ndarray,
-        bone: str
 ) -> np.ndarray:
     if not isinstance(subchondral_bone_plate_mask, np.ndarray):
         raise ValueError("`subchondral_bone_plate_mask` must be a numpy array")
     if not isinstance(roi_mask, np.ndarray):
         raise ValueError("`roi_mask` must be a numpy array")
-    if not isinstance(bone, str):
-        raise ValueError("`bone` must be a string")
-    if bone == "femur":
-        keep_lower = True
-    elif bone == "tibia":
-        keep_lower = False
-    else:
-        raise ValueError(f"bone must be `femur` or `tibia`, given {bone}")
-    mask = subchondral_bone_plate_mask & roi_mask
-    labelled_mask = sklabel(mask, background=0)
-    if np.max(labelled_mask) == 0:
-        raise ValueError("No subchondral bone plate detected in the contact region ROI")
-    z_centers = [np.mean(np.nonzero(labelled_mask == label)[0]) for label in range(1, np.max(labelled_mask) + 1)]
-    return (labelled_mask == (np.argmin(z_centers) + 1 if keep_lower else np.argmax(z_centers) + 1)).astype(int)
+    return keep_largest_connected_component_skimage(
+        subchondral_bone_plate_mask & roi_mask,
+        background=False
+    )
 
 
 def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
@@ -159,7 +161,6 @@ def generate_rois(args: Namespace):
     medial_subchondral_bone_plate_mask = get_regional_subchondral_bone_plate_mask(
         subchondral_bone_plate_mask,
         atlas_mask == args.medial_atlas_code,
-        args.bone
     )
     medial_trabecular_bone_mask = (
         trabecular_bone_mask
@@ -178,7 +179,6 @@ def generate_rois(args: Namespace):
     lateral_subchondral_bone_plate_mask = get_regional_subchondral_bone_plate_mask(
         subchondral_bone_plate_mask,
         atlas_mask == args.lateral_atlas_code,
-        args.bone
     )
     lateral_trabecular_bone_mask = (
             trabecular_bone_mask
