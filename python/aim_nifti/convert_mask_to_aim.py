@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter, Namespace
 import SimpleITK as sitk
+import numpy as np
 from vtk import VTK_CHAR
 from vtkbone import vtkboneAIMReader, vtkboneAIMWriter
 from datetime import datetime
