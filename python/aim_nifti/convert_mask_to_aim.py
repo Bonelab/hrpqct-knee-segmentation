@@ -23,7 +23,7 @@ def convert_back_to_aim(args: Namespace) -> None:
     message(f"Reading input image from: {args.input_mask}")
     mask = sitk.ReadImage(args.input_mask)
     message("Converting input image to numpy array")
-    mask = sitk.GetArrayFromImage(mask)
+    mask = np.transpose(sitk.GetArrayFromImage(mask), (2, 1, 0))
     message(f"Reading reference AIM from {args.reference_aim}")
     reader = vtkboneAIMReader()
     reader.DataOnCellsOff()
