@@ -48,6 +48,7 @@ def convert_back_to_aim(args: Namespace) -> None:
         writer,
         processing_log=processing_log
     )
+    writer.SetFileName(args.output_aim)
     writer.Update()
 
 
