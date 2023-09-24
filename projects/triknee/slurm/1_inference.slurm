@@ -34,4 +34,4 @@ ${MODEL_MASK_DIR} ${IMAGE,,} \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f2/checkpoints/epoch\=197-step\=396.ckpt \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f3/checkpoints/epoch\=119-step\=240.ckpt \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f4/checkpoints/epoch\=231-step\=464.ckpt \
--mt segresnetvae segresnetvae segresnetvae segresnetvae segresnetvae -pw 64 -ow --cuda
+-mt segresnetvae segresnetvae segresnetvae segresnetvae segresnetvae -pw 128 -bs 16 -ow --cuda
