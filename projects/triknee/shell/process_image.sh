@@ -18,7 +18,7 @@ SIDE=$3
 JID_PRE=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} projects/triknee/slurm/0_preinference.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_PRE} to perform pre-inference processing."
 sleep 1
-JID_INF=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_PRE} projects/triknee/slurm/1_inference.slurm | tr -dc "0-9")
+JID_INF=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_PRE} projects/triknee/slurm/1_inference_segresnetvae.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_INF} to perform inference processing. Will not execute until job ${JID_PRE} is complete."
 sleep 1
 JID_POST=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_INF} projects/triknee/slurm/2_postinference.slurm | tr -dc "0-9")
