@@ -34,4 +34,4 @@ ${MODEL_MASK_DIR} ${IMAGE,,} \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/unetpp_3d_knee_transfer_cv/21115368_f2/checkpoints/epoch\=130-step\=1703.ckpt \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/unetpp_3d_knee_transfer_cv/21115368_f3/checkpoints/epoch\=125-step\=1638.ckpt \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/unetpp_3d_knee_transfer_cv/21115368_f4/checkpoints/epoch\=165-step\=2158.ckpt \
--mt unet unet unet unet unet -pw 64 -bs 16 -ow --cuda -o 0.5
+-mt unet unet unet unet unet -pw 64 -bs 16 -ow --cuda -o 0.25
