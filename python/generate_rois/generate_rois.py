@@ -181,6 +181,7 @@ def generate_rois(args: Namespace):
         args.regional_subchondral_bone_plate_dilation_footprint,
         args.silent
     )
+    #TODO: don't do this, just use trab mask
     medial_trabecular_bone_mask = (
         trabecular_bone_mask
         & (atlas_mask == args.medial_atlas_code)
@@ -201,6 +202,7 @@ def generate_rois(args: Namespace):
         args.regional_subchondral_bone_plate_dilation_footprint,
         args.silent
     )
+    # TODO: don't do this, just use trab mask
     lateral_trabecular_bone_mask = (
             trabecular_bone_mask
             & (atlas_mask == args.lateral_atlas_code)
