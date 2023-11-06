@@ -17,19 +17,19 @@ BONE=$2
 SIDE=$3
 JID_PRE=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} projects/conmed/slurm/0_preinference.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_PRE} to perform pre-inference processing."
-sleep 1
+sleep 0.1
 JID_INF=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_PRE} projects/conmed/slurm/1_inference_segresnetvae.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_INF} to perform inference processing. Will not execute until job ${JID_PRE} is complete."
-sleep 1
+sleep 0.1
 JID_POST=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_INF} projects/conmed/slurm/2_postinference.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_POST} to perform post-inference processing. Will not execute until job ${JID_INF} is complete."
-sleep 1
+sleep 0.1
 if [ ${BONE} = "femur" ]; then
   for ROI_CODE in 10 11 12 13 14 15 16 17;
   do
     JID_ROI=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE},ROI_CODE=${ROI_CODE} --dependency=afterany:${JID_POST} projects/conmed/slurm/3_convert_to_aim.slurm | tr -dc "0-9")
     echo "Submitted job ${JID_ROI} to convert the ROI${ROI_CODE} mask to AIM format. Will not execute until job ${JID_POST} is complete."
-    sleep 1
+    sleep 0.1
   done
 fi
 if [ ${BONE} = "tibia" ]; then
@@ -37,6 +37,6 @@ if [ ${BONE} = "tibia" ]; then
   do
     JID_ROI=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE},ROI_CODE=${ROI_CODE} --dependency=afterany:${JID_POST} projects/conmed/slurm/3_convert_to_aim.slurm | tr -dc "0-9")
     echo "Submitted job ${JID_ROI} to convert the ROI${ROI_CODE} mask to AIM format. Will not execute until job ${JID_POST} is complete."
-    sleep 1
+    sleep 0.1
   done
 fi
