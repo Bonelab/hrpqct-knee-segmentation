@@ -47,6 +47,14 @@ def create_parser():
         '--patch-width', '-pw', type=int, default=128, metavar='N',
         help='width of slice patch to use in training'
     )
+    parser.add_argument(
+        '--foreground-channel', '-fc', type=int, default=0, metavar='N',
+        help='channel to use for centering patches'
+    )
+    parser.add_argument(
+        '--probability', '-p', type=float, default=0.5, metavar='P',
+        help='probability of sampling a foreground patch'
+    )
 
     return parser
 
@@ -57,7 +65,11 @@ def main():
 
     # create dataset
     file_loader = AIMLoader(args.data_dir, '*_*_??.AIM')
-    sampler = ForegroundPatchSampler(patch_width=args.patch_width, prob=0.5)
+    sampler = ForegroundPatchSampler(
+        patch_width=args.patch_width,
+        foreground_channel=args.foreground_channel,
+        prob=args.probability
+    )
     transformer = ComposedTransformers([
         Rescaler(intensity_bounds=[args.min_density, args.max_density]),
         TensorConverter()
