@@ -19,7 +19,7 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 source activate blptl_11.1
 python -u python/training/cv/train_segresnetvae_cv.py \
 --image-size 64 64 64 \
---label segresnetvae_3d_knee_base_cv \
+--label segresnetvae_3d_knee_wback_base_cv \
 --version "$SLURM_JOB_ID" \
 --input-channels 1 \
 --output-channels 3 \
@@ -46,4 +46,6 @@ python -u python/training/cv/train_segresnetvae_cv.py \
 /home/njneetes/work/data/SALTAC/visit_4/preprocessed/femur_medial_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_4/preprocessed/femur_lateral_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_lateral_pickled_3d
+/home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_lateral_pickled_3d \
+/home/njneetes/work/data/NORMXTII/preprocessed/radius_pickled_3d_background \
+/home/njneetes/work/data/NORMXTII/preprocessed/tibia_pickled_3d_background

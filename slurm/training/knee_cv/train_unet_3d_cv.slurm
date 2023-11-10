@@ -20,7 +20,7 @@ source activate blptl_11.1
 CHANNELS_ARR=("$CHANNELS")
 # shellcheck disable=SC2068
 python -u python/training/cv/train_unet_cv.py \
---label unet_3d_knee_base_cv \
+--label unet_3d_knee_wback_base_cv \
 --version "$SLURM_JOB_ID" \
 --input-channels 1 \
 --output-channels 3 \
@@ -48,4 +48,6 @@ python -u python/training/cv/train_unet_cv.py \
 /home/njneetes/work/data/SALTAC/visit_4/preprocessed/femur_medial_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_4/preprocessed/femur_lateral_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_lateral_pickled_3d
+/home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_lateral_pickled_3d \
+/home/njneetes/work/data/NORMXTII/preprocessed/radius_pickled_3d_background \
+/home/njneetes/work/data/NORMXTII/preprocessed/tibia_pickled_3d_background

@@ -35,7 +35,9 @@ unetr_3d_final version_21096526 \
 /home/njneetes/work/data/SALTAC/visit_4/preprocessed/femur_lateral_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_medial_pickled_3d \
 /home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_lateral_pickled_3d \
---label unetr_3d_knee_transfer_cv \
+/home/njneetes/work/data/NORMXTII/preprocessed/radius_pickled_3d_background \
+/home/njneetes/work/data/NORMXTII/preprocessed/tibia_pickled_3d_background \
+--label unetr_3d_knee_wback_transfer_cv \
 --version "$SLURM_JOB_ID" \
 --folds 5 \
 --num-workers 6 \
