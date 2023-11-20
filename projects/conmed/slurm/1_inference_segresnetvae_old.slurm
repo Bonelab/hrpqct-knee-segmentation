@@ -23,16 +23,14 @@ echo "Perform inference on the image"
 python python/inference/inference_ensemble.py \
 ${NIFTI_DIR}/${IMAGE,,}.nii.gz \
 ${MODEL_MASK_DIR} ${IMAGE,,} \
--hf \
+-hf /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_final/version_21096522/ref_hparams.yaml \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_final/version_21096522/ref_hparams.yaml \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_final/version_21096522/ref_hparams.yaml \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_final/version_21096522/ref_hparams.yaml \
 /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_final/version_21096522/ref_hparams.yaml \
-/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_final/version_21096522/ref_hparams.yaml \
--cf \
-/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_wback_transfer_cv/24500749_f0/checkpoints/epoch\=152-step\=459.ckpt \
-/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_wback_transfer_cv/24500749_f1/checkpoints/epoch\=144-step\=435.ckpt \
-/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_wback_transfer_cv/24500749_f2/checkpoints/epoch\=149-step\=450.ckpt \
-/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_wback_transfer_cv/24500749_f3/checkpoints/epoch\=176-step\=531.ckpt \
-/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_wback_transfer_cv/24500749_f4/checkpoints/epoch\=154-step\=465.ckpt \
+-cf /home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f0/checkpoints/epoch\=135-step\=272.ckpt \
+/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f1/checkpoints/epoch\=276-step\=554.ckpt \
+/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f2/checkpoints/epoch\=197-step\=396.ckpt \
+/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f3/checkpoints/epoch\=119-step\=240.ckpt \
+/home/njneetes/Projects/hrpqct-knee-segmentation/logs/segresnetvae_3d_knee_transfer_cv/21115374_f4/checkpoints/epoch\=231-step\=464.ckpt \
 -mt segresnetvae segresnetvae segresnetvae segresnetvae segresnetvae -pw 64 -bs 16 -ow --cuda -o 0.25
