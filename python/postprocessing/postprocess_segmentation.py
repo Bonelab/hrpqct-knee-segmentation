@@ -15,6 +15,41 @@ from skimage.measure import label as sklabel
 from skimage.filters import gaussian, median
 
 
+def expand_array_to_3d(array: np.ndarray, dim: int) -> np.ndarray:
+    if dim == 0:
+        return array[:, None, None]
+    elif dim == 1:
+        return array[None, :, None]
+    elif dim == 2:
+        return array[None, None, :]
+    else:
+        raise ValueError("`dim` must be 0, 1, or 2")
+
+
+def create_efficient_3d_binary_operation(func: callable) -> callable:
+    def efficient_3d_binary_operation(mask: np.ndarray, radius: int) -> np.ndarray:
+        for dim in [0, 1, 2]:
+            mask = func(mask, expand_array_to_3d(np.ones((2 * radius + 1,)), dim))
+        return mask
+    return efficient_3d_binary_operation
+
+
+def efficient_3d_dilation(mask: np.ndarray, radius: int) -> np.ndarray:
+    return create_efficient_3d_binary_operation(binary_dilation)(mask, radius)
+
+
+def efficient_3d_erosion(mask: np.ndarray, radius: int) -> np.ndarray:
+    return create_efficient_3d_binary_operation(binary_erosion)(mask, radius)
+
+
+def efficient_3d_closing(mask: np.ndarray, radius: int) -> np.ndarray:
+    return efficient_3d_dilation(efficient_3d_erosion(mask, radius), radius)
+
+
+def efficient_3d_opening(mask: np.ndarray, radius: int) -> np.ndarray:
+    return efficient_3d_erosion(efficient_3d_dilation(mask, radius), radius)
+
+
 def keep_largest_connected_component_skimage(mask: np.ndarray, background: bool = False) -> np.ndarray:
     if not(isinstance(mask, np.ndarray)) or (len(mask.shape) != 3):
         raise ValueError("`mask` must be a 3D numpy array")
@@ -106,27 +141,33 @@ def postprocess_model_masks(
         subchondral_bone_plate_mask: np.ndarray,
         trabecular_bone_mask: np.ndarray,
         min_subchondral_bone_plate_thickness: int = 4,
-        num_iterations_remove_islands: int = 2,
-        num_iterations_fill_gaps: int = 2,
+        trab_remove_islands_radius: int = 8,
+        trab_fill_gaps_radius: int = 2,
+        bone_fill_gaps_radius: int = 2,
+        bone_remove_islands_radius: int = 2,
         subchondral_bone_plate_closing: int = 4,
         silent: bool = False
 ) -> np.ndarray:
     message_s("", silent)
-    message_s(f"Step 1: Tb  <- filter(Tb | ni={num_iterations_remove_islands}, ng={num_iterations_fill_gaps}) | Iteratively filtering trabecular mask", silent)
-    trabecular_bone_mask = iterative_filter(trabecular_bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
-    message_s("Step 2: B   <- Tb ∪ Sc | Combining filtered trabecular and subchondral bone plate masks into bone mask", silent)
+    message_s(f"Step 1: Tb <- remove_islands(Tb | r={trab_remove_islands_radius})", silent)
+    trabecular_bone_mask = remove_islands_from_mask(trabecular_bone_mask, erosion_dilation=trab_remove_islands_radius)
+    message_s(f"Step 2: Tb <- fill_in_gaps(Tb | r={trab_fill_gaps_radius})", silent)
+    trabecular_bone_mask = fill_in_gaps_in_mask(trabecular_bone_mask, dilation_erosion=trab_fill_gaps_radius)
+    message_s(f"Step 3: B <- Tb ∪ Sc", silent)
     bone_mask = np.logical_or(trabecular_bone_mask, subchondral_bone_plate_mask)
-    message_s(f"Step 3: B   <- filter(B | ni={num_iterations_remove_islands}, ng={num_iterations_fill_gaps}) | Iteratively filtering bone mask", silent)
-    bone_mask = iterative_filter(bone_mask, num_iterations_remove_islands, num_iterations_fill_gaps)
-    message_s(f"Step 4: MSc <- B  ∩ (¬ erode(B | ne={min_subchondral_bone_plate_thickness})) | Eroding and subtracting bone mask to get minimum subchondral bone plate mask", silent)
+    message_s(f"Step 4: B <- fill_in_gaps(B | r={bone_fill_gaps_radius}", silent)
+    bone_mask = fill_in_gaps_in_mask(bone_mask, dilation_erosion=bone_fill_gaps_radius)
+    message_s(f"Step 5: B <- remove_islands(B | r={bone_remove_islands_radius})", silent)
+    bone_mask = remove_islands_from_mask(bone_mask, erosion_dilation=bone_remove_islands_radius)
+    message_s(f"Step 4: MSc <- B  ∩ (¬ erode(B | r={min_subchondral_bone_plate_thickness}))", silent)
     minimum_subchondral_bone_plate_mask = erode_and_subtract(bone_mask, min_subchondral_bone_plate_thickness)
-    message_s("Step 5: Tb  <- Tb ∩ (¬ MSc) | Subtracting the minimum subchondral bone plate mask from the trabecular mask", silent)
+    message_s("Step 5: Tb  <- Tb ∩ (¬ MSc)", silent)
     trabecular_bone_mask = np.logical_and(trabecular_bone_mask, np.logical_not(minimum_subchondral_bone_plate_mask))
-    message_s("Step 6: Sc  <- B  ∩ (¬ Tb) | Subtracting the trabecular mask from the bone mask to get the subchondral bone plate mask", silent)
+    message_s("Step 6: Sc  <- B  ∩ (¬ Tb)", silent)
     subchondral_bone_plate_mask = np.logical_and(bone_mask, np.logical_not(trabecular_bone_mask))
-    message_s(f"Step 7: Sc  <- close(Sc, nc={subchondral_bone_plate_closing}) | Performing closing on subchondral bone plate mask", silent)
-    subchondral_bone_plate_mask = binary_closing(subchondral_bone_plate_mask, ball(subchondral_bone_plate_closing))
-    message_s("Step 8: Tb  <- Tb  ∩ (¬ Sc) | Subtracting the subchondral bone plate mask from the trabecular mask", silent)
+    message_s(f"Step 7: Sc  <- close(Sc | r={subchondral_bone_plate_closing})", silent)
+    subchondral_bone_plate_mask = efficient_3d_closing(subchondral_bone_plate_mask, subchondral_bone_plate_closing)
+    message_s("Step 8: Tb  <- Tb  ∩ (¬ Sc)", silent)
     trabecular_bone_mask = np.logical_and(trabecular_bone_mask, np.logical_not(subchondral_bone_plate_mask))
     return subchondral_bone_plate_mask.astype(int), trabecular_bone_mask.astype(int)
 
@@ -160,8 +201,10 @@ def postprocess_segmentation(args: Namespace):
         subchondral_bone_plate_mask,
         trabecular_bone_mask,
         args.minimum_subchondral_bone_plate_thickness,
-        args.num_iterations_remove_islands,
-        args.num_iterations_fill_gaps,
+        args.trab_remove_islands_radius,
+        args.trab_fill_gaps_radius,
+        args.bone_fill_gaps_radius,
+        args.bone_remove_islands_radius,
         args.subchondral_bone_plate_closing,
         args.silent
     )
@@ -196,12 +239,20 @@ def create_parser() -> ArgumentParser:
         help="the class label for the trabecular bone in the model mask"
     )
     parser.add_argument(
-        "--num-iterations-remove-islands", "-niri", type=int, default=2, metavar="N",
-        help="number of iterations of island removal to perform"
+        "--trab-remove-islands-radius", "-trir", type=int, default=8, metavar="N",
+        help="radius of structural element when performing remove_islands on the trabecular bone mask"
     )
     parser.add_argument(
-        "--num-iterations-fill-gaps", "-nifg", type=int, default=2, metavar="N",
-        help="number of iterations of gap filling to perform"
+        "--trab-fill-gaps-radius", "-trfgr", type=int, default=2, metavar="N",
+        help="radius of structural element when performing fill_gaps on the trabecular bone mask"
+    )
+    parser.add_argument(
+        "--bone-fill-gaps-radius", "-bfgr", type=int, default=2, metavar="N",
+        help="radius of structural element when performing fill_gaps on the bone mask"
+    )
+    parser.add_argument(
+        "--bone-remove-islands-radius", "-brir", type=int, default=2, metavar="N",
+        help="radius of structural element when performing remove_islands on the bone mask"
     )
     parser.add_argument(
         "--subchondral-bone-plate-closing", "-sbpc", type=int, default=4, metavar="N",
