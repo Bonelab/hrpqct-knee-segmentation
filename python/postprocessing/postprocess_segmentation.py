@@ -69,9 +69,9 @@ def remove_islands_from_mask(mask: np.ndarray, erosion_dilation: int = 1) -> np.
     if not(isinstance(mask, np.ndarray)) or (len(mask.shape) != 3):
         raise ValueError("`mask` must be a 3D numpy array")
     mask = np.pad(mask, ((1, 1), (1, 1), (1, 1)), mode='constant')
-    binary_erosion(mask, footprint=ball(erosion_dilation), out=mask)
+    mask = efficient_3d_erosion(mask, erosion_dilation)
     mask = keep_largest_connected_component_skimage(mask.astype(int), background=False)
-    binary_dilation(mask, footprint=ball(erosion_dilation), out=mask)
+    mask = efficient_3d_dilation(mask, erosion_dilation)
     return mask[1:-1, 1:-1, 1:-1].astype(int)
 
 
@@ -84,9 +84,9 @@ def fill_in_gaps_in_mask(mask: np.ndarray, dilation_erosion: int = 1) -> np.ndar
     if pad_width:
         pad_width = 2 * dilation_erosion
         mask = np.pad(mask, ((pad_width, pad_width), (pad_width, pad_width), (pad_width, pad_width)), mode='constant')
-    binary_dilation(mask, footprint=ball(dilation_erosion), out=mask)
+    mask = efficient_3d_dilation(mask, dilation_erosion)
     mask = keep_largest_connected_component_skimage(mask.astype(int), background=True)
-    binary_erosion(mask, footprint=ball(dilation_erosion), out=mask)
+    mask = efficient_3d_erosion(mask, dilation_erosion)
     if pad_width:
         mask = mask[pad_width:-pad_width, pad_width:-pad_width, pad_width:-pad_width]
     return keep_largest_connected_component_skimage(mask.astype(int), background=True)
@@ -114,7 +114,7 @@ def dilate_and_subtract(mask: np.ndarray, thickness: int) -> np.ndarray:
         raise ValueError("`mask` must be a 3D numpy array")
     if not(isinstance(thickness, int)) or (thickness < 0):
         raise ValueError("`thickness` must be a positive integer")
-    dilated_mask = binary_dilation(mask, footprint=ball(thickness))
+    dilated_mask = efficient_3d_dilation(mask, thickness)
     return (dilated_mask & (~mask)).astype(int)
 
 
@@ -123,18 +123,8 @@ def erode_and_subtract(mask: np.ndarray, thickness: int) -> np.ndarray:
         raise ValueError("`mask` must be a 3D numpy array")
     if not(isinstance(thickness, int)) or (thickness < 0):
         raise ValueError("`thickness` must be a positive integer")
-    eroded_mask = binary_erosion(mask, footprint=ball(thickness))
+    eroded_mask = efficient_3d_erosion(mask, thickness)
     return ((~eroded_mask) & mask).astype(int)
-
-
-def extract_bone(image, threshold: float = -0.25):
-    if not(isinstance(mask, np.ndarray)) or (len(mask.shape) != 3):
-        raise ValueError("`mask` must be a 3D numpy array")
-    bone_mask = image >= threshold
-    bone_mask = median(bone_mask, selem=np.ones((3, 3, 1)))
-    bone_mask = remove_islands_from_mask(bone_mask, erosion_dilation=3)
-    bone_mask = fill_in_gaps_in_mask(bone_mask, dilation_erosion=15)
-    return bone_mask
 
 
 def postprocess_model_masks(
