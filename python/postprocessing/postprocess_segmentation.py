@@ -143,21 +143,23 @@ def postprocess_model_masks(
     trabecular_bone_mask = remove_islands_from_mask(trabecular_bone_mask, erosion_dilation=trab_remove_islands_radius)
     message_s(f"Step 2: Tb <- fill_in_gaps(Tb | r={trab_fill_gaps_radius})", silent)
     trabecular_bone_mask = fill_in_gaps_in_mask(trabecular_bone_mask, dilation_erosion=trab_fill_gaps_radius)
-    message_s(f"Step 3: B <- Tb ∪ Sc", silent)
+    message_s(f"Step 3: Tb <- Tb ∩ (¬Sc)", silent)
+    trabecular_bone_mask = np.logical_and(trabecular_bone_mask, np.logical_not(subchondral_bone_plate_mask))
+    message_s(f"Step 4: B <- Tb ∪ Sc", silent)
     bone_mask = np.logical_or(trabecular_bone_mask, subchondral_bone_plate_mask)
-    message_s(f"Step 4: B <- fill_in_gaps(B | r={bone_fill_gaps_radius}", silent)
+    message_s(f"Step 5: B <- fill_in_gaps(B | r={bone_fill_gaps_radius})", silent)
     bone_mask = fill_in_gaps_in_mask(bone_mask, dilation_erosion=bone_fill_gaps_radius)
-    message_s(f"Step 5: B <- remove_islands(B | r={bone_remove_islands_radius})", silent)
+    message_s(f"Step 6: B <- remove_islands(B | r={bone_remove_islands_radius})", silent)
     bone_mask = remove_islands_from_mask(bone_mask, erosion_dilation=bone_remove_islands_radius)
-    message_s(f"Step 4: MSc <- B  ∩ (¬ erode(B | r={min_subchondral_bone_plate_thickness}))", silent)
+    message_s(f"Step 7: MSc <- B  ∩ (¬ erode(B | r={min_subchondral_bone_plate_thickness}))", silent)
     minimum_subchondral_bone_plate_mask = erode_and_subtract(bone_mask, min_subchondral_bone_plate_thickness)
-    message_s("Step 5: Tb  <- Tb ∩ (¬ MSc)", silent)
+    message_s("Step 8: Tb  <- Tb ∩ (¬ MSc)", silent)
     trabecular_bone_mask = np.logical_and(trabecular_bone_mask, np.logical_not(minimum_subchondral_bone_plate_mask))
-    message_s("Step 6: Sc  <- B  ∩ (¬ Tb)", silent)
+    message_s("Step 9: Sc  <- B  ∩ (¬ Tb)", silent)
     subchondral_bone_plate_mask = np.logical_and(bone_mask, np.logical_not(trabecular_bone_mask))
-    message_s(f"Step 7: Sc  <- close(Sc | r={subchondral_bone_plate_closing})", silent)
+    message_s(f"Step 10: Sc  <- close(Sc | r={subchondral_bone_plate_closing})", silent)
     subchondral_bone_plate_mask = efficient_3d_closing(subchondral_bone_plate_mask, subchondral_bone_plate_closing)
-    message_s("Step 8: Tb  <- Tb  ∩ (¬ Sc)", silent)
+    message_s("Step 11: Tb  <- Tb  ∩ (¬ Sc)", silent)
     trabecular_bone_mask = np.logical_and(trabecular_bone_mask, np.logical_not(subchondral_bone_plate_mask))
     return subchondral_bone_plate_mask.astype(int), trabecular_bone_mask.astype(int)
 
@@ -245,7 +247,7 @@ def create_parser() -> ArgumentParser:
         help="radius of structural element when performing remove_islands on the bone mask"
     )
     parser.add_argument(
-        "--subchondral-bone-plate-closing", "-sbpc", type=int, default=4, metavar="N",
+        "--subchondral-bone-plate-closing", "-sbpc", type=int, default=1, metavar="N",
         help="radius of structural element when performing closing on the subchondral bone plate mask"
     )
     parser.add_argument(
