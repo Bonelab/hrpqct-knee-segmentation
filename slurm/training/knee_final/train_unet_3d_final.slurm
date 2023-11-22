@@ -42,4 +42,5 @@ unet_3d_final version_21096524 \
 --batch-size 16 \
 --log-step-interval 3 \
 --cuda \
---num-workers 4
+--num-workers 4 \
+--hfn "ref_hparams.yaml"

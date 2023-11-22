@@ -33,7 +33,7 @@ def create_unetplusplus_loss_function(loss_function):
 
 def train_unet_cv(args: Namespace) -> None:
     # load the hyperparameters from file
-    with open(os.path.join(args.log_dir, args.reference_label, args.reference_version, "hparams.yaml")) as f:
+    with open(os.path.join(args.log_dir, args.reference_label, args.reference_version, args.hparams_fn)) as f:
         hparams = yaml.safe_load(f)
 
     # check if we are using CUDA and set accelerator, devices, strategy

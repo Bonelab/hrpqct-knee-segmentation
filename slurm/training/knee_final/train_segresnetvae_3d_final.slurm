@@ -42,4 +42,5 @@ segresnetvae_3d_final version_21096522 \
 --batch-size 128 \
 --log-step-interval 3 \
 --cuda \
---num-workers 4
+--num-workers 4 \
+--hfn "ref_hparams.yaml"

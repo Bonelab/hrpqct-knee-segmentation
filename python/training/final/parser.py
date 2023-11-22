@@ -56,5 +56,9 @@ def create_parser(model_type: str) -> ArgumentParser:
         "--cuda", "-c", action="store_true", default=False,
         help="if enabled, check for GPUs and use them"
     )
+    parser.add_argument(
+        "--hparams-fn", "-hfn", type=str, default="hparams.yaml", metavar="STR",
+        help="filename to load hyperparameters from, within the reference version directory"
+    )
 
     return parser
