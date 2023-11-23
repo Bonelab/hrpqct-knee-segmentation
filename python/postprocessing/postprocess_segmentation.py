@@ -51,7 +51,7 @@ def efficient_3d_opening(mask: np.ndarray, radius: int) -> np.ndarray:
 
 
 def keep_largest_connected_component_skimage(mask: np.ndarray, background: bool = False) -> np.ndarray:
-    if not(isinstance(mask, np.ndarray)) or (len(mask.shape) != 3):
+    if not(isinstance(mask, np.ndarray)):
         raise ValueError("`mask` must be a 3D numpy array")
     mask = ~mask if background else mask
     labelled_mask = sklabel(mask, background=0)
@@ -164,6 +164,43 @@ def postprocess_model_masks(
     return subchondral_bone_plate_mask.astype(int), trabecular_bone_mask.astype(int)
 
 
+def keep_smaller_components(mask: np.ndarray) -> np.ndarray:
+    return mask & (~keep_largest_connected_component_skimage(mask, background=False))
+
+
+def slice_wise_keep_smaller_components(mask: np.ndarray, dim: int) -> np.ndarray:
+    for i in range(mask.shape[dim]):
+        st = tuple([slice(None) if j != dim else i for j in range(len(mask.shape))])
+        mask[st] = keep_smaller_components(mask[st])
+    return mask
+
+
+def segment_tunnel(
+        cortical_mask: np.ndarray,
+        trabecular_mask: np.ndarray,
+        tunnel_min_size: int = 0,
+        axial_dim: int = 0,
+        silent: bool = False
+) -> np.ndarray:
+    message_s("", silent)
+    message_s(f"Step 1: B <- (¬ Sc) ∪ (¬ Tb)", silent)
+    background_mask = np.logical_or(
+        np.logical_not(cortical_mask),
+        np.logical_not(trabecular_mask)
+    )
+    message_s(f"Step 2: T <- slice_wise_keep_smaller_components(B)", silent)
+    tunnel_mask = slice_wise_keep_smaller_components(background_mask, dim=axial_dim)
+    message_s(f"Step 3: T <- keep_largest_connected_component(T)", silent)
+    tunnel_mask = keep_largest_connected_component_skimage(tunnel_mask, background=False)
+    message_s(f"Step 4: Check that |T| > {tunnel_min_size}", silent)
+    if np.sum(tunnel_mask) < tunnel_min_size:
+        message_s(f"|T| < {tunnel_min_size} => No tunnel detected", silent)
+        return np.zeros_like(tunnel_mask)
+    else:
+        message_s(f"|T| > {tunnel_min_size} => Tunnel detected", silent)
+        return tunnel_mask
+
+
 def postprocess_segmentation(args: Namespace):
     print(echo_arguments("Post-process segmentation", vars(args)))
     # check inputs exist
@@ -200,7 +237,20 @@ def postprocess_segmentation(args: Namespace):
         args.subchondral_bone_plate_closing,
         args.silent
     )
-    post_model_mask = post_subchondral_bone_plate_mask + 2 * post_trabecular_bone_mask
+    post_model_mask = (
+            args.output_subchondral_bone_plate_class * post_subchondral_bone_plate_mask
+            + args.output_trabecular_bone_class * post_trabecular_bone_mask
+    )
+    if args.detect_tunnel:
+        message_s("Detecting tunnel...", args.silent)
+        tunnel_mask = segment_tunnel(
+            post_subchondral_bone_plate_mask,
+            post_trabecular_bone_mask,
+            args.tunnel_min_size,
+            silent=args.silent
+        )
+        post_model_mask += args.output_tunnel_class * tunnel_mask
+
     message_s("Writing post-processed mask...", args.silent)
     post_model_mask_sitk = sitk.GetImageFromArray(post_model_mask)
     post_model_mask_sitk.CopyInformation(mask_sitk)
@@ -216,7 +266,10 @@ def create_parser() -> ArgumentParser:
                     'The output mask will have the following class labels: 0-background, 1-subchondral bone plate, '
                     '2-trabecular bone. The output mask will be saved to '
                     '{output_dir}/{output_label}_postprocessed_mask.nii.gz and a yaml file containing the arguments '
-                    'supplied to this script will be saved to {output_dir}/{output_label}_postprocessed_mask.yaml.',
+                    'supplied to this script will be saved to {output_dir}/{output_label}_postprocessed_mask.yaml.'
+                    'Optionally, you can tell this script to try to autodetect an ACLR tunnel using the final '
+                    'cortical and trabecular masks. In this case you will want to set the optional parameter '
+                    '{tunnel-min-size} to the minimum number of voxels you expect a tunnel to occupy.',
         formatter_class=ArgumentDefaultsHelpFormatter
     )
     parser.add_argument("mask", type=str, help="The input mask.")
@@ -229,6 +282,18 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         "--model-trabecular-bone-class", "-mtb", type=int, default=1, metavar="N",
         help="the class label for the trabecular bone in the model mask"
+    )
+    parser.add_argument(
+        "--output-subchondral-bone-plate-class", "-osbpc", type=int, default=1, metavar="N",
+        help="the class label for the subchondral bone plate in the output mask"
+    )
+    parser.add_argument(
+        "--output-trabecular-bone-class", "-otbc", type=int, default=2, metavar="N",
+        help="the class label for the trabecular bone in the output mask"
+    )
+    parser.add_argument(
+        "--output-tunnel-class", "-otnc", type=int, default=3, metavar="N",
+        help="the class label for the tunnel in the output mask"
     )
     parser.add_argument(
         "--trab-remove-islands-radius", "-trir", type=int, default=8, metavar="N",
@@ -253,6 +318,13 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         "--minimum-subchondral-bone-plate-thickness", "-msbpt", type=int, default=4, metavar="N",
         help="minimum thickness of the subchondral bone plate, in voxels"
+    )
+    parser.add_argument(
+        "--detect-tunnel", "-t", action="store_true", help="try to detect ACLR tunnel"
+    )
+    parser.add_argument(
+        "--tunnel-min-size", "-tms", type=int, default=0, metavar="N",
+        help="minimum number of voxels a tunnel must occupy to be detected"
     )
     parser.add_argument("--overwrite", "-ow", action="store_true", help="Overwrite output files if they exist.")
     parser.add_argument("--silent", "-s", action="store_true", help="Silence all terminal output.")
