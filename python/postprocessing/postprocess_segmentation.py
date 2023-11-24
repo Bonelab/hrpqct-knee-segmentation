@@ -168,18 +168,19 @@ def keep_smaller_components(mask: np.ndarray) -> np.ndarray:
     return mask & (~keep_largest_connected_component_skimage(mask, background=False))
 
 
-def slice_wise_keep_smaller_components(mask: np.ndarray, dim: int) -> np.ndarray:
-    for i in range(mask.shape[dim]):
-        st = tuple([slice(None) if j != dim else i for j in range(len(mask.shape))])
-        mask[st] = keep_smaller_components(mask[st])
-    return mask
+def slice_wise_keep_smaller_components(mask: np.ndarray, dims: List[int]) -> np.ndarray:
+    out = np.zeros_like(mask)
+    for dim in dims:
+        for i in range(mask.shape[dim]):
+            st = tuple([slice(None) if j != dim else i for j in range(len(mask.shape))])
+            out[st] = out[st] | keep_smaller_components(mask[st])
+        return mask
 
 
 def segment_tunnel(
         cortical_mask: np.ndarray,
         trabecular_mask: np.ndarray,
         tunnel_min_size: int = 0,
-        axial_dim: int = 0,
         silent: bool = False
 ) -> np.ndarray:
     message_s("", silent)
@@ -189,7 +190,7 @@ def segment_tunnel(
         np.logical_not(trabecular_mask)
     )
     message_s(f"Step 2: T <- slice_wise_keep_smaller_components(B)", silent)
-    tunnel_mask = slice_wise_keep_smaller_components(background_mask, dim=axial_dim)
+    tunnel_mask = slice_wise_keep_smaller_components(background_mask, dims=[0, 1, 2])  # hard code to use all dimensions
     message_s(f"Step 3: T <- keep_largest_connected_component(T)", silent)
     tunnel_mask = keep_largest_connected_component_skimage(tunnel_mask, background=False)
     message_s(f"Step 4: Check that |T| > {tunnel_min_size}", silent)
