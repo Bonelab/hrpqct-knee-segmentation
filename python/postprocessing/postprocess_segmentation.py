@@ -165,7 +165,7 @@ def postprocess_model_masks(
 
 
 def keep_smaller_components(mask: np.ndarray) -> np.ndarray:
-    return mask & (~keep_largest_connected_component_skimage(mask, background=False))
+    return np.logical_and(mask, np.logical_not(keep_largest_connected_component_skimage(mask, background=False)))
 
 
 def slice_wise_keep_smaller_components(mask: np.ndarray, dims: List[int]) -> np.ndarray:
@@ -173,8 +173,8 @@ def slice_wise_keep_smaller_components(mask: np.ndarray, dims: List[int]) -> np.
     for dim in dims:
         for i in range(mask.shape[dim]):
             st = tuple([slice(None) if j != dim else i for j in range(len(mask.shape))])
-            out[st] = out[st] | keep_smaller_components(mask[st])
-        return mask
+            out[st] = np.logical_or(out[st], keep_smaller_components(mask[st]))
+    return out
 
 
 def segment_tunnel(
@@ -184,11 +184,8 @@ def segment_tunnel(
         silent: bool = False
 ) -> np.ndarray:
     message_s("", silent)
-    message_s(f"Step 1: B <- (¬ Sc) ∪ (¬ Tb)", silent)
-    background_mask = np.logical_or(
-        np.logical_not(cortical_mask),
-        np.logical_not(trabecular_mask)
-    )
+    message_s(f"Step 1: B <- ¬(Sc ∪ Tb)", silent)
+    background_mask = np.logical_not(np.logical_or(cortical_mask, trabecular_mask))
     message_s(f"Step 2: T <- slice_wise_keep_smaller_components(B)", silent)
     tunnel_mask = slice_wise_keep_smaller_components(background_mask, dims=[0, 1, 2])  # hard code to use all dimensions
     message_s(f"Step 3: T <- keep_largest_connected_component(T)", silent)
@@ -196,10 +193,10 @@ def segment_tunnel(
     message_s(f"Step 4: Check that |T| > {tunnel_min_size}", silent)
     if np.sum(tunnel_mask) < tunnel_min_size:
         message_s(f"|T| < {tunnel_min_size} => No tunnel detected", silent)
-        return np.zeros_like(tunnel_mask)
+        return np.zeros_like(tunnel_mask).astype(int)
     else:
-        message_s(f"|T| > {tunnel_min_size} => Tunnel detected", silent)
-        return tunnel_mask
+        message_s(f"|T| >= {tunnel_min_size} => Tunnel detected", silent)
+        return tunnel_mask.astype(int)
 
 
 def postprocess_segmentation(args: Namespace):
