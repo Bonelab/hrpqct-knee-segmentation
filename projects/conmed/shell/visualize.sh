@@ -11,4 +11,4 @@ then
   exit
 fi
 IMAGE=$1
-sbatch --export=IMAGE=${IMAGE} projects/conmed/slurm/4_visualize.slurm
+sbatch --export=IMAGE=${IMAGE} projects/conmed/slurm/5_visualize.slurm

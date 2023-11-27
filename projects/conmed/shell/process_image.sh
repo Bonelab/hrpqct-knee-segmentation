@@ -24,6 +24,8 @@ sleep 0.1
 JID_POST=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_INF} projects/conmed/slurm/2_postinference.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_POST} to perform post-inference processing. Will not execute until job ${JID_INF} is complete."
 sleep 0.1
+JID_CTC=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_POST} projects/conmed/slurm/4_convert_to_aims.slurm | tr -dc "0-9")
+echo "Submitted job ${JID_CTC} to convert the cort/trab/tunnel masks to AIM format. Will not execute until job ${JID_POST} is complete."
 if [ ${BONE} = "femur" ]; then
   for ROI_CODE in 10 11 12 13 14 15 16 17;
   do
