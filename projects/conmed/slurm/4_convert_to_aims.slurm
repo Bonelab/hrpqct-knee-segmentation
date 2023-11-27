@@ -25,6 +25,6 @@ python python/aim_nifti/convert_masks_to_aims.py \
 ${MODEL_MASK_DIR}/${IMAGE,,}_postprocessed_mask.nii.gz \
 ${AIM_DIR}/${IMAGE}.AIM \
 ${ROI_MASK_DIR}/${IMAGE} \
--cl 1 2 3 \
--cv CORT_MASK TRAB_MASK TUNNEL_MASK \
+-cv 1 2 3 \
+-cl CORT_MASK TRAB_MASK TUNNEL_MASK \
 -l "Generated using the code at: https://github.com/Bonelab/hrpqct-knee-segmentation" -ow
