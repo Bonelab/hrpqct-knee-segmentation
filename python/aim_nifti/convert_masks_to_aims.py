@@ -32,10 +32,10 @@ def convert_masks_to_aims(args: Namespace) -> None:
     reader.SetFileName(args.reference_aim)
     reader.Update()
     message(f"Converting images back to AIMs")
-    for cl, output_aim in zip(args.class_labels, output_aims):
-        message(f"Converting class {cl} to AIM")
+    for cl, cv, output_aim in zip(args.class_labels, args.class_values, output_aims):
+        message(f"Converting class {cl} ({cv}) to AIM")
         mask_cl = numpy_to_vtkImageData(
-            127 * (mask == cl),
+            127 * (mask == cv),
             spacing=reader.GetOutput().GetSpacing(),
             origin=reader.GetOutput().GetOrigin(),
             array_type=VTK_CHAR
