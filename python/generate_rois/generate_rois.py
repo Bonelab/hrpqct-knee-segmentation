@@ -10,9 +10,32 @@ import SimpleITK as sitk
 import yaml
 import os
 from tqdm import tqdm, trange
-from skimage.morphology import binary_dilation, binary_erosion, binary_closing, ball
+from skimage.morphology import binary_dilation, binary_erosion, binary_closing
 from skimage.measure import label as sklabel
 from skimage.filters import gaussian, median
+
+
+def expand_array_to_3d(array: np.ndarray, dim: int) -> np.ndarray:
+    if dim == 0:
+        return array[:, None, None]
+    elif dim == 1:
+        return array[None, :, None]
+    elif dim == 2:
+        return array[None, None, :]
+    else:
+        raise ValueError("`dim` must be 0, 1, or 2")
+
+
+def create_efficient_3d_binary_operation(func: callable) -> callable:
+    def efficient_3d_binary_operation(mask: np.ndarray, radius: int) -> np.ndarray:
+        for dim in [0, 1, 2]:
+            mask = func(mask, expand_array_to_3d(np.ones((2 * radius + 1,)), dim))
+        return mask
+    return efficient_3d_binary_operation
+
+
+def efficient_3d_dilation(mask: np.ndarray, radius: int) -> np.ndarray:
+    return create_efficient_3d_binary_operation(binary_dilation)(mask, radius)
 
 
 def keep_largest_connected_component_skimage(mask: np.ndarray, background: bool = False) -> np.ndarray:
@@ -158,9 +181,12 @@ def generate_rois(args: Namespace):
     message_s("Converting mask and atlas mask to numpy arrays...", args.silent)
     mask = sitk.GetArrayFromImage(mask_sitk)
     atlas_mask = sitk.GetArrayFromImage(atlas_mask_sitk)
-    message_s("Extract subchondral bone plate and trabecular bone masks from mask...", args.silent)
+    message_s("Extract subchondral bone plate, trabecular, and tunnel masks from mask...", args.silent)
     subchondral_bone_plate_mask = (mask == args.subchondral_bone_plate_class).astype(int)
     trabecular_bone_mask = (mask == args.trabecular_bone_class).astype(int)
+    tunnel_mask = (mask == args.tunnel_class).astype(int)
+    message_s(f"Dilating the tunnel mask with a radius of {args.tunnel_dilation_footprint}...", args.silent)
+    tunnel_mask = efficient_3d_dilation(tunnel_mask, args.tunnel_dilation_footprint)
     message_s("Creating dilation kernels...", args.silent)
     dilation_kernel_down = np.zeros((2 * args.compartment_depth + 1, 1, 1), dtype=int)
     dilation_kernel_up = np.zeros((3, 1, 1), dtype=int)
@@ -176,20 +202,15 @@ def generate_rois(args: Namespace):
     message_s("Generating medial subchondral bone plate mask...", args.silent)
     medial_subchondral_bone_plate_mask = get_regional_subchondral_bone_plate_mask(
         subchondral_bone_plate_mask,
-        atlas_mask == args.medial_atlas_code,
+        (atlas_mask == args.medial_atlas_code) & (~tunnel_mask),
         args.roi_smoothing_sigma,
         args.regional_subchondral_bone_plate_dilation_footprint,
         args.silent
     )
-    #TODO: don't do this, just use trab mask
-    medial_trabecular_bone_mask = (
-        trabecular_bone_mask
-        & (atlas_mask == args.medial_atlas_code)
-    ).astype(int)
     message_s("Generating medial ROIs...", args.silent)
     medial_roi_masks = generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
         medial_subchondral_bone_plate_mask,
-        medial_trabecular_bone_mask,
+        trabecular_bone_mask & (~tunnel_mask),
         dilation_kernel_up,
         dilation_kernel_down,
         args.silent
@@ -197,20 +218,15 @@ def generate_rois(args: Namespace):
     message_s("Generating lateral subchondral bone plate mask...", args.silent)
     lateral_subchondral_bone_plate_mask = get_regional_subchondral_bone_plate_mask(
         subchondral_bone_plate_mask,
-        atlas_mask == args.lateral_atlas_code,
+        (atlas_mask == args.lateral_atlas_code) & (~tunnel_mask),
         args.roi_smoothing_sigma,
         args.regional_subchondral_bone_plate_dilation_footprint,
         args.silent
     )
-    # TODO: don't do this, just use trab mask
-    lateral_trabecular_bone_mask = (
-            trabecular_bone_mask
-            & (atlas_mask == args.lateral_atlas_code)
-    ).astype(int)
     message_s("Generating lateral ROIs...", args.silent)
     lateral_roi_masks = generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
         lateral_subchondral_bone_plate_mask,
-        lateral_trabecular_bone_mask,
+        trabecular_bone_mask & (~tunnel_mask),
         dilation_kernel_up,
         dilation_kernel_down,
         args.silent
@@ -267,6 +283,11 @@ def create_parser() -> ArgumentParser:
              "was produced by python/postprocessing/postprocess_segmentation.py"
     )
     parser.add_argument(
+        "--tunnel-class", "-mt", type=int, default=3, metavar="N",
+        help="the class label for the tunnel in the mask. Leave this as the default if the input mask "
+             "was produced by python/postprocessing/postprocess_segmentation.py"
+    )
+    parser.add_argument(
         "--femur-lateral-site-codes", "-flsc", default=[17, 13, 14, 15], type=int, nargs=4, metavar="N",
         help="the site codes for the lateral ROIs in the femur, the order should be: "
              "bone plate, shallow, mid, deep. Leave these as default to ensure compatibility with the "
@@ -312,6 +333,11 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         "--roi-smoothing-sigma", "-rss", type=float, default=1.0, metavar="N",
         help="the sigma to use for smoothing the roi mask before intersecting with the subchondral bone plate mask. "
+    )
+    parser.add_argument(
+        "--tunnel-dilation-footprint", "-tdf", type=int, default=17, metavar="N",
+        help="the footprint to use for the dilation of the tunnel mask to ensure the ROIs do not include "
+             "cortical bone at the border of the tunnel"
     )
     parser.add_argument("--overwrite", "-ow", action="store_true", help="Overwrite output files if they exist.")
     parser.add_argument("--silent", "-s", action="store_true", help="Silence all terminal output.")
