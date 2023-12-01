@@ -1,88 +1,88 @@
 #!/bin/bash
-./projects/triknee/shell/process_image.shTRIKNEE_01_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_01_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_01_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_02_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_02_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_02_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_03_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_03_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_03_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_04_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_04_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_04_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_05_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_05_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_05_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_06_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_06_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_06_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_07_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_07_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_07_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_08_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_08_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_08_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_09_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_09_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_09_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_10_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_10_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_10_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_11_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_11_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_11_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_12_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_12_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_12_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_13_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_13_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_13_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_14_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_14_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_14_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_15_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_15_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_15_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_16_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_16_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_16_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_17_TR_1 tibia right; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_17_TR_2 tibia right; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_17_TR_3 tibia right; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_18_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_18_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_18_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_19_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_19_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_19_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_20_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_20_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_20_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_21_TR_1 tibia right; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_21_TR_2 tibia right; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_21_TR_3 tibia right; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_22_TR_1 tibia right; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_22_TR_2 tibia right; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_22_TR_3 tibia right; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_23_TR_1 tibia right; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_23_TR_2 tibia right; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_23_TR_3 tibia right; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_24_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_24_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_24_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_25_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_25_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_25_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_26_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_26_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_26_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_28_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_28_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_28_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_29_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_29_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_29_TL_3 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_30_TL_1 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_30_TL_2 tibia left; sleep 0.1
-./projects/triknee/shell/process_image.shTRIKNEE_30_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_01_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_01_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_01_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_02_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_02_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_02_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_03_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_03_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_03_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_04_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_04_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_04_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_05_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_05_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_05_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_06_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_06_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_06_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_07_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_07_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_07_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_08_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_08_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_08_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_09_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_09_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_09_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_10_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_10_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_10_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_11_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_11_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_11_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_12_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_12_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_12_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_13_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_13_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_13_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_14_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_14_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_14_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_15_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_15_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_15_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_16_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_16_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_16_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_17_TR_1 tibia right; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_17_TR_2 tibia right; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_17_TR_3 tibia right; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_18_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_18_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_18_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_19_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_19_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_19_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_20_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_20_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_20_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_21_TR_1 tibia right; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_21_TR_2 tibia right; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_21_TR_3 tibia right; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_22_TR_1 tibia right; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_22_TR_2 tibia right; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_22_TR_3 tibia right; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_23_TR_1 tibia right; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_23_TR_2 tibia right; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_23_TR_3 tibia right; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_24_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_24_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_24_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_25_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_25_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_25_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_26_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_26_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_26_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_28_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_28_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_28_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_29_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_29_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_29_TL_3 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_30_TL_1 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_30_TL_2 tibia left; sleep 0.1
+./projects/triknee/shell/process_image.sh TRIKNEE_30_TL_3 tibia left; sleep 0.1
