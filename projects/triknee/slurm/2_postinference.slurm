@@ -16,7 +16,7 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 export PYTHONUNBUFFERED=1
 export NIFTI_DIR="/home/njneetes/work/data/TRIKNEE/niftis"
 export ATLAS_REG_DIR="/home/njneetes/work/data/TRIKNEE/atlas_registrations"
-export ROI_MASK_DIR="/home/njneetes/work/data/TRIKNEE/roi_masks"
+export ROI_MASK_DIR="/home/njneetes/work/data/TRIKNEE/roi_masks_noreg"
 export MODEL_MASK_DIR="/home/njneetes/work/data/TRIKNEE/model_masks"
 export VIZ_DIR="/home/njneetes/work/data/TRIKNEE/visualizations"
 
