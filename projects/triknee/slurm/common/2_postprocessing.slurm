@@ -14,7 +14,7 @@
 ####### Set environment variables ###############
 export PATH="$HOME/software/miniconda3/bin:$PATH"
 export PYTHONUNBUFFERED=1
-export ROI_MASK_DIR="/home/njneetes/work/data/TRIKNEE/roi_masks_noreg"
+export MODEL_MASK_DIR="/home/njneetes/work/data/TRIKNEE/model_masks"
 
 ####### Run your script #########################
 source activate blptl_11.1
