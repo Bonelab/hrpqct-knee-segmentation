@@ -6,7 +6,7 @@
 #SBATCH --time=4:00:00
 #SBATCH --mem=100G
 #SBATCH --partition=gpu-v100 --gres=gpu:1
-#SBATCH --job-name=Inference
+#SBATCH --job-name=1_INFERENCE
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
 #SBATCH --mail-type=END
