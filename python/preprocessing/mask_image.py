@@ -64,7 +64,7 @@ def mask_image(args: Namespace) -> None:
         message_s("Dilating mask...", args.silent)
         mask_array = efficient_3d_dilation(mask_array, args.dilate_amount)
     message_s("Masking image...", args.silent)
-    image_array[~mask_array] = 0
+    image_array[~mask_array] = args.background_value
     message_s("Writing output image...", args.silent)
     output = sitk.GetImageFromArray(image_array)
     output.CopyInformation(image)
@@ -92,6 +92,10 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         "--background-class", "-bc", type=int, default=0, metavar="N",
         help="The class to use for the background."
+    )
+    parser.add_argument(
+        "--background-value", "-bv", type=int, default=0, metavar="N",
+        help="The value to use for the background."
     )
     parser.add_argument(
         "--overwrite", "-ow", action="store_true", help="Overwrite output file if it exists."
