@@ -26,7 +26,7 @@ python python/preprocessing/mask_image.py \
 ${NIFTI_DIR}/${IMAGE,,}.nii.gz \
 ${MODEL_MASK_DIR}/${IMAGE,,}_postprocessed_mask.nii.gz \
 ${NIFTI_DIR}/${IMAGE,,}_masked.nii.gz \
---dilate-amount 10 --background-class 0 -ow
+--dilate-amount 10 --background-class 0 --background-value -1000 -ow
 echo "Step 2: if the image is from a LEFT knee, need to mirror it"
 if [ ${SIDE} = "left" ]; then
   echo "Mirroring the image"
