@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --time=0:30:00
 #SBATCH --mem=100G
-#SBATCH --job-name=Post-inference
+#SBATCH --job-name=7_VISUALIZE
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
 #SBATCH --mail-type=END

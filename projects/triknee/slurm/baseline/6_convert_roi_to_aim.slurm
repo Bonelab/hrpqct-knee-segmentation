@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --time=2:00:00
 #SBATCH --mem=100G
-#SBATCH --job-name=Convert-to-AIM
+#SBATCH --job-name=6_CONVERT_TO_AIM
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
 #SBATCH --mail-type=END
