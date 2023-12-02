@@ -53,7 +53,7 @@ def message_s(m: str, s: bool):
 
 
 def mask_image(args: Namespace) -> None:
-    echo_arguments("Mask image", vars(args))
+    print(echo_arguments("Mask image", vars(args)))
     check_inputs_exist([args.input, args.mask], args.silent)
     check_for_output_overwrite(args.output, args.overwrite, args.silent)
     message_s("Reading input image...", args.silent)
