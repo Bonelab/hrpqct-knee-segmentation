@@ -22,7 +22,7 @@ export ATLAS_DIR="/home/njneetes/work/data/Atlases/Knee/periarticular"
 ####### Run your script #########################
 source activate blptl_11.1
 echo "Step 1: mask the image with the postprocessed model mask"
-python python/preprocessing/mask_image \
+python python/preprocessing/mask_image.py \
 ${NIFTI_DIR}/${IMAGE,,}.nii.gz \
 ${MODEL_MASK_DIR}/${IMAGE,,}_postprocessed_mask.nii.gz \
 ${NIFTI_DIR}/${IMAGE,,}_masked.nii.gz \
