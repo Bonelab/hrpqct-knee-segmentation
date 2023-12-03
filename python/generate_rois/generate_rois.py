@@ -288,35 +288,35 @@ def create_parser() -> ArgumentParser:
              "was produced by python/postprocessing/postprocess_segmentation.py"
     )
     parser.add_argument(
-        "--femur-lateral-site-codes", "-flsc", default=[17, 13, 14, 15], type=int, nargs=4, metavar="N",
+        "--femur-lateral-site-codes", "-flsc", default=[16, 10, 11, 12], type=int, nargs=4, metavar="N",
         help="the site codes for the lateral ROIs in the femur, the order should be: "
              "bone plate, shallow, mid, deep. Leave these as default to ensure compatibility with the "
              "periarticular microarchitectural analysis IPL scripts written by Andres Kroker"
     )
     parser.add_argument(
-        "--femur-medial-site-codes", "-fmsc", default=[16, 10, 11, 12], type=int, nargs=4, metavar="N",
+        "--femur-medial-site-codes", "-fmsc", default=[17, 13, 14, 15], type=int, nargs=4, metavar="N",
         help="the site codes for the medial ROIs in the femur, the order should be: "
              "bone plate, shallow, mid, deep. Leave these as default to ensure compatibility with the "
              "periarticular microarchitectural analysis IPL scripts written by Andres Kroker"
     )
     parser.add_argument(
-        "--tibia-lateral-site-codes", "-tlsc", default=[37, 33, 34, 35], type=int, nargs=4, metavar="N",
+        "--tibia-lateral-site-codes", "-tlsc", default=[36, 30, 31, 32], type=int, nargs=4, metavar="N",
         help="the site codes for the lateral ROIs in the tibia, the order should be: "
              "bone plate, shallow, mid, deep. Leave these as default to ensure compatibility with the "
              "periarticular microarchitectural analysis IPL scripts written by Andres Kroker"
     )
     parser.add_argument(
-        "--tibia-medial-site-codes", "-tmsc", default=[36, 30, 31, 32], type=int, nargs=4, metavar="N",
+        "--tibia-medial-site-codes", "-tmsc", default=[37, 33, 34, 35], type=int, nargs=4, metavar="N",
         help="the site codes for the medial ROIs in the tibia, the order should be: "
              "bone plate, shallow, mid, deep. Leave these as default to ensure compatibility with the "
              "periarticular microarchitectural analysis IPL scripts written by Andres Kroker"
     )
     parser.add_argument(
-        "--lateral-atlas-code", "-lac", default=2, type=int, metavar="N",
+        "--lateral-atlas-code", "-lac", default=1, type=int, metavar="N",
         help="site code used in the atlas mask for the combined lateral VOI"
     )
     parser.add_argument(
-        "--medial-atlas-code", "-mac", default=1, type=int, metavar="N",
+        "--medial-atlas-code", "-mac", default=2, type=int, metavar="N",
         help="site code used in the atlas mask for the combined medial VOI"
     )
     parser.add_argument(

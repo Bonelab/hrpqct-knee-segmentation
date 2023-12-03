@@ -180,19 +180,19 @@ def create_parser() -> ArgumentParser:
              "this is how you control the viscosity of the smoothing of the deformation"
     )
     parser.add_argument(
-        "--lateral-site-codes", "-lsc", default=[13, 14, 15, 17, 33, 34, 35, 37], type=int, nargs="+", metavar="N",
+        "--lateral-site-codes", "-lsc", default=[10, 11, 12, 16, 30, 31, 32, 36], type=int, nargs="+", metavar="N",
         help="the site codes for the lateral VOIs"
     )
     parser.add_argument(
-        "--medial-site-codes", "-msc", default=[10, 11, 12, 16, 30, 31, 32, 36], type=int, nargs="+", metavar="N",
+        "--medial-site-codes", "-msc", default=[13, 14, 15, 17, 33, 34, 35, 37], type=int, nargs="+", metavar="N",
         help="the site codes for the medial VOIs"
     )
     parser.add_argument(
-        "--lateral-output-code", "-loc", default=2, type=int, metavar="N",
+        "--lateral-output-code", "-loc", default=1, type=int, metavar="N",
         help="site code to use in final atlas mask for the combined lateral VOI"
     )
     parser.add_argument(
-        "--medial-output-code", "-moc", default=1, type=int, metavar="N",
+        "--medial-output-code", "-moc", default=2, type=int, metavar="N",
         help="site code to use in final atlas mask for the combined medial VOI"
     )
     parser.add_argument(
