@@ -19,25 +19,25 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 source activate blptl_11.1
 python -u python/training/knee_cv/train_unet_knee_cv.py \
 unet_3d_final version_21096524 \
-/home/njneetes/work/data/SALTAC/visit_1/preprocessed/femur_medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_1/preprocessed/femur_lateral_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_1/preprocessed/tibia_medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_1/preprocessed/tibia_lateral_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_2/preprocessed/femur_medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_2/preprocessed/femur_lateral_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_2/preprocessed/tibia_medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_2/preprocessed/tibia_lateral_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_3/preprocessed/femur_medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_3/preprocessed/femur_lateral_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_3/preprocessed/tibia_medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_3/preprocessed/tibia_lateral_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_4/preprocessed/femur_medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_4/preprocessed/femur_lateral_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_medial_pickled_3d \
-/home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_lateral_pickled_3d \
+/home/njneetes/work/data/SALTAC/visit_1/preprocessed/femur_medial_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_1/preprocessed/femur_lateral_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_1/preprocessed/tibia_medial_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_1/preprocessed/tibia_lateral_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_2/preprocessed/femur_medial_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_2/preprocessed/femur_lateral_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_2/preprocessed/tibia_medial_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_2/preprocessed/tibia_lateral_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_3/preprocessed/femur_medial_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_3/preprocessed/femur_lateral_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_3/preprocessed/tibia_medial_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_3/preprocessed/tibia_lateral_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_4/preprocessed/femur_medial_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_4/preprocessed/femur_lateral_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_medial_pickled_3d_e100 \
+/home/njneetes/work/data/SALTAC/visit_4/preprocessed/tibia_lateral_pickled_3d_e100 \
 /home/njneetes/work/data/NORMXTII/preprocessed/radius_pickled_3d_background \
 /home/njneetes/work/data/NORMXTII/preprocessed/tibia_pickled_3d_background \
---label unet_3d_knee_wback_transfer_cv \
+--label unet_3d_knee_wback_e100_transfer_cv \
 --version "$SLURM_JOB_ID" \
 --folds 5 \
 --num-workers 6 \
