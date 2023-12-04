@@ -49,8 +49,7 @@ ${ATLAS_REG_DIR}/${IMAGE,,}_atlas_mask_transformed.nii.gz \
 echo ""
 echo "Step 5: if the image is from a LEFT knee, need to mirror the image and transformed mask back"
 if [ ${SIDE} = "left" ]; then
-  echo "Mirroring the image and transformed mask"
-  blImageMirror ${NIFTI_DIR}/${IMAGE,,}_masked.nii.gz 0 ${NIFTI_DIR}/${IMAGE,,}_masked.nii.gz -ow
+  echo "Mirroring the transformed mask"
   blImageMirror \
   ${ATLAS_REG_DIR}/${IMAGE,,}_atlas_mask_transformed.nii.gz \
   0 \
@@ -59,3 +58,5 @@ if [ ${SIDE} = "left" ]; then
 else
   echo "Not mirroring the image and transformed mask"
 fi
+echo "remove the masked image"
+rm ${NIFTI_DIR}/${IMAGE,,}_masked.nii.gz

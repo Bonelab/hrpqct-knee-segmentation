@@ -294,7 +294,7 @@ def create_parser() -> ArgumentParser:
         help="the class label for the tunnel in the output mask"
     )
     parser.add_argument(
-        "--trab-remove-islands-radius", "-trir", type=int, default=8, metavar="N",
+        "--trab-remove-islands-radius", "-trir", type=int, default=6, metavar="N",
         help="radius of structural element when performing remove_islands on the trabecular bone mask"
     )
     parser.add_argument(
