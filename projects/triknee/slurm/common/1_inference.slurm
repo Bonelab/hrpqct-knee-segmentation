@@ -26,4 +26,4 @@ ${NIFTI_DIR}/${IMAGE,,}.nii.gz \
 ${MODEL_MASK_DIR} ${IMAGE,,} \
 -hf /home/njneetes/Projects/hrpqct-knee-segmentation/logs/unetpp_3d_final/version_21096525/ref_hparams.yaml \
 -cf /home/njneetes/Projects/hrpqct-knee-segmentation/logs/unetpp_3d_knee_wback_transfer_final/version_25943069/checkpoints/epoch\=257-step\=6192.ckpt \
--mt unet -pw 64 -bs 16 -ow --cuda -o 0.75
+-mt unet -pw 128 -bs 8 -ow --cuda -o 0.25
