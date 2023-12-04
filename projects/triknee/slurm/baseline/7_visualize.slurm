@@ -15,6 +15,7 @@
 export PATH="$HOME/software/miniconda3/bin:$PATH"
 export PYTHONUNBUFFERED=1
 export NIFTI_DIR="/home/njneetes/work/data/TRIKNEE/niftis"
+export MODEL_MASK_DIR="/home/njneetes/work/data/TRIKNEE/model_masks"
 export ROI_MASK_DIR="/home/njneetes/work/data/TRIKNEE/roi_masks_noreg"
 export VIZ_DIR="/home/njneetes/work/data/TRIKNEE/visualizations"
 
@@ -23,5 +24,15 @@ source activate blptl_11.1
 python python/visualization/write_panning_video.py \
 ${NIFTI_DIR}/${IMAGE,,}.nii.gz \
 ${ROI_MASK_DIR}/${IMAGE,,}_allrois_mask.nii.gz \
-${VIZ_DIR}/${IMAGE,,} \
+${VIZ_DIR}/${IMAGE,,}_rois \
+-ib -400 1400 -pd 1 -ri -cens 10
+python python/visualization/write_panning_video.py \
+${NIFTI_DIR}/${IMAGE,,}.nii.gz \
+${MODEL_MASK_DIR}/${IMAGE,,}_ensemble_inference_mask.nii.gz \
+${VIZ_DIR}/${IMAGE,,}_inference \
+-ib -400 1400 -pd 1 -ri -cens 10
+python python/visualization/write_panning_video.py \
+${NIFTI_DIR}/${IMAGE,,}.nii.gz \
+${MODEL_MASK_DIR}/${IMAGE,,}_postprocessed_mask.nii.gz \
+${VIZ_DIR}/${IMAGE,,}_postprocessed \
 -ib -400 1400 -pd 1 -ri -cens 10
