@@ -21,4 +21,4 @@ source activate blptl
 python -u python/preprocessing/preprocess_3d_patch_samples_from_npz.py \
 /home/njneetes/work/data/"$STUDY"/visit_"$VISIT_NUM"/"$BONE"/"$COMPARTMENT" \
 /home/njneetes/work/data/"$STUDY"/visit_"$VISIT_NUM"/preprocessed/"$BONE"_"$COMPARTMENT"_pickled_3d \
---patch-width 64 -e 20
+--patch-width 64 -e 100
