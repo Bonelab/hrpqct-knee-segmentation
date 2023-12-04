@@ -54,7 +54,7 @@ class EnsembleSegmentationModel:
             with torch.no_grad():
                 pred = self.inferer(image, model)
             if isinstance(pred, list) or isinstance(pred, tuple):
-                pred = pred[-1]
+                pred = sum(pred)
             y_hat += pred.squeeze(0).squeeze(0)
         return torch.argmax(y_hat.squeeze(0), dim=0).cpu().numpy()
 
@@ -241,7 +241,8 @@ def inference_ensemble(args: Namespace):
             mode="gaussian",
             sw_device=device,
             device="cpu",
-            progress=(~args.silent)
+            progress=(~args.silent),
+            cache_roi_weight_map=True
         ),
         args.silent
     )
