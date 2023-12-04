@@ -20,5 +20,5 @@ source activate blptl
 ####### Run your script #########################
 python -u python/preprocessing/preprocess_3d_patch_samples_from_npz.py \
 /home/njneetes/work/data/"$STUDY"/visit_"$VISIT_NUM"/"$BONE"/"$COMPARTMENT" \
-/home/njneetes/work/data/"$STUDY"/visit_"$VISIT_NUM"/preprocessed/"$BONE"_"$COMPARTMENT"_pickled_3d \
+/home/njneetes/work/data/"$STUDY"/visit_"$VISIT_NUM"/preprocessed/"$BONE"_"$COMPARTMENT"_pickled_3d_e100 \
 --patch-width 64 -e 100
