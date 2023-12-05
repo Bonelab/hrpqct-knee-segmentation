@@ -13,7 +13,6 @@ then
   exit
 fi
 LABEL=$1
-FOLLOWUP=$2
 BONE=$2
-JID_REG=$(sbatch --export=LABEL=${LABEL},FOLLOWUP=${FOLLOWUP} projects/triknee/slurm/followup/4_longitudinal_registration.slurm | tr -dc "0-9")
+JID_REG=$(sbatch --export=LABEL=${LABEL} projects/triknee/slurm/followup/4_longitudinal_registration.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_REG} to register the followup image to the baseline image."
