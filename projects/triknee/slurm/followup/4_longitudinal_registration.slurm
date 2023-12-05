@@ -48,5 +48,5 @@ ${NIFTI_DIR}/${LABEL}_${FOLLOWUP}_masked.nii.gz \
 --centering-initialization Geometry \
 --overwrite
 echo "Step 4: Remove the masked images"
-rm ${NIFTI_DIR}/${LABEL}_${BASELINE}_masked.nii.gz
+rm ${NIFTI_DIR}/${LABEL}_1_masked.nii.gz
 rm ${NIFTI_DIR}/${LABEL}_${FOLLOWUP}_masked.nii.gz
