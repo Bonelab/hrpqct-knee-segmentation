@@ -20,7 +20,6 @@ unet_3d_final version_21096524 \
 /home/njneetes/scratch/auto_peri_knee/data/normxtii/preprocessed/radius_pickled_3d_background \
 /home/njneetes/scratch/auto_peri_knee/data/normxtii/preprocessed/tibia_pickled_3d_background \
 --label unet_3d_knee_wback_e100_transfer_cv \
---version "$SLURM_JOB_ID" \
 --folds 5 \
 --num-workers 6 \
 --batch-size 16 \
@@ -47,7 +46,6 @@ unetpp_3d_final version_21096525 \
 /home/njneetes/scratch/auto_peri_knee/data/normxtii/preprocessed/radius_pickled_3d_background \
 /home/njneetes/scratch/auto_peri_knee/data/normxtii/preprocessed/tibia_pickled_3d_background \
 --label unetpp_3d_knee_wback_e100_transfer_cv \
---version "$SLURM_JOB_ID" \
 --folds 5 \
 --num-workers 6 \
 --batch-size 16 \
@@ -74,7 +72,6 @@ unetr_3d_final version_21096526 \
 /home/njneetes/scratch/auto_peri_knee/data/normxtii/preprocessed/radius_pickled_3d_background \
 /home/njneetes/scratch/auto_peri_knee/data/normxtii/preprocessed/tibia_pickled_3d_background \
 --label unetr_3d_knee_wback_e100_transfer_cv \
---version "$SLURM_JOB_ID" \
 --folds 5 \
 --num-workers 6 \
 --batch-size 16 \
@@ -101,7 +98,6 @@ segan_3d_final version_21096520 \
 /home/njneetes/scratch/auto_peri_knee/data/normxtii/preprocessed/radius_pickled_3d_background \
 /home/njneetes/scratch/auto_peri_knee/data/normxtii/preprocessed/tibia_pickled_3d_background \
 --label segan_3d_knee_wback_e100_transfer_cv \
---version "$SLURM_JOB_ID" \
 --folds 5 \
 --num-workers 6 \
 --batch-size 16 \
@@ -128,7 +124,6 @@ segresnetvae_3d_final version_21096522 \
 /home/njneetes/scratch/auto_peri_knee/data/normxtii/preprocessed/radius_pickled_3d_background \
 /home/njneetes/scratch/auto_peri_knee/data/normxtii/preprocessed/tibia_pickled_3d_background \
 --label segresnetvae_3d_knee_wback_e100_transfer_cv \
---version "$SLURM_JOB_ID" \
 --folds 5 \
 --num-workers 6 \
 --batch-size 128 \
