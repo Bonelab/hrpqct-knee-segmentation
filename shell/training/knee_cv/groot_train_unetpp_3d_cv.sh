@@ -7,6 +7,7 @@ CHANNELS_ARR=("$CHANNELS")
 python -u python/training/cv/train_unet_cv.py \
 --model-architecture unet++ \
 --label unetpp_3d_knee_wback_e100_base_cv \
+--version "$(date +%s)" \
 --input-channels 1 \
 --output-channels 3 \
 --model-channels ${CHANNELS_ARR[@]} \

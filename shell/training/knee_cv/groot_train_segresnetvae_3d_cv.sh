@@ -4,6 +4,7 @@ LEARNING_RATE=$2
 python -u python/training/cv/train_segresnetvae_cv.py \
 --image-size 64 64 64 \
 --label segresnetvae_3d_knee_wback_e100_base_cv \
+--version "$(date +%s)" \
 --input-channels 1 \
 --output-channels 3 \
 --batch-size 128 \

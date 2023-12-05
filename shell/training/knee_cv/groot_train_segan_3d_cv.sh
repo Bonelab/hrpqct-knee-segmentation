@@ -6,6 +6,7 @@ CHANNELS_ARR=("$CHANNELS")
 # shellcheck disable=SC2068
 python -u python/training/cv/train_segan_cv.py \
 --label segan_3d_knee_wback_e100_base_cv \
+--version "$(date +%s)" \
 --input-channels 1 \
 --output-channels 3 \
 --model-channels ${CHANNELS_ARR[@]} \
