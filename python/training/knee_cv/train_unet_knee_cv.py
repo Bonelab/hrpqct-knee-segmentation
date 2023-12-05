@@ -32,6 +32,7 @@ def create_unetplusplus_loss_function(loss_function):
 
 
 def train_unet_cv(args: Namespace) -> None:
+    torch.set_float32_matmul_precision('medium')
     # load the hyperparameters from file
     # with open(os.path.join(args.log_dir, args.reference_label, args.reference_version, "hparams.yaml")) as f:
     #     hparams = yaml.safe_load(f)

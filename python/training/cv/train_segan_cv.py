@@ -103,6 +103,7 @@ def create_parser() -> ArgumentParser:
 
 
 def train_segan_cv(args):
+    torch.set_float32_matmul_precision('medium')
     # check if we are using CUDA and set accelerator, devices, strategy
     if args.cuda:
         if torch.cuda.is_available():

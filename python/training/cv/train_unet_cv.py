@@ -139,7 +139,7 @@ def create_unetplusplus_loss_function(loss_function):
 
 
 def train_unet_cv(args: Namespace) -> None:
-
+    torch.set_float32_matmul_precision('medium')
     # check if we are using CUDA and set accelerator, devices, strategy
     if args.cuda:
         if torch.cuda.is_available():
