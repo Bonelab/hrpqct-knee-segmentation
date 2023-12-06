@@ -1,5 +1,5 @@
 #!/bin/bash
-./projects/triknee/shell/process_baseline_image.sh TRIKNEE_01_TL_1 tibia left; sleep 0.1
+#./projects/triknee/shell/process_baseline_image.sh TRIKNEE_01_TL_1 tibia left; sleep 0.1
 ./projects/triknee/shell/process_baseline_image.sh TRIKNEE_01_TL_2 tibia left; sleep 0.1
 ./projects/triknee/shell/process_baseline_image.sh TRIKNEE_01_TL_3 tibia left; sleep 0.1
 ./projects/triknee/shell/process_baseline_image.sh TRIKNEE_02_TL_1 tibia left; sleep 0.1
