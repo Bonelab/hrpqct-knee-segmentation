@@ -241,8 +241,7 @@ def inference_ensemble(args: Namespace):
             mode="gaussian",
             sw_device=device,
             device="cpu",
-            progress=(~args.silent),
-            cache_roi_weight_map=True
+            progress=(~args.silent)
         ),
         args.silent
     )
