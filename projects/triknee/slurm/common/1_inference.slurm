@@ -24,6 +24,16 @@ echo "Perform inference on the image"
 python python/inference/inference_ensemble.py \
 ${NIFTI_DIR}/${IMAGE,,}.nii.gz \
 ${MODEL_MASK_DIR} ${IMAGE,,} \
--hf /home/njneetes/Projects/hrpqct-knee-segmentation/logs/unetpp_3d_final/version_21096525/ref_hparams.yaml \
--cf /home/njneetes/Projects/hrpqct-knee-segmentation/logs/unetpp_3d_knee_wback_transfer_final/version_25943069/checkpoints/epoch\=257-step\=6192.ckpt \
--mt unet -pw 128 -bs 2 -ow --cuda -o 0.5
+-hf \
+/home/njneetes/Projects/hrpqct-knee-segmentation/from_groot/logs/unetpp_3d_final/version_21096525/ref_hparams.yaml \
+/home/njneetes/Projects/hrpqct-knee-segmentation/from_groot/logs/unetpp_3d_final/version_21096525/ref_hparams.yaml \
+/home/njneetes/Projects/hrpqct-knee-segmentation/from_groot/logs/unetpp_3d_final/version_21096525/ref_hparams.yaml \
+/home/njneetes/Projects/hrpqct-knee-segmentation/from_groot/logs/unetpp_3d_final/version_21096525/ref_hparams.yaml \
+/home/njneetes/Projects/hrpqct-knee-segmentation/from_groot/logs/unetpp_3d_final/version_21096525/ref_hparams.yaml \
+-cf \
+/home/njneetes/Projects/hrpqct-knee-segmentation/from_groot/logs/unetpp_3d_knee_wback_e100_transfer_cv/1701820901_f0/checkpoints/epoch\=151-step\=2888.ckpt \
+/home/njneetes/Projects/hrpqct-knee-segmentation/from_groot/logs/unetpp_3d_knee_wback_e100_transfer_cv/1701820901_f1/checkpoints/epoch\=144-step\=2755.ckpt \
+/home/njneetes/Projects/hrpqct-knee-segmentation/from_groot/logs/unetpp_3d_knee_wback_e100_transfer_cv/1701820901_f2/checkpoints/epoch\=184-step\=3515.ckpt \
+/home/njneetes/Projects/hrpqct-knee-segmentation/from_groot/logs/unetpp_3d_knee_wback_e100_transfer_cv/1701820901_f3/checkpoints/epoch\=180-step\=3439.ckpt \
+/home/njneetes/Projects/hrpqct-knee-segmentation/from_groot/logs/unetpp_3d_knee_wback_e100_transfer_cv/1701820901_f4/checkpoints/epoch\=120-step\=2299.ckpt \
+-mt unet -pw 128 -bs 2 -ow --cuda -o 0.25
