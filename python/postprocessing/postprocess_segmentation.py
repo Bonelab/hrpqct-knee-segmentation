@@ -69,10 +69,11 @@ def remove_islands_from_mask(mask: np.ndarray, erosion_dilation: int = 1) -> np.
     if not(isinstance(mask, np.ndarray)) or (len(mask.shape) != 3):
         raise ValueError("`mask` must be a 3D numpy array")
     mask = np.pad(mask, ((1, 1), (1, 1), (1, 1)), mode='constant')
-    for _ in range(erosion_dilation):
-        mask = efficient_3d_erosion(mask, 1)
+    if erosion_dilation > 0:
+        mask = efficient_3d_erosion(mask, erosion_dilation)
     mask = keep_largest_connected_component_skimage(mask.astype(int), background=False)
-    mask = efficient_3d_dilation(mask, erosion_dilation)
+    if erosion_dilation > 0:
+        mask = efficient_3d_dilation(mask, erosion_dilation)
     return mask[1:-1, 1:-1, 1:-1].astype(int)
 
 
@@ -85,9 +86,11 @@ def fill_in_gaps_in_mask(mask: np.ndarray, dilation_erosion: int = 1) -> np.ndar
     if pad_width:
         pad_width = 2 * dilation_erosion
         mask = np.pad(mask, ((pad_width, pad_width), (pad_width, pad_width), (pad_width, pad_width)), mode='constant')
-    mask = efficient_3d_dilation(mask, dilation_erosion)
+    if dilation_erosion > 0:
+        mask = efficient_3d_dilation(mask, dilation_erosion)
     mask = keep_largest_connected_component_skimage(mask.astype(int), background=True)
-    mask = efficient_3d_erosion(mask, dilation_erosion)
+    if dilation_erosion > 0:
+        mask = efficient_3d_erosion(mask, dilation_erosion)
     if pad_width:
         mask = mask[pad_width:-pad_width, pad_width:-pad_width, pad_width:-pad_width]
     return keep_largest_connected_component_skimage(mask.astype(int), background=True)
