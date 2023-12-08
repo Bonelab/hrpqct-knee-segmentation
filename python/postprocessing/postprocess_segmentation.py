@@ -135,8 +135,6 @@ def postprocess_model_masks(
         subchondral_bone_plate_mask: np.ndarray,
         trabecular_bone_mask: np.ndarray,
         min_subchondral_bone_plate_thickness: int = 4,
-        subchondral_remove_islands_radius: int = 2,
-        subchondral_fill_gaps_radius: int = 3,
         bone_fill_gaps_radius: int = 5,
         bone_remove_islands_radius: int = 4,
         silent: bool = False
@@ -153,14 +151,8 @@ def postprocess_model_masks(
             subchondral_bone_plate_mask
             | erode_and_subtract(bone_mask, min_subchondral_bone_plate_thickness)
     )
-    message_s(f"Sc <- fill_gaps(Sc | r={subchondral_fill_gaps_radius})", silent)
-    subchondral_bone_plate_mask = fill_in_gaps_in_mask(
-        subchondral_bone_plate_mask, dilation_erosion=subchondral_fill_gaps_radius
-    )
-    message_s(f"Sc <- remove_islands(Sc | r={subchondral_remove_islands_radius})", silent)
-    subchondral_bone_plate_mask = remove_islands_from_mask(
-        subchondral_bone_plate_mask, erosion_dilation=subchondral_remove_islands_radius
-    )
+    message_s(f"Sc <- remove_islands(Sc | r=0)", silent)
+    subchondral_bone_plate_mask = remove_islands_from_mask(subchondral_bone_plate_mask, 0)
     message_s(f"Tb <- B ∩ (¬ Sc)", silent)
     trabecular_bone_mask = bone_mask & (~subchondral_bone_plate_mask)
     return subchondral_bone_plate_mask.astype(int), trabecular_bone_mask.astype(int)
@@ -230,8 +222,6 @@ def postprocess_segmentation(args: Namespace):
         subchondral_bone_plate_mask,
         trabecular_bone_mask,
         args.minimum_subchondral_bone_plate_thickness,
-        args.subchondral_remove_islands_radius,
-        args.subchondral_fill_gaps_radius,
         args.bone_fill_gaps_radius,
         args.bone_remove_islands_radius,
         args.silent
@@ -298,14 +288,6 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         "--output-tunnel-class", "-otnc", type=int, default=3, metavar="N",
         help="the class label for the tunnel in the output mask"
-    )
-    parser.add_argument(
-        "--subchondral-remove-islands-radius", "-trir", type=int, default=2, metavar="N",
-        help="radius of structural element when performing remove_islands on the trabecular bone mask"
-    )
-    parser.add_argument(
-        "--subchondral-fill-gaps-radius", "-trfgr", type=int, default=3, metavar="N",
-        help="radius of structural element when performing fill_gaps on the trabecular bone mask"
     )
     parser.add_argument(
         "--bone-fill-gaps-radius", "-bfgr", type=int, default=5, metavar="N",
