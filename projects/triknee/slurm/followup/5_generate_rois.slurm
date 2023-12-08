@@ -44,6 +44,18 @@ ${MODEL_MASK_DIR}/${LABEL,,}_3_transformed_mask.nii.gz ${BONE} \
 ${ATLAS_REG_DIR}/${LABEL,,}_1_atlas_mask_transformed.nii.gz \
 ${ROI_MASK_DIR} ${LABEL,,}_3_baseline -ow
 echo "Step 3: Transform the ROIs to the followup reference frame"
+blRegistrationApplyTransform \
+${ROI_MASK_DIR}/${LABEL,,}_2_baseline_allrois_mask.nii.gz \
+${REG_DIR}/${LABEL,,}_2_transform.txt \
+${ROI_MASK_DIR}/${LABEL,,}_2_allrois_mask.nii.gz \
+-fi ${MODEL_MASK_DIR}/${LABEL,,}_2_postprocessed_mask.nii.gz \
+-int NearestNeighbour -it -ow
+blRegistrationApplyTransform \
+${ROI_MASK_DIR}/${LABEL,,}_3_baseline_allrois_mask.nii.gz \
+${REG_DIR}/${LABEL,,}_3_transform.txt \
+${ROI_MASK_DIR}/${LABEL,,}_3_allrois_mask.nii.gz \
+-fi ${MODEL_MASK_DIR}/${LABEL,,}_3_postprocessed_mask.nii.gz \
+-int NearestNeighbour -it -ow
 if [ ${BONE} = "femur" ]; then
   for ROI_CODE in 10 11 12 13 14 15 16 17;
   do
