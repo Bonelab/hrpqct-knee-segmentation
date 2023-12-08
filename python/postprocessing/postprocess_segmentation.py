@@ -53,7 +53,7 @@ def efficient_3d_opening(mask: np.ndarray, radius: int) -> np.ndarray:
 def keep_largest_connected_component_skimage(mask: np.ndarray, background: bool = False) -> np.ndarray:
     if not(isinstance(mask, np.ndarray)):
         raise ValueError("`mask` must be a 3D numpy array")
-    mask = ~mask if background else mask
+    mask = (1 - mask) if background else mask
     labelled_mask = sklabel(mask, background=0)
     component_counts = np.bincount(labelled_mask.flat)
     if len(component_counts) < 2:
