@@ -244,6 +244,7 @@ def postprocess_segmentation(args: Namespace):
         args.minimum_subchondral_bone_plate_thickness,
         args.bone_fill_gaps_radius,
         args.bone_remove_islands_radius,
+        args.trab_fill_gaps_radius,
         args.silent
     )
 
@@ -319,6 +320,10 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         "--minimum-subchondral-bone-plate-thickness", "-msbpt", type=int, default=4, metavar="N",
         help="minimum thickness of the subchondral bone plate, in voxels"
+    )
+    parser.add_argument(
+        "--trab-fill-gaps-radius", "-tfgr", type=int, default=5, metavar="N",
+        help="radius of structural element when performing fill_gaps on the trabecular bone mask"
     )
     parser.add_argument(
         "--detect-tunnel", "-t", action="store_true", help="try to detect ACLR tunnel"
