@@ -47,7 +47,9 @@ ${NIFTI_DIR}/${LABEL,,}_3_masked.nii.gz \
 --max-iterations 1000 \
 --shrink-factors 16 8 4 2 1 --smoothing-sigmas 8 4 2 1 0.1 \
 --plot-metric-history \
---optimizer GradientDescent --gradient-descent-learning-rate 0.01 \
+--optimizer GradientDescent --gradient-descent-learning-rate 0.0005 \
+--gradient-descent-convergence-min-value 0.000001 \
+--gradient-descent-convergence-window-size 10 \
 --similarity-metric Correlation \
 --similarity-metric-sampling-strategy Random --similarity-metric-sampling-rate 0.01 \
 --interpolator Linear \
