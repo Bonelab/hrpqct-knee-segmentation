@@ -15,14 +15,16 @@ fi
 IMAGE=$1
 BONE=$2
 SIDE=$3
-JID_PRE=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} projects/conmed/slurm/0_preinference.slurm | tr -dc "0-9")
-echo "Submitted job ${JID_PRE} to perform pre-inference processing."
-sleep 0.1
-JID_INF=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_PRE} projects/conmed/slurm/1_inference.slurm | tr -dc "0-9")
-echo "Submitted job ${JID_INF} to perform inference processing. Will not execute until job ${JID_PRE} is complete."
-sleep 0.1
-JID_POST=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_INF} projects/conmed/slurm/2_postinference.slurm | tr -dc "0-9")
-echo "Submitted job ${JID_POST} to perform post-inference processing. Will not execute until job ${JID_INF} is complete."
+#JID_PRE=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} projects/conmed/slurm/0_preinference.slurm | tr -dc "0-9")
+#echo "Submitted job ${JID_PRE} to perform pre-inference processing."
+#sleep 0.1
+#JID_INF=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_PRE} projects/conmed/slurm/1_inference.slurm | tr -dc "0-9")
+#echo "Submitted job ${JID_INF} to perform inference processing. Will not execute until job ${JID_PRE} is complete."
+#sleep 0.1
+#JID_POST=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_INF} projects/conmed/slurm/2_postinference.slurm | tr -dc "0-9")
+#echo "Submitted job ${JID_POST} to perform post-inference processing. Will not execute until job ${JID_INF} is complete."
+JID_POST=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} projects/conmed/slurm/2_postinference.slurm | tr -dc "0-9")
+echo "Submitted job ${JID_POST} to perform post-inference processing."
 sleep 0.1
 JID_CTC=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_POST} projects/conmed/slurm/4_convert_to_aims.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_CTC} to convert the cort/trab/tunnel masks to AIM format. Will not execute until job ${JID_POST} is complete."
