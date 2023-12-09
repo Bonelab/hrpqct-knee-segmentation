@@ -6,9 +6,11 @@ import numpy as np
 from bonelab.util.echo_arguments import echo_arguments
 from bonelab.util.registration_util import check_inputs_exist, check_for_output_overwrite, message_s
 
+import SimpleITK as sitk
+
 
 def intersect_masks(args: Namespace) -> None:
-    if not silent:
+    if not args.silent:
         print(echo_arguments("Intersect Masks", vars(args)))
 
     check_inputs_exist(args.inputs, args.silent)
@@ -17,13 +19,13 @@ def intersect_masks(args: Namespace) -> None:
     if len(args.inputs) == 1:
         if not silent:
             print(message_s("Only one input mask provided, copying to output", args.silent))
-        Sitk.WriteImage(Sitk.ReadImage(args.inputs[0]), args.output)
+        sitk.WriteImage(sitk.ReadImage(args.inputs[0]), args.output)
         return
 
     message_s("Reading in masks", args.silent)
-    input_masks = [Sitk.ReadImage(fn) for fn in args.inputs]
+    input_masks = [sitk.ReadImage(fn) for fn in args.inputs]
     message_s("Converting masks to arrays", args.silent)
-    input_arrays = [Sitk.GetArrayFromImage(mask) for mask in input_masks]
+    input_arrays = [sitk.GetArrayFromImage(mask) for mask in input_masks]
     message_s("Initializing output array", args.silent)
     output_array = np.zeros_like(input_arrays[0], dtype=np.uint8)
 
@@ -41,18 +43,18 @@ def intersect_masks(args: Namespace) -> None:
         output_array += c * class_intersection
 
     message_s("Converting output array to SimpleITK image", args.silent)
-    output_mask = Sitk.GetImageFromArray(output_array)
+    output_mask = sitk.GetImageFromArray(output_array)
     output_mask.CopyInformation(input_masks[0])
     message_s("Writing output mask", args.silent)
-    Sitk.WriteImage(output_mask, args.output)
+    sitk.WriteImage(output_mask, args.output)
 
 
 def create_parser() -> ArgumentParser:
     parser = ArgumentParser(description="Intersect masks", formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument("--inputs", "-i", help="Input masks", nargs="+", required=True)
-    parser.add_argument("--classes", "-c", help="Classes to intersect", nargs="+", required=True)
+    parser.add_argument("--classes", "-c", help="Classes to intersect", type=int, nargs="+", required=True)
     parser.add_argument("--output", "-o", help="Output mask", required=True)
-    parser.add_argument("--overwrite", "-w", help="Overwrite output", action="store_true")
+    parser.add_argument("--overwrite", "-ow", help="Overwrite output", action="store_true")
     parser.add_argument("--silent", "-s", help="Silence output", action="store_true")
     return parser
 
