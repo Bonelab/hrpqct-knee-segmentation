@@ -137,6 +137,7 @@ def postprocess_model_masks(
         min_subchondral_bone_plate_thickness: int = 4,
         bone_fill_gaps_radius: int = 5,
         bone_remove_islands_radius: int = 4,
+        trab_fill_gaps_radius: int = 5,
         silent: bool = False
 ) -> np.ndarray:
     message_s("", silent)
@@ -155,6 +156,25 @@ def postprocess_model_masks(
     subchondral_bone_plate_mask = remove_islands_from_mask(subchondral_bone_plate_mask, 0)
     message_s(f"Tb <- B ∩ (¬ Sc)", silent)
     trabecular_bone_mask = bone_mask & (~subchondral_bone_plate_mask)
+    message_s(
+        f"Tb <- Tb ∪ (erode(fill_gaps(dilate(Tb | r={trab_fill_gaps_radius}) | r=0) | r={2*trab_fill_gaps_radius}))",
+        silent
+    )
+    trabecular_bone_mask = (
+        trabecular_bone_mask
+        | efficient_3d_erosion(
+            fill_in_gaps_in_mask(
+                efficient_3d_dilation(
+                    trabecular_bone_mask,
+                    trab_fill_gaps_radius
+                ),
+                dilation_erosion=0
+            ),
+            2 * trab_fill_gaps_radius
+        )
+    )
+    message_s(f"Sc <- Sc ∩ (¬ Tb)", silent)
+    subchondral_bone_plate_mask = subchondral_bone_plate_mask & (~trabecular_bone_mask)
     return subchondral_bone_plate_mask.astype(int), trabecular_bone_mask.astype(int)
 
 
@@ -235,7 +255,6 @@ def postprocess_segmentation(args: Namespace):
             args.tunnel_min_size,
             silent=args.silent
         )
-        #postprocess_with_tunnel()
     else:
         tunnel_mask = np.zeros_like(post_subchondral_bone_plate_mask)
 
