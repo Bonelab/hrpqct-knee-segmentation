@@ -8,7 +8,7 @@
 ./projects/triknee/shell/process_followup_image.sh TRIKNEE_07_TL tibia; sleep 0.1
 ./projects/triknee/shell/process_followup_image.sh TRIKNEE_08_TL tibia; sleep 0.1
 ./projects/triknee/shell/process_followup_image.sh TRIKNEE_09_TL tibia; sleep 0.1
-./projects/triknee/shell/process_followup_image.sh TRIKNEE_10_TL tibia; sleep 0.1
+#./projects/triknee/shell/process_followup_image.sh TRIKNEE_10_TL tibia; sleep 0.1
 ./projects/triknee/shell/process_followup_image.sh TRIKNEE_11_TL tibia; sleep 0.1
 ./projects/triknee/shell/process_followup_image.sh TRIKNEE_12_TL tibia; sleep 0.1
 #./projects/triknee/shell/process_followup_image.sh TRIKNEE_13_TL tibia; sleep 0.1
