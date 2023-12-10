@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
 #SBATCH --time=4:00:00
-#SBATCH --mem=100G
+#SBATCH --mem=150G
 #SBATCH --partition=gpu-v100 --gres=gpu:1
 #SBATCH --job-name=1_INFERENCE
 #SBATCH --mail-user=njneetes@ucalgary.ca
