@@ -59,15 +59,15 @@ echo "Step 4: Generate the ROIs in the baseline reference frame with the overlap
 python python/generate_rois/generate_rois.py \
 ${MODEL_MASK_DIR}/${LABEL,,}_1_postprocessed_mask.nii.gz ${BONE} \
 ${REG_DIR}/${LABEL,,}_atlas_masks_overlapped_baseline.nii.gz \
-${ROI_MASK_DIR} ${LABEL,,}_1 -ow
+${ROI_MASK_DIR} ${LABEL,,}_1 --axial-dilation-footprint 40 -ow
 python python/generate_rois/generate_rois.py \
 ${REG_DIR}/${LABEL,,}_2_bone_mask_baseline.nii.gz ${BONE} \
 ${REG_DIR}/${LABEL,,}_atlas_masks_overlapped_baseline.nii.gz \
-${ROI_MASK_DIR} ${LABEL,,}_2_baseline -ow
+${ROI_MASK_DIR} ${LABEL,,}_2_baseline --axial-dilation-footprint 40 -ow
 python python/generate_rois/generate_rois.py \
 ${REG_DIR}/${LABEL,,}_3_bone_mask_baseline.nii.gz ${BONE} \
 ${REG_DIR}/${LABEL,,}_atlas_masks_overlapped_baseline.nii.gz \
-${ROI_MASK_DIR} ${LABEL,,}_3_baseline -ow
+${ROI_MASK_DIR} ${LABEL,,}_3_baseline --axial-dilation-footprint 40 -ow
 echo "Step 5: Transform the followup ROIs to the followup reference frames"
 blRegistrationApplyTransform \
 ${ROI_MASK_DIR}/${LABEL,,}_2_baseline_allrois_mask.nii.gz \
