@@ -1,3 +1,30 @@
 #!/bin/bash
 ./projects/triknee/shell/process_baseline_image.sh TRIKNEE_01_TL tibia; sleep 0.1
-# fill others in after it's working
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_02_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_03_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_04_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_05_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_06_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_07_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_08_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_09_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_10_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_11_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_12_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_13_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_14_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_15_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_16_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_17_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_18_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_19_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_20_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_21_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_22_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_23_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_24_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_25_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_26_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_28_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_29_TL tibia; sleep 0.1
+./projects/triknee/shell/process_baseline_image.sh TRIKNEE_30_TL tibia; sleep 0.1
