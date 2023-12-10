@@ -45,3 +45,5 @@ sbatch --export=IMAGE=${LABEL}_1 --dependency=afterany:${JID_GR} projects/trikne
 echo "Submitted job to generate a visualization. Will not execute until job ${JID_GR} is complete."
 sbatch --export=IMAGE=${LABEL}_2 --dependency=afterany:${JID_GR} projects/triknee/slurm/followup/7_visualize.slurm
 echo "Submitted job to generate a visualization. Will not execute until job ${JID_GR} is complete."
+sbatch --export=IMAGE=${LABEL}_3 --dependency=afterany:${JID_GR} projects/triknee/slurm/followup/7_visualize.slurm
+echo "Submitted job to generate a visualization. Will not execute until job ${JID_GR} is complete."
