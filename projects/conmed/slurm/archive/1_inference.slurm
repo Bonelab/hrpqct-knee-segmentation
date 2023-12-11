@@ -1,12 +1,11 @@
 #!/bin/bash
-####### Reserve computing resources #############
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
-#SBATCH --time=4:00:00
-#SBATCH --mem=150G
+#SBATCH --time=2:00:00
+#SBATCH --mem=100G
 #SBATCH --partition=gpu-v100 --gres=gpu:1
-#SBATCH --job-name=1_INFERENCE
+#SBATCH --job-name=Inference
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
 #SBATCH --mail-type=END
