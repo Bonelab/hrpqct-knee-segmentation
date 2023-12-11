@@ -16,7 +16,7 @@ IMAGE=$1
 BONE=$2
 SIDE=$3
 JID_NII=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} projects/triknee/slurm/common/0_convert_to_nifti.slurm | tr -dc "0-9")
-echo "Submitted job ${JID_PRE} to convert AIM to nifti."
+echo "Submitted job ${JID_NII} to convert AIM to nifti."
 sleep 0.1
 JID_INF=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_NII} projects/triknee/slurm/common/1_inference.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_INF} to perform inference processing. Will not execute until job ${JID_NII} is complete."
