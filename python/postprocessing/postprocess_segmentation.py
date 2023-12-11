@@ -182,13 +182,14 @@ def keep_smaller_components(mask: np.ndarray) -> np.ndarray:
     return np.logical_and(mask, np.logical_not(keep_largest_connected_component_skimage(mask, background=False)))
 
 
-def slice_wise_keep_smaller_components(mask: np.ndarray, dims: List[int]) -> np.ndarray:
+def slice_wise_keep_smaller_components(mask: np.ndarray, dims: List[int], pad_amount: int = 5) -> np.ndarray:
+    mask = np.pad(mask, ((pad_amount, pad_amount), (pad_amount, pad_amount), (pad_amount, pad_amount)), mode='constant')
     out = np.zeros_like(mask)
     for dim in dims:
         for i in range(mask.shape[dim]):
             st = tuple([slice(None) if j != dim else i for j in range(len(mask.shape))])
             out[st] = np.logical_or(out[st], keep_smaller_components(mask[st]))
-    return out
+    return out[pad_amount:-pad_amount, pad_amount:-pad_amount, pad_amount:-pad_amount]
 
 
 def segment_tunnel(
