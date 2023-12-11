@@ -28,7 +28,7 @@ if [ ${BONE} = "femur" ]; then
     JID_ROI=$(sbatch --export=IMAGE=${LABEL}_2,ROI_CODE=${ROI_CODE} --dependency=afterany:${JID_GR} projects/triknee/slurm/followup/6_convert_roi_to_aim.slurm | tr -dc "0-9")
     echo "Submitted job ${JID_ROI} to convert the ROI${ROI_CODE} mask to AIM format. Will not execute until job ${JID_GR} is complete."
     sleep 0.1
-    JID_ROI=$(sbatch --export=IMAGE=${LABEL}_3,ROI_CODE=${ROI_CODE} --dependency=afterany:${JID_GR} projects/triknee/slurm/followup/6_convert_roi_to_aim.slurm | tr -dc "0-9")
+    JID_ROI=$(sbatch --export=IMAGE=${LABEL}_3,ROI_CODE=${ROI_CODE}  projects/triknee/slurm/followup/6_convert_roi_to_aim.slurm | tr -dc "0-9")
     echo "Submitted job ${JID_ROI} to convert the ROI${ROI_CODE} mask to AIM format. Will not execute until job ${JID_GR} is complete."
     sleep 0.1
   done
@@ -42,7 +42,7 @@ if [ ${BONE} = "tibia" ]; then
     JID_ROI=$(sbatch --export=IMAGE=${LABEL}_2,ROI_CODE=${ROI_CODE} --dependency=afterany:${JID_GR} projects/triknee/slurm/followup/6_convert_roi_to_aim.slurm | tr -dc "0-9")
     echo "Submitted job ${JID_ROI} to convert the ROI${ROI_CODE} mask to AIM format. Will not execute until job ${JID_GR} is complete."
     sleep 0.1
-    JID_ROI=$(sbatch --export=IMAGE=${LABEL}_3,ROI_CODE=${ROI_CODE} --dependency=afterany:${JID_GR} projects/triknee/slurm/followup/6_convert_roi_to_aim.slurm | tr -dc "0-9")
+    JID_ROI=$(sbatch --export=IMAGE=${LABEL}_3,ROI_CODE=${ROI_CODE}  projects/triknee/slurm/followup/6_convert_roi_to_aim.slurm | tr -dc "0-9")
     echo "Submitted job ${JID_ROI} to convert the ROI${ROI_CODE} mask to AIM format. Will not execute until job ${JID_GR} is complete."
     sleep 0.1
   done
