@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --time=0:30:00
+#SBATCH --time=1:30:00
 #SBATCH --mem=100G
 #SBATCH --job-name=7_VISUALIZE
 #SBATCH --mail-user=njneetes@ucalgary.ca
