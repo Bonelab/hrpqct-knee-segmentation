@@ -183,7 +183,12 @@ def keep_smaller_components(mask: np.ndarray) -> np.ndarray:
 
 
 def slice_wise_keep_smaller_components(mask: np.ndarray, dims: List[int], pad_amount: int = 5) -> np.ndarray:
-    mask = np.pad(mask, ((pad_amount, pad_amount), (pad_amount, pad_amount), (pad_amount, pad_amount)), mode='constant')
+    mask = np.pad(
+        mask,
+        ((pad_amount, pad_amount), (pad_amount, pad_amount), (pad_amount, pad_amount)),
+        mode='constant',
+        constant_values=1
+    )
     out = np.zeros_like(mask)
     for dim in dims:
         for i in range(mask.shape[dim]):
