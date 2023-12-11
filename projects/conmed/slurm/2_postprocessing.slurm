@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --time=3:00:00
-#SBATCH --mem=150G
+#SBATCH --mem=250G
 #SBATCH --job-name=2_POSTPROC
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
