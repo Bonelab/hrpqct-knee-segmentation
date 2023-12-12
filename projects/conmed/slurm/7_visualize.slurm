@@ -16,7 +16,7 @@ export PATH="$HOME/software/miniconda3/bin:$PATH"
 export PYTHONUNBUFFERED=1
 export NIFTI_DIR="/home/njneetes/work/data/CONMED/niftis"
 export MODEL_MASK_DIR="/home/njneetes/work/data/CONMED/model_masks"
-export ROI_MASK_DIR="/home/njneetes/work/data/CONMED/roi_masks_noreg"
+export ROI_MASK_DIR="/home/njneetes/work/data/CONMED/roi_masks"
 export VIZ_DIR="/home/njneetes/work/data/CONMED/visualizations"
 
 ####### Run your script #########################
