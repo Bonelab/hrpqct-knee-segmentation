@@ -15,14 +15,16 @@ fi
 IMAGE=$1
 BONE=$2
 SIDE=$3
-JID_NII=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} projects/conmed/slurm/0_convert_to_nifti.slurm | tr -dc "0-9")
-echo "Submitted job ${JID_NII} to convert AIM to nifti."
-sleep 0.1
-JID_INF=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_NII} projects/conmed/slurm/1_inference.slurm | tr -dc "0-9")
-echo "Submitted job ${JID_INF} to perform inference processing. Will not execute until job ${JID_NII} is complete."
-sleep 0.1
-JID_PP=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_INF} projects/conmed/slurm/2_postprocessing.slurm | tr -dc "0-9")
-echo "Submitted job ${JID_PP} to postprocess segmentation. Will not execute until job ${JID_INF} is complete."
+#JID_NII=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} projects/conmed/slurm/0_convert_to_nifti.slurm | tr -dc "0-9")
+#echo "Submitted job ${JID_NII} to convert AIM to nifti."
+#sleep 0.1
+#JID_INF=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_NII} projects/conmed/slurm/1_inference.slurm | tr -dc "0-9")
+#echo "Submitted job ${JID_INF} to perform inference processing. Will not execute until job ${JID_NII} is complete."
+#sleep 0.1
+#JID_PP=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_INF} projects/conmed/slurm/2_postprocessing.slurm | tr -dc "0-9")
+#echo "Submitted job ${JID_PP} to postprocess segmentation. Will not execute until job ${JID_INF} is complete."
+JID_PP=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} projects/conmed/slurm/2_postprocessing.slurm | tr -dc "0-9")
+echo "Submitted job ${JID_PP} to postprocess segmentation."
 sleep 0.1
 JID_CTA=$(sbatch --export=IMAGE=${IMAGE},BONE=${BONE},SIDE=${SIDE} --dependency=afterany:${JID_PP} projects/conmed/slurm/3_convert_segmentation_to_aims.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_CTA} to convert the segmentation to AIMs. Will not execute until job ${JID_PP} is complete."

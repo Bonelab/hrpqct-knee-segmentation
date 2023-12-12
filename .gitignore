@@ -133,3 +133,4 @@ dmypy.json
 
 # things copied over from ARC
 /from_arc
+.Rproj.user
