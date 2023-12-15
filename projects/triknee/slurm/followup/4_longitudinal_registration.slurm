@@ -45,13 +45,13 @@ ${NIFTI_DIR}/${LABEL,,}_2_masked.nii.gz \
 ${NIFTI_DIR}/${LABEL,,}_3_masked.nii.gz \
 --baseline-label 1 --follow-up-labels 2 3 \
 --max-iterations 1000 \
+--downsampling-shrink-factor 4 \
+--downsampling-smoothing-sigma 1 \
 --shrink-factors 16 8 4 2 1 --smoothing-sigmas 8 4 2 1 0.1 \
 --plot-metric-history \
---optimizer GradientDescent --gradient-descent-learning-rate 0.0005 \
---gradient-descent-convergence-min-value 0.000001 \
---gradient-descent-convergence-window-size 10 \
+--optimizer Powell \
 --similarity-metric Correlation \
---similarity-metric-sampling-strategy Random --similarity-metric-sampling-rate 0.01 \
+--similarity-metric-sampling-strategy Regular --similarity-metric-sampling-rate 0.3 \
 --interpolator Linear \
 --centering-initialization Geometry \
 --overwrite
