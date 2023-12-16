@@ -20,4 +20,4 @@ export MODEL_MASK_DIR="/home/njneetes/work/data/PREOA/model_masks"
 source activate blptl_11.1
 python python/postprocessing/postprocess_segmentation.py \
 ${MODEL_MASK_DIR}/${IMAGE,,}_ensemble_inference_mask.nii.gz \
-${MODEL_MASK_DIR} ${IMAGE,,} -t -ow
+${MODEL_MASK_DIR} ${IMAGE,,} -ow
