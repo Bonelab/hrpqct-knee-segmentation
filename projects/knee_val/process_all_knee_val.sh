@@ -1,6 +1,4 @@
 #!/bin/bash
-./projects/knee_val/shell/process_image.sh CONMD01R_T tibia right; sleep 0.1
-
 ./projects/knee_val/shell/process_image.sh PTFT_002_61 femur right; sleep 0.1
 ./projects/knee_val/shell/process_image.sh PTFT_003_61 femur right; sleep 0.1
 ./projects/knee_val/shell/process_image.sh PTFT_006_61 femur right; sleep 0.1

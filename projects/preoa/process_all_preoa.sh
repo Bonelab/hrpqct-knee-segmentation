@@ -20,9 +20,9 @@
 #./projects/preoa/shell/process_image.sh PREOA_009_R_XCT_F femur right; sleep 0.1
 #./projects/preoa/shell/process_image.sh PREOA_009_R_XCT_T tibia right; sleep 0.1
 #./projects/preoa/shell/process_image.sh PREOA_010_L_XCT_F femur left; sleep 0.1
-./projects/preoa/shell/process_image.sh PREOA_010_L_XCT_T tibia left; sleep 0.1
+#./projects/preoa/shell/process_image.sh PREOA_010_L_XCT_T tibia left; sleep 0.1
 #./projects/preoa/shell/process_image.sh PREOA_010_R_XCT_F femur right; sleep 0.1
-./projects/preoa/shell/process_image.sh PREOA_010_R_XCT_T tibia right; sleep 0.1
+#./projects/preoa/shell/process_image.sh PREOA_010_R_XCT_T tibia right; sleep 0.1
 #./projects/preoa/shell/process_image.sh PREOA_011_L_XCT_F femur left; sleep 0.1
 #./projects/preoa/shell/process_image.sh PREOA_011_L_XCT_T tibia left; sleep 0.1
 #./projects/preoa/shell/process_image.sh PREOA_011_R_XCT_F femur right; sleep 0.1
@@ -47,7 +47,7 @@
 #./projects/preoa/shell/process_image.sh PREOA_016_L_XCT_T tibia left; sleep 0.1
 #./projects/preoa/shell/process_image.sh PREOA_016_R_XCT_F femur right; sleep 0.1
 #./projects/preoa/shell/process_image.sh PREOA_016_R_XCT_T tibia right; sleep 0.1
-#./projects/preoa/shell/process_image.sh PREOA_017_L_XCT_F femur left; sleep 0.1
+./projects/preoa/shell/process_image.sh PREOA_017_L_XCT_F femur left; sleep 0.1
 #./projects/preoa/shell/process_image.sh PREOA_017_L_XCT_T tibia left; sleep 0.1
 #./projects/preoa/shell/process_image.sh PREOA_017_R_XCT_F femur right; sleep 0.1
 #./projects/preoa/shell/process_image.sh PREOA_017_R_XCT_T tibia right; sleep 0.1
