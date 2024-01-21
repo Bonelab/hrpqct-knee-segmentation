@@ -54,7 +54,7 @@
 #./projects/conmed/shell/process_image.sh CONMD18R_F femur right; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD19R_F femur right; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD20R_F femur right; sleep 0.1
-./projects/conmed/shell/process_image.sh CONMD21R_F femur right; sleep 0.1
+#./projects/conmed/shell/process_image.sh CONMD21R_F femur right; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD22R_F femur right; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD23R_F femur right; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD24R_F femur right; sleep 0.1
@@ -97,13 +97,13 @@
 #./projects/conmed/shell/process_image.sh CONMD26L_T tibia left; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD27L_T tibia left; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD28L_T tibia left; sleep 0.1
-#./projects/conmed/shell/process_image.sh CONMD29L_T tibia left; sleep 0.1
+./projects/conmed/shell/process_image.sh CONMD29L_T tibia left; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD30L_T tibia left; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD31L_T tibia left; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD32L_T tibia left; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD33L_T tibia left; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD34L_T tibia left; sleep 0.1
-#./projects/conmed/shell/process_image.sh CONMD35L_T tibia left; sleep 0.1
+./projects/conmed/shell/process_image.sh CONMD35L_T tibia left; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD01L_F femur left; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD02L_F femur left; sleep 0.1
 #./projects/conmed/shell/process_image.sh CONMD03L_F femur left; sleep 0.1
