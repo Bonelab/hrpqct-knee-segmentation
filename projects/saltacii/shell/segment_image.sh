@@ -19,15 +19,12 @@ sleep 0.1
 JID_INF=$(sbatch --export=IMAGE=${IMAGE} --dependency=afterany:${JID_NII} projects/saltacii/slurm/segmentation/1_inference.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_INF} to perform inference processing. Will not execute until job ${JID_NII} is complete."
 sleep 0.1
-JID_PP=$(sbatch --export=IMAGE=${IMAGE} --dependency=afterany:${JID_INF} projects/saltacii/slurm/segmentation/2a_postprocessing.slurm | tr -dc "0-9")
-echo "Submitted job ${JID_PP} to postprocess segmentation. Will not execute until job ${JID_INF} is complete."
-sleep 0.1
 if [ ${SURGERY} = "yes" ]; then
-  JID_PP=$(sbatch --export=IMAGE=${IMAGE} projects/saltacii/slurm/segmentation/2b_postprocessing_tunnel.slurm | tr -dc "0-9")
-  echo "Submitted job ${JID_PP} to postprocess segmentation with tunnel detection."
+  JID_PP=$(sbatch --export=IMAGE=${IMAGE} --dependency=afterany:${JID_INF} projects/saltacii/slurm/segmentation/2b_postprocessing_tunnel.slurm | tr -dc "0-9")
+  echo "Submitted job ${JID_PP} to postprocess segmentation with tunnel detection. Will not execute until job ${JID_INF} is complete."
 else
-  JID_PP=$(sbatch --export=IMAGE=${IMAGE} projects/saltacii/slurm/segmentation/2a_postprocessing.slurm | tr -dc "0-9")
-  echo "Submitted job ${JID_PP} to postprocess segmentation."
+  JID_PP=$(sbatch --export=IMAGE=${IMAGE} --dependency=afterany:${JID_INF} projects/saltacii/slurm/segmentation/2a_postprocessing.slurm | tr -dc "0-9")
+  echo "Submitted job ${JID_PP} to postprocess segmentation. Will not execute until job ${JID_INF} is complete."
 fi
 sbatch --export=IMAGE=${IMAGE} --dependency=afterany:${JID_PP} projects/saltacii/slurm/segmentation/4_visualize.slurm
 echo "Submitted job to generate a visualization. Will not execute until job ${JID_PP} is complete."
