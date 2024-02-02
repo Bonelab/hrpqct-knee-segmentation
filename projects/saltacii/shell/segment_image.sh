@@ -19,7 +19,7 @@ sleep 0.1
 JID_INF=$(sbatch --export=IMAGE=${IMAGE} --dependency=afterany:${JID_NII} projects/saltacii/slurm/segmentation/1_inference.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_INF} to perform inference processing. Will not execute until job ${JID_NII} is complete."
 sleep 0.1
-JID_PP=$(sbatch --export=IMAGE=${IMAGE} --dependency=afterany:${JID_INF} projects/preoa/slurm/2a_postprocessing.slurm | tr -dc "0-9")
+JID_PP=$(sbatch --export=IMAGE=${IMAGE} --dependency=afterany:${JID_INF} projects/saltacii/slurm/segmentation/2a_postprocessing.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_PP} to postprocess segmentation. Will not execute until job ${JID_INF} is complete."
 sleep 0.1
 if [ ${SURGERY} = "yes" ]; then
