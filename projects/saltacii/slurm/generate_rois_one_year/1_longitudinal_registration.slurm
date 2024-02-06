@@ -22,22 +22,22 @@ export REG_DIR="/home/njneetes/work/data/SALTACII/registrations"
 source activate blptl_11.1
 echo "Step 1: mask the baseline image with the postprocessed model mask"
 python python/preprocessing/mask_image.py \
-${NIFTI_DIR}/${LABEL,,}_${T0}.nii.gz \
-${MODEL_MASK_DIR}/${LABEL,,}_${T0}_postprocessed_mask.nii.gz \
-${NIFTI_DIR}/${LABEL,,}_${T0}_masked.nii.gz \
+${NIFTI_DIR}/${LABEL,,}_${T0,,}.nii.gz \
+${MODEL_MASK_DIR}/${LABEL,,}_${T0,,}_postprocessed_mask.nii.gz \
+${NIFTI_DIR}/${LABEL,,}_${T0,,}_masked.nii.gz \
 --dilate-amount 35 --background-class 0 --background-value -1000 -ow
 echo "Step 2: mask the followup images with the postprocessed model mask"
 python python/preprocessing/mask_image.py \
-${NIFTI_DIR}/${LABEL,,}_${T1}.nii.gz \
-${MODEL_MASK_DIR}/${LABEL,,}_${T1}_postprocessed_mask.nii.gz \
-${NIFTI_DIR}/${LABEL,,}_${T1}_masked.nii.gz \
+${NIFTI_DIR}/${LABEL,,}_${T1,,}.nii.gz \
+${MODEL_MASK_DIR}/${LABEL,,}_${T1,,}_postprocessed_mask.nii.gz \
+${NIFTI_DIR}/${LABEL,,}_${T1,,}_masked.nii.gz \
 --dilate-amount 35 --background-class 0 --background-value -1000 -ow
 echo "Step 3: Register the followup image to the baseline image"
 blRegistrationLongitudinal \
 ${REG_DIR} ${LABEL,,} \
-${NIFTI_DIR}/${LABEL,,}_${T0}_masked.nii.gz \
-${NIFTI_DIR}/${LABEL,,}_${T1}_masked.nii.gz \
---baseline-label ${T0} --follow-up-labels ${T1} \
+${NIFTI_DIR}/${LABEL,,}_${T0,,}_masked.nii.gz \
+${NIFTI_DIR}/${LABEL,,}_${T1,,}_masked.nii.gz \
+--baseline-label ${T0,,} --follow-up-labels ${T1,,} \
 --max-iterations 1000 \
 --downsampling-shrink-factor 4 \
 --downsampling-smoothing-sigma 1 \
@@ -50,5 +50,5 @@ ${NIFTI_DIR}/${LABEL,,}_${T1}_masked.nii.gz \
 --centering-initialization Geometry \
 --overwrite
 echo "Step 4: Remove the masked images"
-rm ${NIFTI_DIR}/${LABEL,,}_${T0}_masked.nii.gz
-rm ${NIFTI_DIR}/${LABEL,,}_${T1}_masked.nii.gz
+rm ${NIFTI_DIR}/${LABEL,,}_${T0,,}_masked.nii.gz
+rm ${NIFTI_DIR}/${LABEL,,}_${T1,,}_masked.nii.gz

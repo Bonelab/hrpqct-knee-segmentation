@@ -10,7 +10,7 @@ then
   echo "Argument 4: the bone, either \`tibia\` or \`femur\`"
   echo "Argument 5: the side, either \`left\` or \`right\`"
   echo "--------------------"
-  echo "Example usage: ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII_0002_FR V01 V02 femur right"
+  echo "Example usage: ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0002_FR V01 V02 femur right"
   echo ""
   exit
 fi
