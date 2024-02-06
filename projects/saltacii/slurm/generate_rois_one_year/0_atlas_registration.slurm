@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --time=2:00:00
 #SBATCH --mem=64G
-#SBATCH --job-name=4_ATLAS_REG
+#SBATCH --job-name=0_ATLAS_REG
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
 #SBATCH --mail-type=END
