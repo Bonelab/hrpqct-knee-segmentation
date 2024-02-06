@@ -1,0 +1,43 @@
+#!/bin/bash
+# this exists because in the original segment images script I forgot to also make the conert to AIMs job
+# convert the tunnel mask to an AIM mask and we need that transferred to the VMS also
+./projects/saltacii/shell/segment_image.sh SLTCII0002_FR_V03 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0002_TR_V03 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0002_FR_V04 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0002_TR_V04 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0003_FL_V02 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0003_TL_V02 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0003_FL_V03 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0003_TL_V03 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0003_FL_V04 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0003_TL_V04 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0004_FL_V02 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0004_TL_V02 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0004_FL_V03 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0004_TL_V03 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0004_FL_V04 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0004_TL_V04 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0005_FL_V02 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0005_TL_V02 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0005_FL_V03 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0005_TL_V03 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0005_FL_V04 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0005_TL_V04 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0007_FR_V02 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0007_TR_V02 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0009_FR_V02 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0009_TR_V02 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0009_FR_V03 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0009_TR_V03 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0002_FR_V0S yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0002_TR_V0S yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0003_FL_V0S yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0003_TL_V0S yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0004_FL_V0S yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0004_TL_V0S yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0005_FL_V0S yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0005_TL_V0S yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0007_FR_V0S yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0007_TR_V0S yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0009_FR_V0S yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0009_TR_V0S yes; sleep 0.1

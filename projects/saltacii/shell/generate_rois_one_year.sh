@@ -25,11 +25,11 @@ sleep 0.1
 JID_ATLT1=$(sbatch --export=IMAGE=${LABEL}_${T1},BONE=${BONE},SIDE=${SIDE} projects/saltacii/slurm/generate_rois_one_year/0_atlas_registration.slurm | tr -dc "0-9")
 echo "Submitted job ${JID_ATLT1} to register followup to atlas."
 sleep 0.1
-JID_REG=$(sbatch --export=LABEL=${LABEL},T0=${T0},T1=${T1} projects/saltacii/slurm/generate_rois_one_year/1_longitudinal_registration.slurm | tr -dc "0-9")
-echo "Submitted job ${JID_REG} to register the followup image to the baseline image."
+JID_REG=$(sbatch --export=LABEL=${LABEL},T0=${T0},T1=${T1} --dependency=afterany:${JID_ATLT0}:${JID_ATLT1} projects/saltacii/slurm/generate_rois_one_year/1_longitudinal_registration.slurm | tr -dc "0-9")
+echo "Submitted job ${JID_REG} to register the followup image to the baseline image. Will not run until jobs ${JID_ATLT0}, ${JID_ATLT1} are complete."
 sleep 0.1
-JID_GR=$(sbatch --export=LABEL=${LABEL},T0=${T0},T1=${T1},BONE=${BONE} --dependency=afterany:${JID_ATLT0}:${JID_ATLT1}:${JID_REG} projects/saltacii/slurm/generate_rois_one_year/2_generate_rois.slurm | tr -dc "0-9")
-echo "Submitted job ${JID_GR} to generate all ROIs. Will not run until jobs ${JID_ATLT0}, ${JID_ATLT1}, and ${JID_REG} are complete."
+JID_GR=$(sbatch --export=LABEL=${LABEL},T0=${T0},T1=${T1},BONE=${BONE} --dependency=afterany:${JID_REG} projects/saltacii/slurm/generate_rois_one_year/2_generate_rois.slurm | tr -dc "0-9")
+echo "Submitted job ${JID_GR} to generate all ROIs. Will not run until job ${JID_REG} is complete."
 sleep 0.1
 if [ ${BONE} = "femur" ]; then
   for ROI_CODE in 10 11 12 13 14 15 16 17;
