@@ -84,6 +84,28 @@ def get_regional_subchondral_bone_plate_mask(
     )
 
 
+def get_bounding_box_limits(arr: np.ndarray) -> Tuple[Tuple[int, int, int], Tuple[int, int, int]]:
+    xmin, xmax = np.where(np.any(arr, axis=(1, 2)))[0][[0, -1]]
+    ymin, ymax = np.where(np.any(arr, axis=(0, 2)))[0][[0, -1]]
+    zmin, zmax = np.where(np.any(arr, axis=(0, 1)))[0][[0, -1]]
+    return (xmin, ymin, zmin), (xmax, ymax, zmax)
+
+
+def reinsert_submask_into_full_image(
+        mask: np.ndarray,
+        bounds_min: Tuple[int, int, int],
+        bounds_max: Tuple[int, int, int],
+        original_shape: Tuple[int, int, int]
+) -> np.ndarray:
+    big_mask = np.zeros(original_shape, dtype=mask.dtype)
+    big_mask[
+        bounds_min[0]:bounds_max[0],
+        bounds_min[1]:bounds_max[1],
+        bounds_min[2]:bounds_max[2]
+    ] = mask
+    return big_mask
+
+
 def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
         subchondral_bone_plate_mask: np.ndarray,
         trabecular_bone_mask: np.ndarray,
@@ -91,11 +113,36 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
         dilation_kernel_down_compartment: np.ndarray,
         silent: bool
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    # get the original shape of the image
+    original_shape = subchondral_bone_plate_mask.shape
+    # get the bounds of the bone voxels
+    bounds_min, bounds_max = get_bounding_box_limits(subchondral_bone_plate_mask)
+    # pad out what we consider as the bounds to include all of the space required to include the dilations
+    pad_amounts = [3 * (ds - 1) // 2 for ds in dilation_kernel_down_compartment.shape]
+    bounds_min = [
+        max(0, bm - pa - 1)
+        for bm, pa in zip(bounds_min, pad_amounts)
+    ]
+    bounds_max = [
+        min(s, bm + pa + 1)
+        for s, bm, pa in zip(subchondral_bone_plate_mask.shape, bounds_max, pad_amounts)
+    ]
+    # then get the subset of the original masks
+    subchondral_bone_plate_mask = subchondral_bone_plate_mask[
+        bounds_min[0]:bounds_max[0],
+        bounds_min[1]:bounds_max[1],
+        bounds_min[2]:bounds_max[2]
+    ]
+    trabecular_bone_mask = trabecular_bone_mask[
+        bounds_min[0]:bounds_max[0],
+        bounds_min[1]:bounds_max[1],
+        bounds_min[2]:bounds_max[2]
+    ]
     # find the top layer of bone
     message_s("Finding top layer of bone...", silent)
     top_layer_mask = (
-            binary_dilation(subchondral_bone_plate_mask, dilation_kernel_up_single)
-            & ~subchondral_bone_plate_mask & ~trabecular_bone_mask
+        binary_dilation(subchondral_bone_plate_mask, dilation_kernel_up_single)
+        & ~subchondral_bone_plate_mask & ~trabecular_bone_mask
     ).astype(int)
     # dilate down into the bone to get the shallow mask
     message_s("Dilating down into the bone to get the shallow mask...", silent)
@@ -123,7 +170,32 @@ def generate_periarticular_rois_from_bone_plate_and_trabecular_masks(
         deep_mask & trabecular_bone_mask
         & ~mid_mask & ~shallow_mask & ~subchondral_bone_plate_mask & ~top_layer_mask
     ).astype(int)
-    return subchondral_bone_plate_mask, shallow_mask, mid_mask, deep_mask
+    return (
+        reinsert_submask_into_full_image(
+            subchondral_bone_plate_mask,
+            bounds_min,
+            bounds_max,
+            original_shape
+        ),
+        reinsert_submask_into_full_image(
+            shallow_mask,
+            bounds_min,
+            bounds_max,
+            original_shape
+        ),
+        reinsert_submask_into_full_image(
+            mid_mask,
+            bounds_min,
+            bounds_max,
+            original_shape
+        ),
+        reinsert_submask_into_full_image(
+            deep_mask,
+            bounds_min,
+            bounds_max,
+            original_shape
+        )
+    )
 
 
 def generate_rois(args: Namespace):
