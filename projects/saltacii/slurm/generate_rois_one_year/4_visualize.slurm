@@ -3,8 +3,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --time=0:30:00
-#SBATCH --mem=100G
+#SBATCH --time=1:30:00
+#SBATCH --mem=24G
 #SBATCH --job-name=4_VISUALIZE
 #SBATCH --mail-user=njneetes@ucalgary.ca
 #SBATCH --mail-type=BEGIN
