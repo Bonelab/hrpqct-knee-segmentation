@@ -1,8 +1,8 @@
 #!/bin/bash 
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0002_FL V01 V02 femur left; sleep 0.1 
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0002_TL V01 V02 tibia left; sleep 0.1 
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0002_FR V01 V02 femur right; sleep 0.1 
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0002_TR V01 V02 tibia right; sleep 0.1 
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0002_FL V01 V02 femur left; sleep 0.1
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0002_TL V01 V02 tibia left; sleep 0.1
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0002_FR V01 V02 femur right; sleep 0.1
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0002_TR V01 V02 tibia right; sleep 0.1
 ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0002_FL V0S V03 femur left; sleep 0.1 
 ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0002_TL V0S V03 tibia left; sleep 0.1 
 ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0002_FR V0S V03 femur right; sleep 0.1 
@@ -19,23 +19,23 @@
 ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0005_TL V0S V02 tibia left; sleep 0.1
 ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0005_FR V0S V02 femur right; sleep 0.1
 ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0005_TR V0S V02 tibia right; sleep 0.1
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0006_FL V01 V02 femur left; sleep 0.1
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0006_TL V01 V02 tibia left; sleep 0.1
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0006_FR V01 V02 femur right; sleep 0.1
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0006_TR V01 V02 tibia right; sleep 0.1
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0006_FL V01 V02 femur left; sleep 0.1
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0006_TL V01 V02 tibia left; sleep 0.1
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0006_FR V01 V02 femur right; sleep 0.1
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0006_TR V01 V02 tibia right; sleep 0.1
 ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0007_FL V0S V02 femur left; sleep 0.1
 ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0007_TL V0S V02 tibia left; sleep 0.1
 ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0007_FR V0S V02 femur right; sleep 0.1
 ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0007_TR V0S V02 tibia right; sleep 0.1
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0008_FL V01 V02 femur left; sleep 0.1
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0008_TL V01 V02 tibia left; sleep 0.1
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0008_FR V01 V02 femur right; sleep 0.1
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0008_TR V01 V02 tibia right; sleep 0.1
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0008_FL V01 V02 femur left; sleep 0.1
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0008_TL V01 V02 tibia left; sleep 0.1
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0008_FR V01 V02 femur right; sleep 0.1
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0008_TR V01 V02 tibia right; sleep 0.1
 ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0009_FL V0S V02 femur left; sleep 0.1 
 ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0009_TL V0S V02 tibia left; sleep 0.1 
 ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0009_FR V0S V02 femur right; sleep 0.1 
 ./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0009_TR V0S V02 tibia right; sleep 0.1 
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0010_FL V01 V02 femur left; sleep 0.1 
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0010_TL V01 V02 tibia left; sleep 0.1 
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0010_FR V01 V02 femur right; sleep 0.1 
-./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0010_TR V01 V02 tibia right
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0010_FL V01 V02 femur left; sleep 0.1
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0010_TL V01 V02 tibia left; sleep 0.1
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0010_FR V01 V02 femur right; sleep 0.1
+#./projects/saltacii/shell/generate_rois_one_year.sh SLTCII0010_TR V01 V02 tibia right
