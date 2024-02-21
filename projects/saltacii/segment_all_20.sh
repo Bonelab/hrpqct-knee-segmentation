@@ -1,0 +1,31 @@
+#!/bin/bash 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_FL_V01 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_TL_V01 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_PL_V01 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_FR_V01 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_TR_V01 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_PR_V01 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_FL_V0S no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_TL_V0S no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_PL_V0S no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_FR_V0S no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_TR_V0S no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_PR_V0S no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_FL_V02 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_TL_V02 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_PL_V02 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_FR_V02 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_TR_V02 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_PR_V02 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_FL_V03 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_TL_V03 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_PL_V03 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_FR_V03 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_TR_V03 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_PR_V03 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_FL_V04 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_TL_V04 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_PL_V04 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_FR_V04 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_TR_V04 no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0020_PR_V04 no
