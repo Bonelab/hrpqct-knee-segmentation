@@ -14,4 +14,6 @@
 ./projects/saltacii/shell/segment_image.sh SLTCII0017_FL_V03 no; sleep 0.1
 ./projects/saltacii/shell/segment_image.sh SLTCII0018_FR_V03 no; sleep 0.1
 ./projects/saltacii/shell/segment_image.sh SLTCII0018_FR_V0S no; sleep 0.1
-./projects/saltacii/shell/segment_image.sh SLTCII0023_FR_V0S no; sleep 0.1 
+./projects/saltacii/shell/segment_image.sh SLTCII0023_FR_V0S no; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0055_FR_V02 yes; sleep 0.1
+./projects/saltacii/shell/segment_image.sh SLTCII0056_TL_V02 no; sleep 0.1 
