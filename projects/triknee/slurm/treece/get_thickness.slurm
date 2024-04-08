@@ -21,7 +21,7 @@ export MODEL_MASK_DIR="model_masks"
 export ROI_DIR_BASE="roi_masks"
 
 ####### Run your script #########################
-source activate blptl_11.1
+source activate bl
 blTreeceThickness \
 ${BASE_DIR}/${NIFTI_DIR}/${IMAGE,,}.nii.gz \
 ${BASE_DIR}/${TREECE_DIR}/${IMAGE,,}_${COMPARTMENT}_${REG} \
