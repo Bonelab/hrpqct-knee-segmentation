@@ -2,8 +2,8 @@
 ####### Reserve computing resources #############
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
-#SBATCH --time=4:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --time=6:00:00
 #SBATCH --mem=64G
 #SBATCH --job-name=TREECE
 #SBATCH --mail-user=njneetes@ucalgary.ca
