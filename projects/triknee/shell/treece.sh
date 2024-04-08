@@ -6,8 +6,7 @@ fi
 IMAGE=$1
 COMPARTMENT=$2
 REG=$3
-ROI_DIR=$4
 ROI_CODE=$5
 sbatch \
---export=IMAGE=${IMAGE},COMPARTMENT=${COMPARTMENT},REG=${REG},ROI_DIR=${ROI_DIR},ROI_CODE=${ROI_CODE} \
+--export=IMAGE=${IMAGE},COMPARTMENT=${COMPARTMENT},REG=${REG},ROI_CODE=${ROI_CODE} \
 projects/triknee/slurm/treece/get_thickness.slurm

@@ -18,6 +18,7 @@ export BASE_DIR="/home/njneetes/work/data/TRIKNEE"
 export NIFTI_DIR="niftis"
 export TREECE_DIR="treece"
 export MODEL_MASK_DIR="model_masks"
+export ROI_DIR_BASE="roi_masks"
 
 ####### Run your script #########################
 source activate blptl_11.1
@@ -25,7 +26,7 @@ blTreeceThickness \
 ${BASE_DIR}/${NIFTI_DIR}/${IMAGE,,}.nii.gz \
 ${BASE_DIR}/${TREECE_DIR}/${IMAGE,,}_${COMPARTMENT}_${REG} \
 -bm ${BASE_DIR}/${MODEL_MASK_DIR}/${IMAGE,,}_postprocessed_mask.nii.gz \
--sm ${BASE_DIR}/${ROI_DIR}/${IMAGE,,}_allrois_mask.nii.gz \
+-sm ${BASE_DIR}/${ROI_DIR_BASE}_${REG}/${IMAGE,,}_allrois_mask.nii.gz \
 -sml ${ROI_CODE} \
 -ss -ssi 20 \
 -cd 600 -lr 0.006 -rbf 10 \
