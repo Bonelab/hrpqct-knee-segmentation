@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ $# -lt 5 ]
+if [ $# -lt 4 ]
 then
   echo "Error: not enough arguments given (requires 5)."
 fi
