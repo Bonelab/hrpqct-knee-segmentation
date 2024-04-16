@@ -29,5 +29,5 @@ ${BASE_DIR}/${TREECE_DIR}/${IMAGE,,}_${COMPARTMENT}_${REG} \
 -sm ${BASE_DIR}/${ROI_DIR_BASE}_${REG}/${IMAGE,,}_allrois_mask.nii.gz \
 -sml ${ROI_CODE} \
 -ss -ssi 20 \
--cd 600 -lr 0.006 -rbf 10 \
+-cd 600 -lr 0.06 -rbf 10 \
 -sod 3 -sid 8 -stig 0 -tbig 0 -ow -mst
