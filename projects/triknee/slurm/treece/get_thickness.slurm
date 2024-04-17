@@ -28,6 +28,6 @@ ${BASE_DIR}/${TREECE_DIR}/${IMAGE,,}_${COMPARTMENT}_${REG} \
 -bm ${BASE_DIR}/${MODEL_MASK_DIR}/${IMAGE,,}_postprocessed_mask.nii.gz \
 -sm ${BASE_DIR}/${ROI_DIR_BASE}_${REG}/${IMAGE,,}_allrois_mask.nii.gz \
 -sml ${ROI_CODE} \
--ss -ssi 20 \
--cd 600 -lr 0.06 -rbf 10 \
--sod 3 -sid 8 -stig 0 -tbig 0 -ow -mst
+-ss -ssi 30  -iss 2.0 \
+-lr 0.06 -rbf 3.0 \
+-sod 3 -sid 9 -stig 0 -tbig 0 -ow -mst
