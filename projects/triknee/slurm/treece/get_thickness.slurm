@@ -30,4 +30,5 @@ ${BASE_DIR}/${TREECE_DIR}/${IMAGE,,}_${COMPARTMENT}_${REG} \
 -sml ${ROI_CODE} \
 -ss -ssi 30  -iss 2.0 \
 -lr 0.06 -rbf 3.0 \
--sod 3 -sid 9 -stig 0 -tbig 0 -ow -mst
+-sod 3 -sid 9 -stig 0 -tbig 0 -ow -mst \
+-tig 0.7 -tb 0.244 10.0
