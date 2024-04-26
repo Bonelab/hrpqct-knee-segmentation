@@ -31,4 +31,5 @@ ${BASE_DIR}/${TREECE_DIR}/${IMAGE,,}_${COMPARTMENT}_${REG} \
 -ss -ssi 40 -ssp 0.05 -iss 5.0 \
 -lr 0.06 -rbf 3.0 \
 -sod 3 -sid 9 -stig 0 -tbig 0 -ow \
--tig 0.7 -tb 0.244 8.0 -cd 600
+-tig 0.7 -tb 0.244 8.0 -cd 600 \
+-gmf -cps 1.8 -tpsn 8
