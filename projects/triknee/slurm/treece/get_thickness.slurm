@@ -2,7 +2,7 @@
 ####### Reserve computing resources #############
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=2
 #SBATCH --time=6:00:00
 #SBATCH --mem=300G
 #SBATCH --job-name=TREECE
@@ -32,4 +32,5 @@ ${BASE_DIR}/${TREECE_DIR}/${IMAGE,,}_${COMPARTMENT}_${REG} \
 -lr 0.06 -rbf 3.0 \
 -sod 3 -sid 9 -stig 0 -tbig 0 -ow \
 -tig 0.7 -tb 0.244 8.0 -cd 600 \
--gmf -cps 1.8 -tpsn 8
+-gmf -cps 7.2 3.6 1.8 0.9 \
+-idp -1 -idn 15 -rbf 5 -msb 0.1 2
