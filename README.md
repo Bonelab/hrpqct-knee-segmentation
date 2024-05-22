@@ -2,6 +2,18 @@
 Scripts for training and testing models with the goal of automating knee contouring. 
 Depends on `bonelab-pytorch-lightning`
 
+## Publication
+
+Pre-print: https://doi.org/10.1101/2024.05.20.24307643
+
+This repository contains code for automating peri-articular analysis of bone in knee HR-pQCT images. There are utilities for training, and doing inference with, segmentation models using deep learning (UNet variants specifically), for atlas-based registration, and for ROI generation. This work is not yet peer-reviewed.
+
+## Atlases and trained models
+
+The atlases and trained models are available on zenodo.
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11244681.svg)](https://doi.org/10.5281/zenodo.11244681)
+
 ## Environment Setup
 
 These instructions are the same as in `bonelab-pytorch-lightning`...
