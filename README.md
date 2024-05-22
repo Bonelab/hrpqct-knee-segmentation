@@ -1,6 +1,11 @@
 # hrpqct-knee-segmentation
 Scripts for training and testing models with the goal of automating knee contouring. 
-Depends on `bonelab-pytorch-lightning`
+Depends on `bonelab-pytorch-lightning`. If you want to see how the work in the paper was done,
+you're in the right place. If you just want to use the method yourself, you should go to
+[https://github.com/Bonelab/HRpQCT-Knee-Seg/](https://github.com/Bonelab/HRpQCT-Knee-Seg/),
+as that repo has all of the same tools as this one, but is configured to include only things you 
+need (i.e. not a bunch of jupyter notebooks and slurm files for processing and analyzing my data)
+and is much more user-friendly.
 
 ## Publication
 
