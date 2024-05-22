@@ -53,7 +53,7 @@ def create_parser() -> ArgumentParser:
         help="sequence of filters in U-Net layers"
     )
     parser.add_argument(
-        "--unet-r-feature-size", "-urfs", type=int, default="16", metavar="N",
+        "--unet-r-feature-size", "-urfs", type=int, default=16, metavar="N",
         help="feature size for `unet-r`"
     )
     parser.add_argument(
